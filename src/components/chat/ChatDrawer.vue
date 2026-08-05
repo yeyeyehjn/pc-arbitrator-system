@@ -8,8 +8,15 @@
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <div class="chat-drawer-header">
-      <span class="drawer-title">消息</span>
-      <el-icon class="drawer-close" @click="close"><Close /></el-icon>
+      <div class="header-left">
+        <div class="header-icon">
+          <el-icon :size="18"><ChatLineRound /></el-icon>
+        </div>
+        <span class="drawer-title">案件消息</span>
+      </div>
+      <button class="drawer-close" @click="close" aria-label="关闭">
+        <el-icon :size="18"><Close /></el-icon>
+      </button>
     </div>
     <div class="chat-drawer-body">
       <ChatPanel mode="drawer" />
@@ -18,7 +25,7 @@
 </template>
 
 <script setup>
-import { Close } from '@element-plus/icons-vue'
+import { Close, ChatLineRound } from '@element-plus/icons-vue'
 import ChatPanel from './ChatPanel.vue'
 
 defineProps({
@@ -38,7 +45,9 @@ const close = () => {
 <!-- 非 scoped：el-drawer 通过 teleport 挂载到 body，scoped 样式无法命中 -->
 <style lang="scss">
 .chat-drawer.el-drawer:not(.is-fullscreen) {
-  width: 400px !important;
+  width: 420px !important;
+  border-radius: 16px 0 0 16px;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
 }
 
 .chat-drawer .el-drawer__body {
@@ -52,23 +61,71 @@ const close = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background-color: var(--el-color-primary);
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
   color: #fff;
+  position: relative;
+  overflow: hidden;
 
-  .drawer-title {
-    font-size: 16px;
-    font-weight: 600;
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
   }
 
-  .drawer-close {
-    cursor: pointer;
-    font-size: 18px;
-    color: #fff;
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
 
-    &:hover {
-      opacity: 0.8;
-    }
+  .header-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .drawer-title {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}
+
+.drawer-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
