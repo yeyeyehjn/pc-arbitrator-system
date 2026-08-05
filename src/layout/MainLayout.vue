@@ -31,6 +31,7 @@
             <Bell />
           </el-icon>
         </el-badge>
+        <AiIconButton />
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
             {{ authStore.user?.name || '用户' }} {{ authStore.user?.role || '' }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
@@ -50,6 +51,11 @@
       </div>
     </el-main>
   </el-container>
+
+  <!-- 全局聊天悬浮球 -->
+  <FloatingChatButton @click="chatDrawerVisible = true" />
+  <!-- 聊天抽屉 -->
+  <ChatDrawer v-model="chatDrawerVisible" />
 
   <!-- 移动端抽屉菜单 -->
   <el-drawer
@@ -106,6 +112,10 @@
       </el-menu-item>
     </el-menu>
   </el-drawer>
+
+  <!-- AI 助手 -->
+  <AiFloatingBall />
+  <AiAssistantDrawer />
 </template>
 
 <script setup>
@@ -113,6 +123,11 @@ import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ArrowDown, Bell, Menu, Close, HomeFilled, Document, List, User, SwitchButton, Reading } from '@element-plus/icons-vue'
 import { useAuthStore } from '../stores/auth'
+import FloatingChatButton from '../components/chat/FloatingChatButton.vue'
+import ChatDrawer from '../components/chat/ChatDrawer.vue'
+import AiIconButton from '@/components/ai-assistant/AiIconButton.vue'
+import AiFloatingBall from '@/components/ai-assistant/AiFloatingBall.vue'
+import AiAssistantDrawer from '@/components/ai-assistant/AiAssistantDrawer.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -121,6 +136,7 @@ const authStore = useAuthStore()
 // Mock 未读消息数，待接入接口后替换
 const unreadCount = ref(3)
 const drawerVisible = ref(false)
+const chatDrawerVisible = ref(false)
 
 function resolveActiveMenu(path) {
   const menuPaths = ['/', '/cases', '/todos', '/profile']
