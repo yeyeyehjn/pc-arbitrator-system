@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="message-input">
     <div class="input-container" :class="{ 'is-focused': isFocused }">
       <button class="attach-btn" @click="triggerFileInput" aria-label="上传附件">
@@ -110,15 +110,15 @@ const autoResize = () => {
   align-items: flex-end;
   gap: 4px;
   background: #f4f6fa;
-  border: 1px solid #e4e7ed;
+  border: 1px solid #cfe2f7;
   border-radius: 10px;
   padding: 4px 4px 4px 6px;
   transition: all 0.25s ease;
 
   &.is-focused {
     background: #fff;
-    border-color: #3d4756;
-    box-shadow: 0 0 0 3px rgba(61, 71, 86, 0.08);
+    border-color: #1565c0;
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
   }
 }
 
@@ -138,8 +138,8 @@ const autoResize = () => {
   transition: all 0.2s ease;
 
   &:hover {
-    background: #ede8e1;
-    color: #6b5d4a;
+    background: #cfe2f7;
+    color: #1565c0;
   }
 }
 
@@ -183,13 +183,13 @@ const autoResize = () => {
   cursor: pointer;
   color: #fff;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
-  box-shadow: 0 2px 6px rgba(61, 71, 86, 0.25);
+  background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
+  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.25);
   transition: all 0.2s ease;
 
   &:hover:not(.is-disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(61, 71, 86, 0.3);
+    box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
   }
 
   &:active:not(.is-disabled) {
