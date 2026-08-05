@@ -3,7 +3,7 @@
     <!-- 空状态 -->
     <div v-if="conversations.length === 0" class="conv-empty">
       <div class="empty-icon-wrap">
-        <el-icon :size="28" color="#a0b4d8"><ChatLineSquare /></el-icon>
+        <el-icon :size="28" color="#a8a298"><ChatLineSquare /></el-icon>
       </div>
       <p>暂无会话</p>
     </div>
@@ -112,11 +112,11 @@ const avatarText = (type) => ({
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #f0f4ff 0%, #e8edf8 100%);
+    background: linear-gradient(135deg, #f9f8f6 0%, #ede8e1 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #e0e8f5;
+    border: 1px solid #ddd5c8;
   }
 
   p {
@@ -150,7 +150,7 @@ const avatarText = (type) => ({
   }
 
   &:hover {
-    background-color: #f8faff;
+    background-color: #f9f8f6;
 
     .conv-avatar {
       transform: scale(1.05);
@@ -158,7 +158,7 @@ const avatarText = (type) => ({
   }
 
   &.is-active {
-    background: linear-gradient(90deg, #f0f4ff 0%, #f8faff 100%);
+    background: linear-gradient(90deg, #f5f3f0 0%, #f9f8f6 100%);
 
     .active-indicator {
       opacity: 1;
@@ -200,7 +200,7 @@ const avatarText = (type) => ({
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 
   &.avatar-discussion {
-    background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
+    background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
   }
   &.avatar-evidence {
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
