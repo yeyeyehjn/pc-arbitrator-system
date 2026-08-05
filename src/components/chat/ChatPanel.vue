@@ -249,10 +249,10 @@ watch(
 
   .drawer-conv-list {
     width: 210px;
-    border-right: 1px solid #ebeef5;
+    border-right: 1px solid #e0ecfa;
     flex-shrink: 0;
     overflow: hidden;
-    background: #f8f8f9;
+    background: #f5faff;
     display: flex;
     flex-direction: column;
   }
@@ -272,17 +272,17 @@ watch(
     font-size: 11px;
     cursor: pointer;
     background: transparent;
-    color: #606266;
+    color: #4577b5;
     transition: all 0.2s ease;
     font-weight: 500;
 
     &:hover {
       background: rgba(139, 111, 71, 0.08);
-      color: #445063;
+      color: #1565c0;
     }
 
     &.is-active {
-      background: #445063;
+      background: #1565c0;
       color: #fff;
     }
   }
@@ -293,7 +293,7 @@ watch(
     gap: 4px;
     padding: 4px 12px 8px;
     font-size: 10px;
-    color: #a8abb2;
+    color: #7ba8d4;
     flex-shrink: 0;
     line-height: 1.4;
   }
@@ -309,7 +309,7 @@ watch(
 
 .chat-header {
   padding: 12px 14px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid #e0ecfa;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -323,9 +323,9 @@ watch(
 
   .chat-participants-hint {
     font-size: 11px;
-    color: #445063;
+    color: #1565c0;
     padding: 2px 8px;
-    background: #f2f5fa;
+    background: #ebf4fc;
     border-radius: 4px;
   }
 }
@@ -359,28 +359,28 @@ watch(
     border-radius: 8px;
     font-size: 12px;
     cursor: pointer;
-    background-color: #f2f5fa;
-    color: #606266;
+    background-color: #ebf4fc;
+    color: #4577b5;
     transition: all 0.25s ease;
     font-weight: 500;
 
     &:hover {
-      background-color: #e4e7ed;
-      color: #445063;
+      background-color: #cfe2f7;
+      color: #1565c0;
     }
 
     &.is-active {
-      background: linear-gradient(135deg, #445063 0%, #556273 100%);
+      background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
       color: #fff;
-      box-shadow: 0 2px 6px rgba(68, 80, 99, 0.25);
+      box-shadow: 0 2px 6px rgba(21, 101, 192, 0.25);
     }
   }
 
   .participants-bar {
     margin: 10px 12px 0;
     padding: 8px 12px;
-    background: linear-gradient(90deg, #f8f8f9 0%, #f2f5fa 100%);
-    border: 1px solid #e4e7ed;
+    background: linear-gradient(90deg, #f5faff 0%, #ebf4fc 100%);
+    border: 1px solid #cfe2f7;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -389,13 +389,13 @@ watch(
 
     .participants-label {
       font-size: 11px;
-      color: #a8abb2;
+      color: #7ba8d4;
       font-weight: 500;
     }
 
     .participant-tag {
       background: #fff;
-      border: 1px solid #e4e7ed;
+      border: 1px solid #cfe2f7;
       padding: 2px 8px;
       border-radius: 4px;
       font-size: 11px;
@@ -403,14 +403,14 @@ watch(
       transition: all 0.2s ease;
 
       &:hover {
-        border-color: #445063;
-        color: #445063;
+        border-color: #1565c0;
+        color: #1565c0;
       }
     }
 
     .participants-hint {
       font-size: 11px;
-      color: #445063;
+      color: #1565c0;
       margin-left: auto;
       font-style: italic;
     }
@@ -423,10 +423,10 @@ watch(
 
   .private-hint {
     font-size: 12px;
-    color: #606266;
+    color: #4577b5;
     margin-bottom: 16px;
     padding: 8px 12px;
-    background: #f2f5fa;
+    background: #ebf4fc;
     border-radius: 8px;
     text-align: center;
   }
@@ -440,11 +440,11 @@ watch(
   border-radius: 10px;
   margin-bottom: 8px;
   background: #fff;
-  border: 1px solid #ebeef5;
+  border: 1px solid #e0ecfa;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #dcdfe6;
+    border-color: #b8d4ee;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transform: translateY(-1px);
   }
@@ -466,7 +466,7 @@ watch(
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
   }
   &.avatar-arbitrator {
-    background: linear-gradient(135deg, #445063 0%, #556273 100%);
+    background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
   }
 }
 
@@ -481,7 +481,7 @@ watch(
 
   .member-role {
     font-size: 11px;
-    color: #a8abb2;
+    color: #7ba8d4;
     margin-top: 2px;
   }
 }
@@ -496,13 +496,13 @@ watch(
   font-size: 12px;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, #445063 0%, #556273 100%);
-  box-shadow: 0 2px 6px rgba(68, 80, 99, 0.25);
+  background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
+  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.25);
   transition: all 0.2s ease;
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(68, 80, 99, 0.3);
+    box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
   }
 }
 </style>
