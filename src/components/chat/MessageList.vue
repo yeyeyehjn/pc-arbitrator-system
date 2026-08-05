@@ -3,7 +3,7 @@
     <!-- 空状态 -->
     <div v-if="messages.length === 0" class="message-empty">
       <div class="empty-icon-wrap">
-        <el-icon :size="32" color="#a0b4d8"><ChatDotRound /></el-icon>
+        <el-icon :size="32" color="#a8a298"><ChatDotRound /></el-icon>
       </div>
       <p>暂无消息，发送第一条消息开始讨论</p>
     </div>
@@ -141,11 +141,11 @@ const roleLabel = (role) => {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #f0f4ff 0%, #e8edf8 100%);
+    background: linear-gradient(135deg, #f9f8f6 0%, #f5f3f0 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #e0e8f5;
+    border: 1px solid #ddd5c8;
   }
 
   p {
@@ -173,10 +173,10 @@ const roleLabel = (role) => {
     }
 
     .message-bubble {
-      background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
+      background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
       color: #fff;
       border-radius: 12px 4px 12px 12px;
-      box-shadow: 0 2px 8px rgba(5, 61, 153, 0.2);
+      box-shadow: 0 2px 8px rgba(61, 71, 86, 0.2);
     }
 
     .message-time {
@@ -232,7 +232,7 @@ const roleLabel = (role) => {
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
   }
   &.avatar-arbitrator {
-    background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
+    background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
   }
   &.avatar-party {
     background: linear-gradient(135deg, #6bb07a 0%, #4a9d5e 100%);
