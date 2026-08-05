@@ -45,7 +45,7 @@ const close = () => {
 <!-- 非 scoped：el-drawer 通过 teleport 挂载到 body，scoped 样式无法命中 -->
 <style lang="scss">
 .chat-drawer.el-drawer:not(.is-fullscreen) {
-  width: 420px !important;
+  width: 700px !important;
   border-radius: 16px 0 0 16px;
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
 }
@@ -62,7 +62,7 @@ const close = () => {
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
+  background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
   color: #fff;
   position: relative;
   overflow: hidden;

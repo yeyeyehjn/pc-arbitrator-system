@@ -41,7 +41,7 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
 
   &:hover {
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 24px rgba(5, 61, 153, 0.4);
+    box-shadow: 0 8px 24px rgba(61, 71, 86, 0.4);
   }
 
   &:active {
