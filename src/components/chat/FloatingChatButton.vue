@@ -29,7 +29,7 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #445063 0%, #556273 100%);
+  background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -41,7 +41,7 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
 
   &:hover {
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 24px rgba(68, 80, 99, 0.4);
+    box-shadow: 0 8px 24px rgba(21, 101, 192, 0.4);
   }
 
   &:active {
@@ -54,7 +54,7 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 2px solid #445063;
+  border: 2px solid #1565c0;
   animation: pulse-ring 2s ease-out infinite;
   pointer-events: none;
 }
