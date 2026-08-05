@@ -39,6 +39,7 @@ import WorkTab from './components/detail/WorkTab.vue'
 import InfoTab from './components/detail/InfoTab.vue'
 import DocsTab from './components/detail/DocsTab.vue'
 import ServiceTab from './components/detail/ServiceTab.vue'
+import DiscussionTab from './components/detail/DiscussionTab.vue'
 
 const route = useRoute()
 const router = useRouter()
