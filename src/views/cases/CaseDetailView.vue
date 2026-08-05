@@ -23,6 +23,9 @@
         <el-tab-pane label="电子送达" name="service">
           <ServiceTab :services="store.services" />
         </el-tab-pane>
+        <el-tab-pane label="讨论" name="discussion">
+          <DiscussionTab :case-id="store.currentCaseId" :case-no="store.caseInfo.caseNo" />
+        </el-tab-pane>
       </el-tabs>
     </template>
   </div>
