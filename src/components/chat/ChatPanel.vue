@@ -5,8 +5,23 @@
       <div class="drawer-layout">
         <!-- 会话列表 -->
         <div class="drawer-conv-list">
+          <!-- 筛选 Tab -->
+          <div class="drawer-filter-tabs">
+            <button
+              v-for="tab in drawerTabs"
+              :key="tab.type"
+              class="drawer-filter-tab"
+              :class="{ 'is-active': drawerFilter === tab.type }"
+              @click="switchDrawerFilter(tab.type)"
+            >{{ tab.label }}</button>
+          </div>
+          <!-- 筛选提示 -->
+          <div v-if="drawerHint" class="drawer-filter-hint">
+            <el-icon :size="12"><InfoFilled /></el-icon>
+            {{ drawerHint }}
+          </div>
           <ConversationList
-            :conversations="store.conversations"
+            :conversations="filteredConversations"
             :active-id="activeConvId"
             @select="selectConversation"
           />
@@ -87,7 +102,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { ChatDotRound, ChatLineRound } from '@element-plus/icons-vue'
+import { ChatDotRound, ChatLineRound, InfoFilled } from '@element-plus/icons-vue'
 import { useChatStore } from '@/stores/chat'
 import MessageList from './MessageList.vue'
 import MessageInput from './MessageInput.vue'
@@ -121,6 +136,26 @@ const activeConversation = computed(() =>
 const selectConversation = (convId) => {
   activeConvId.value = convId
   store.markAsRead(convId)
+}
+
+// 抽屉模式：筛选 Tab
+const drawerFilter = ref('all')
+const drawerTabs = [
+  { type: 'all', label: '全部' },
+  { type: 'discussion', label: '案件讨论' },
+  { type: 'evidence', label: '在线示证' },
+]
+const filteredConversations = computed(() => {
+  if (drawerFilter.value === 'all') return store.conversations
+  return store.conversations.filter((c) => c.type === drawerFilter.value)
+})
+const drawerHint = computed(() => {
+  if (drawerFilter.value === 'discussion') return '三方公开讨论 · 秘书、仲裁员、当事人'
+  if (drawerFilter.value === 'evidence') return '仅内部 · 秘书与仲裁员，不对外公开'
+  return ''
+})
+const switchDrawerFilter = (type) => {
+  drawerFilter.value = type
 }
 
 // ============ Embedded 模式 ============
@@ -216,10 +251,53 @@ watch(
 
   .drawer-conv-list {
     width: 210px;
-    border-right: 1px solid #f0f2f5;
+    border-right: 1px solid #efece8;
     flex-shrink: 0;
     overflow: hidden;
-    background: #fafbfc;
+    background: #f9f8f6;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .drawer-filter-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 10px 10px 6px;
+    flex-shrink: 0;
+  }
+
+  .drawer-filter-tab {
+    flex: 1;
+    padding: 5px 0;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    background: transparent;
+    color: #8a8580;
+    transition: all 0.2s ease;
+    font-weight: 500;
+
+    &:hover {
+      background: rgba(139, 111, 71, 0.08);
+      color: #8b6f47;
+    }
+
+    &.is-active {
+      background: #3d4756;
+      color: #fff;
+    }
+  }
+
+  .drawer-filter-hint {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px 8px;
+    font-size: 10px;
+    color: #a8a298;
+    flex-shrink: 0;
+    line-height: 1.4;
   }
 
   .drawer-chat-area {
@@ -233,7 +311,7 @@ watch(
 
 .chat-header {
   padding: 12px 14px;
-  border-bottom: 1px solid #f0f2f5;
+  border-bottom: 1px solid #efece8;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -247,9 +325,9 @@ watch(
 
   .chat-participants-hint {
     font-size: 11px;
-    color: var(--el-text-color-placeholder);
+    color: #8b6f47;
     padding: 2px 8px;
-    background: #f4f6fa;
+    background: #f5f0ea;
     border-radius: 4px;
   }
 }
@@ -283,28 +361,28 @@ watch(
     border-radius: 8px;
     font-size: 12px;
     cursor: pointer;
-    background-color: #f4f6fa;
-    color: var(--el-text-color-secondary);
+    background-color: #f5f3f0;
+    color: #8a8580;
     transition: all 0.25s ease;
     font-weight: 500;
 
     &:hover {
-      background-color: #e8edf8;
-      color: var(--el-color-primary);
+      background-color: #ede8e1;
+      color: #6b5d4a;
     }
 
     &.is-active {
-      background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
+      background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
       color: #fff;
-      box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
+      box-shadow: 0 2px 6px rgba(61, 71, 86, 0.25);
     }
   }
 
   .participants-bar {
     margin: 10px 12px 0;
     padding: 8px 12px;
-    background: linear-gradient(90deg, #f8faff 0%, #f4f6fa 100%);
-    border: 1px solid #e8edf8;
+    background: linear-gradient(90deg, #f9f8f6 0%, #f5f3f0 100%);
+    border: 1px solid #ede8e1;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -313,13 +391,13 @@ watch(
 
     .participants-label {
       font-size: 11px;
-      color: var(--el-text-color-placeholder);
+      color: #a8a298;
       font-weight: 500;
     }
 
     .participant-tag {
       background: #fff;
-      border: 1px solid #e4e7ed;
+      border: 1px solid #e4ddd3;
       padding: 2px 8px;
       border-radius: 4px;
       font-size: 11px;
@@ -327,14 +405,14 @@ watch(
       transition: all 0.2s ease;
 
       &:hover {
-        border-color: var(--el-color-primary);
-        color: var(--el-color-primary);
+        border-color: #8b6f47;
+        color: #6b5d4a;
       }
     }
 
     .participants-hint {
       font-size: 11px;
-      color: var(--el-text-color-placeholder);
+      color: #8b6f47;
       margin-left: auto;
       font-style: italic;
     }
@@ -347,10 +425,10 @@ watch(
 
   .private-hint {
     font-size: 12px;
-    color: var(--el-text-color-secondary);
+    color: #8a8580;
     margin-bottom: 16px;
     padding: 8px 12px;
-    background: #f4f6fa;
+    background: #f5f3f0;
     border-radius: 8px;
     text-align: center;
   }
@@ -364,11 +442,11 @@ watch(
   border-radius: 10px;
   margin-bottom: 8px;
   background: #fff;
-  border: 1px solid #f0f2f5;
+  border: 1px solid #efece8;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #e0e8f5;
+    border-color: #ddd5c8;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transform: translateY(-1px);
   }
@@ -390,7 +468,7 @@ watch(
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
   }
   &.avatar-arbitrator {
-    background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
+    background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
   }
 }
 
@@ -405,7 +483,7 @@ watch(
 
   .member-role {
     font-size: 11px;
-    color: var(--el-text-color-placeholder);
+    color: #a8a298;
     margin-top: 2px;
   }
 }
@@ -420,13 +498,13 @@ watch(
   font-size: 12px;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
-  box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
+  background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
+  box-shadow: 0 2px 6px rgba(61, 71, 86, 0.25);
   transition: all 0.2s ease;
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(5, 61, 153, 0.3);
+    box-shadow: 0 4px 10px rgba(61, 71, 86, 0.3);
   }
 }
 </style>

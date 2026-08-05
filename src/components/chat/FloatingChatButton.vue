@@ -29,7 +29,7 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
+  background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -54,7 +54,7 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 2px solid var(--el-color-primary);
+  border: 2px solid #3d4756;
   animation: pulse-ring 2s ease-out infinite;
   pointer-events: none;
 }

@@ -268,7 +268,7 @@ const roleLabel = (role) => {
       background-color: #909399;
     }
     &.avatar-arbitrator {
-      background-color: var(--el-color-primary);
+      background-color: #3d4756;
     }
     &.avatar-party {
       background-color: #74c080;
@@ -318,8 +318,8 @@ const roleLabel = (role) => {
   }
 
   .message-item:not(.is-mine) & .attachment-icon {
-    background: #e8edf8;
-    color: var(--el-color-primary);
+    background: #f5f3f0;
+    color: #6b5d4a;
   }
 
   .attachment-info {

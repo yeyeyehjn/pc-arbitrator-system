@@ -166,7 +166,7 @@ const avatarText = (type) => ({
     }
 
     .conv-title {
-      color: var(--el-color-primary);
+      color: #6b5d4a;
     }
   }
 }
@@ -179,7 +179,7 @@ const avatarText = (type) => ({
   transform: translateY(-50%) scaleY(0);
   width: 3px;
   height: 24px;
-  background: linear-gradient(180deg, #053d99 0%, #0a5cb8 100%);
+  background: linear-gradient(180deg, #3d4756 0%, #525e70 100%);
   border-radius: 0 2px 2px 0;
   opacity: 0;
   transition: all 0.25s ease;
