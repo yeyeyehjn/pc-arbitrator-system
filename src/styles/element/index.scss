@@ -1,0 +1,325 @@
+/* Element Plus 主题定制 - 使用 CSS 变量覆盖方式 */
+:root {
+  /* 品牌主题色 */
+  --el-color-primary: #053d99;
+  --el-color-primary-light-3: #3a6bb5;
+  --el-color-primary-light-5: #6a96cd;
+  --el-color-primary-light-7: #9abde0;
+  --el-color-primary-light-8: #b5d0e8;
+  --el-color-primary-light-9: #d5e3f2;
+  --el-color-primary-dark-2: #04307a;
+
+  /* 页面背景色 */
+  --el-bg-color-page: #f7f7f7;
+
+  /* 文字颜色 */
+  --el-text-color-primary: #00296b;
+  --el-text-color-regular: #303133;
+  --el-text-color-secondary: #606266;
+  --el-text-color-placeholder: #8a8e95;
+
+  /* 边框颜色 */
+  --el-border-color: #dcdfe6;
+  --el-border-color-light: #e4e7ed;
+  --el-border-color-lighter: #ebeef5;
+  --el-border-color-extra-light: #f2f6fc;
+
+  /* 卡片样式 */
+  --el-card-border-radius: 4px;
+  --el-card-border-color: var(--el-border-color-lighter);
+  --el-card-padding: 20px;
+}
+
+/* ========== 全局侧边栏样式规范 ========== */
+.todos-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-right: 1px solid var(--el-border-color-light);
+  transition: width 0.3s ease;
+
+  &.collapsed {
+    width: 64px;
+  }
+
+  .sidebar-title {
+    height: 50px;
+    line-height: 50px;
+    padding: 0 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--el-text-color-primary);
+    border-bottom: 1px solid var(--el-border-color-lighter);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+
+    .toggle-icon {
+      font-size: 18px;
+      color: var(--el-text-color-secondary);
+      flex-shrink: 0;
+    }
+  }
+
+  &.collapsed .sidebar-title {
+    padding: 0;
+    justify-content: center;
+
+    .toggle-icon {
+      margin: 0;
+    }
+  }
+
+  .sidebar-menu {
+    border-right: none;
+
+    &:not(.el-menu--collapse) {
+      width: 200px;
+    }
+
+    .el-menu-item {
+      height: 48px;
+      line-height: 48px;
+      position: relative;
+      color: var(--el-text-color-secondary);
+
+      .el-icon {
+        font-size: 18px;
+        margin-right: 8px;
+      }
+
+      &.is-active {
+        color: var(--el-color-primary);
+        background-color: #f2f5fa;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 3px;
+          background-color: var(--el-color-primary);
+        }
+      }
+    }
+  }
+}
+
+.menu-badge {
+  margin-left: auto;
+  margin-right: 8px;
+  bottom: 26px;
+}
+
+.suggest-tag {
+  margin-left: auto;
+  margin-right: 8px;
+  font-size: 12px;
+  color: var(--el-text-color-placeholder);
+}
+
+/* ========== 全局表格样式规范 ========== */
+/* 表头样式 */
+.el-table__header-wrapper th.el-table__cell {
+  background-color: #f8f8f9 !important;
+  color: var(--el-text-color-regular) !important;
+  font-weight: bold;
+  border-bottom: none !important;
+}
+
+/* 表格行底部边框 */
+.el-table .el-table__cell {
+  border-bottom: var(--el-border-color-lighter) 1px solid;
+}
+
+/* ========== 全局筛选栏样式规范 ========== */
+.filter-bar {
+  margin-bottom: 16px;
+  background: #ffffff;
+  padding: 24px 20px;
+
+  .filter-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    overflow: hidden;
+
+    &.collapsed {
+      max-height: 40px;
+    }
+
+    .flex-grow {
+      flex: 1;
+    }
+  }
+
+  .filter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    > .el-input,
+    > .el-select,
+    > .el-date-editor {
+      width: 180px;
+    }
+  }
+
+  .filter-label {
+    font-size: 14px;
+    color: var(--el-text-color-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-align: left;
+    width: 56px;
+  }
+
+  .filter-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-top: 16px;
+
+    .toggle-icon {
+      margin-left: 4px;
+    }
+  }
+
+  .el-button {
+    font-size: 12px;
+  }
+}
+
+/* ========== 全局表格区域样式规范 ========== */
+.table-section {
+  background: #ffffff;
+  padding: 24px 20px;
+}
+
+.table-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--el-text-color-regular);
+  margin-bottom: 16px;
+
+  .title-count {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--el-text-color-placeholder);
+  }
+}
+
+/* ========== 全局分页样式规范 ========== */
+.pagination-wrapper,
+.pagination-bar {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 16px;
+}
+
+/* ========== 全局表单样式规范 ========== */
+.el-form-item__label {
+  text-align: left;
+  justify-content: flex-start;
+  position: relative;
+  padding-left: 12px;
+}
+
+.el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* ========== 全局描述列表样式规范 ========== */
+/* 除列表页外，详情页 descriptions label 字重设为 400 */
+.el-descriptions__label.is-bordered-label {
+  font-weight: 400 !important;
+}
+
+/* 描述列表 content 文字颜色 */
+.el-descriptions__content.el-descriptions__cell.is-bordered-content {
+  color: var(--el-text-color-regular);
+}
+
+/* 对话框标题颜色 */
+.el-dialog__title {
+  color: var(--el-text-color-regular);
+}
+
+/* 移除水平菜单 hover/focus 背景色 */
+.el-menu--horizontal .el-menu-item:not(.is-disabled):hover,
+.el-menu--horizontal .el-menu-item:not(.is-disabled):focus {
+  background-color: transparent;
+}
+
+/* ========== 全局 section 卡片样式（案件详情等模块复用） ========== */
+/* 注：3px 标题竖条仅用于首页 .dashboard-card .card-title，详情模块不沿用 */
+.section-card {
+  background-color: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 8px;
+  padding: var(--el-card-padding);
+  margin-bottom: 16px;
+  /* 加深分层阴影：近距接地 + 远距投射，营造明确悬浮层次 */
+  // box-shadow:
+  //   0 2px 4px rgba(0, 0, 0, 0.04),
+  //   0 8px 24px rgba(0, 0, 0, 0.06);
+  // transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--el-text-color-regular);
+    margin-bottom: 12px;
+    letter-spacing: 0.01em;
+  }
+
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+
+    .section-title {
+      margin-bottom: 0;
+    }
+
+    .section-actions {
+      display: flex;
+      gap: 8px;
+    }
+  }
+}
+
+/* ========== 全局字体字号规范 ========== */
+/* 仅允许使用以下四档字号，禁止使用 13px / 15px 等非标准值：
+ *   16px —— 大标题（页面/区块主标题）
+ *   14px —— 正文（描述、表格内容、表单、按钮、标签项等）
+ *   12px —— 辅助文字（提示、说明、空状态、分页、筛选按钮等）
+ *   10px —— 标签/角标（el-tag size=small、徽章等）
+ * 辅助文字（12px）须使用 var(--el-text-color-secondary) 以满足 WCAG AA 对比度。
+ */
+
+/* ========== 全局移动端弹窗/抽屉尺寸适配 ========== */
+/* 抽屉/弹窗使用百分比尺寸时，移动端窄屏下统一适配为近全宽，避免内容挤压。
+ * el-drawer / el-dialog 的 size/width 生成内联样式，需 !important 覆盖。
+ */
+@media (max-width: 768px) {
+  .el-drawer:not(.is-fullscreen) {
+    // width: 90% !important;
+  }
+  .el-dialog:not(.is-fullscreen) {
+    width: 92% !important;
+    margin: 5vh auto !important;
+  }
+}

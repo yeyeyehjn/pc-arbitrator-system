@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 — 广州仲裁委员会</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --blue:#2563EB;
+    --blue-hover:#1D4ED8;
+    --blue-light:#DBEAFE;
+    --blue-50:#EFF6FF;
+    --blue-100:#DBEAFE;
+    --blue-200:#3989c2;
+    --blue-600:#086cb3;
+    --blue-700:#15377f;
+    --slate-50:#F8FAFC;
+    --slate-100:#F1F5F9;
+    --slate-200:#E2E8F0;
+    --slate-300:#CBD5E1;
+    --slate-400:#94A3B8;
+    --slate-500:#64748B;
+    --slate-600:#475569;
+    --slate-700:#334155;
+    --slate-800:#1E293B;
+    --slate-900:#0F172A;
+    --white:#FFFFFF;
+    --radius:10px;
+    --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+    --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lg:0 10px 25px rgba(0,0,0,0.06);
+  }
+  html,body{height:100%}
+  body{overflow:hidden}
+  body{
+    font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--slate-50);
+    color:var(--slate-800);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ── Full-screen layout ── */
+  .page{
+    display:grid;
+    grid-template-columns:1fr 520px;
+    height:100vh;
+    width:100vw;
+  }
+
+  /* ── Left: Brand panel ── */
+  .brand-panel{
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:clamp(40px,6vw,80px);
+  }
+  .brand-bg{
+    position:absolute;
+    inset:0;
+    background:url('banner10.png') center/cover no-repeat;
+    /* filter:brightness(0.7) saturate(0.9); */
+    filter:brightness(1.02) saturate(1.1);
+    transform:scale(1.05);
+    transition:transform 8s ease;
+  }
+  .brand-panel:hover .brand-bg{
+    transform:scale(1.0);
+  }
+  .brand-overlay{
+    position:absolute;
+    inset:0;
+    /* background:linear-gradient(180deg,rgba(15,23,42,0.15) 0%,rgba(15,23,42,0.5) 50%,rgba(15,23,42,0.85) 100%); */
+  }
+  .brand-content{
+    position:absolute;
+    inset:0;
+    z-index:1;
+  }
+  .brand-mark{
+    position:absolute;
+    top:clamp(24px,4vw,40px);
+    left:clamp(24px,4vw,40px);
+    opacity:0;
+    transform:translateY(24px);
+    animation:riseIn 1s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+  }
+  .brand-mark img{
+    height:60px;
+    width:auto;
+    object-fit:contain;
+    /* filter:brightness(0) invert(1); */
+  }
+  .brand-headline{
+    position:absolute;
+    /* bottom:clamp(50px,3vw,140px); */
+    top: clamp(140px, 2vw, 140px);
+    right:clamp(40px,2vw,80px);
+    left:auto;
+    line-height:1.3;
+    opacity:0;
+    animation:headlineRiseIn 1s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+  }
+  .brand-headline img{
+    height:clamp(80px,8vw,160px);
+    width:auto;
+    object-fit:contain;
+    /* filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3)) drop-shadow(0 8px 24px rgba(0,0,0,0.2)); */
+    filter:drop-shadow(0 2px 8px rgba(0,0,0,0.1)) drop-shadow(0 8px 24px rgba(0,0,0,0.05));
+  }
+  @keyframes headlineRiseIn{
+    from{opacity:0;transform:translateY(30px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .brand-headline em{
+    font-style:normal;
+    /* color:var(--blue-200); */
+    display:inline-block;
+    padding-left:2em;
+  }
+  .brand-tagline{
+    font-size:clamp(14px,1.4vw,15px);
+    font-weight:300;
+    line-height:1.8;
+    color:rgba(255,255,255,0.7);
+    max-width:440px;
+    opacity:0;
+    transform:translateY(20px);
+    animation:riseIn 1s cubic-bezier(0.22,1,0.36,1) 0.7s forwards;
+  }
+  .brand-footer{
+    position:absolute;
+    bottom:clamp(24px,4vw,48px);
+    left:clamp(24px,4vw,48px);
+    font-size:12px;
+    color:rgba(255,255,255,0.35);
+    letter-spacing:0.04em;
+    opacity:0;
+    animation:riseIn 0.8s cubic-bezier(0.22,1,0.36,1) 0.9s forwards;
+  }
+
+  /* ── Right: Login panel ── */
+  .login-panel{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:48px 40px;
+    background:var(--white);
+    border-left:1px solid var(--slate-100);
+    position:relative;
+    overflow-y:auto;
+  }
+
+  .login-form{
+    width:100%;max-width:360px;
+    opacity:0;
+    transform:translateY(20px);
+    animation:riseIn 0.9s cubic-bezier(0.22,1,0.36,1) 0.6s forwards;
+  }
+  .login-title{
+    font-size:24px;
+    font-weight:700;
+    color:var(--slate-800);
+    margin-bottom:32px;
+  }
+
+  /* ── Tabs ── */
+  .tabs{
+    display:flex;
+    gap:0;
+    margin-bottom:32px;
+    border-bottom:2px solid var(--slate-100);
+  }
+  .tab{
+    flex:1;
+    padding:12px 0;
+    font-size:15px;
+    font-weight:500;
+    color:var(--slate-400);
+    text-align:center;
+    cursor:pointer;
+    position:relative;
+    transition:color 0.25s;
+    border:none;
+    background:none;
+    font-family:inherit;
+  }
+  .tab:hover{color:var(--slate-600)}
+  .tab.active{
+    color:var(--blue-600);
+    font-weight:600;
+  }
+  .tab.active::after{
+    content:'';
+    position:absolute;
+    bottom:-2px;
+    left:0;right:0;
+    height:2px;
+    background:var(--blue-600);
+    border-radius:1px;
+    animation:tabSlide 0.3s ease;
+  }
+  @keyframes tabSlide{
+    from{transform:scaleX(0)}
+    to{transform:scaleX(1)}
+  }
+
+  /* ── Tab content ── */
+  .tab-content{
+    display:none;
+  }
+  .tab-content.active{
+    display:block;
+    animation:fadeUp 0.35s ease;
+  }
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(8px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  /* ── Form fields ── */
+  .field{
+    margin-bottom:20px;
+  }
+  .field label{
+    display:block;
+    font-size:13px;
+    font-weight:500;
+    color:var(--slate-700);
+    margin-bottom:8px;
+  }
+  .field-input{
+    position:relative;
+  }
+  .field-input input{
+    width:100%;
+    padding:12px 42px 12px 42px;
+    background:var(--slate-50);
+    border:1px solid var(--slate-200);
+    border-radius:var(--radius);
+    color:var(--slate-800);
+    font-family:inherit;
+    font-size:14px;
+    outline:none;
+    transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;
+  }
+  .field-input input::placeholder{
+    color:var(--slate-400);
+  }
+  .field-input input:focus{
+    border-color:var(--blue-600);
+    box-shadow:0 0 0 3px rgba(37,99,235,0.1);
+    background:var(--white);
+  }
+  .field-input .icon{
+    position:absolute;
+    left:13px;top:50%;
+    transform:translateY(-50%);
+    color:var(--slate-400);
+    transition:color 0.2s;
+    pointer-events:none;
+  }
+  .field-input input:focus ~ .icon{
+    color:var(--blue-600);
+  }
+  .field-input .icon svg{
+    width:18px;height:18px;
+    stroke:currentColor;fill:none;stroke-width:1.8;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  /* ── Password toggle eye ── */
+  .pwd-toggle{
+    position:absolute;
+    right:12px;top:50%;
+    transform:translateY(-50%);
+    background:none;border:none;
+    cursor:pointer;
+    color:var(--slate-400);
+    padding:4px;
+    display:flex;align-items:center;justify-content:center;
+    transition:color 0.2s;
+  }
+  .pwd-toggle:hover{color:var(--slate-600)}
+  .pwd-toggle svg{
+    width:18px;height:18px;
+    stroke:currentColor;fill:none;stroke-width:1.8;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  /* ── Caps Lock hint ── */
+  .caps-hint{
+    display:none;
+    align-items:center;
+    gap:4px;
+    margin-top:6px;
+    font-size:12px;
+    color:#D97706;
+    animation:fadeUp 0.25s ease;
+  }
+  .caps-hint.visible{display:flex}
+  .caps-hint svg{
+    width:14px;height:14px;
+    stroke:currentColor;fill:none;stroke-width:2;
+    stroke-linecap:round;stroke-linejoin:round;
+    flex-shrink:0;
+  }
+
+  /* ── SMS code input with button ── */
+  .field-input--sms{
+    display:flex;
+    gap:10px;
+  }
+  .field-input--sms .field-input{
+    flex:1;min-width:0;
+  }
+  .btn-sms{
+    flex-shrink:0;
+    padding:12px 16px;
+    background:var(--blue-600);
+    color:#fff;
+    border:none;
+    border-radius:var(--radius);
+    font-family:inherit;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background 0.2s,opacity 0.2s;
+  }
+  .btn-sms:hover{background:var(--blue-200)}
+  .btn-sms:disabled{
+    background:var(--slate-300);
+    color:var(--slate-500);
+    cursor:not-allowed;
+  }
+
+  /* ── 2FA Step indicator ── */
+  .steps-bar{
+    display:flex;
+    align-items:center;
+    gap:0;
+    margin-bottom:28px;
+  }
+  .step-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:1;
+    position:relative;
+  }
+  .step-item:not(:last-child)::after{
+    content:'';
+    flex:1;
+    height:2px;
+    background:var(--slate-200);
+    margin:0 12px;
+    border-radius:1px;
+    transition:background 0.3s;
+  }
+  .step-item.done:not(:last-child)::after{
+    background:var(--blue-600);
+  }
+  .step-num{
+    width:26px;height:26px;
+    border-radius:50%;
+    background:var(--slate-100);
+    color:var(--slate-400);
+    font-size:13px;
+    font-weight:600;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    transition:all 0.3s;
+  }
+  .step-item.active .step-num{
+    background:var(--blue-600);
+    color:#fff;
+  }
+  .step-item.done .step-num{
+    background:var(--blue-600);
+    color:#fff;
+  }
+  .step-item.done .step-num::after{
+    content:'✓';
+  }
+  .step-item.done .step-num span{display:none}
+  .step-label{
+    font-size:13px;
+    font-weight:500;
+    color:var(--slate-400);
+    white-space:nowrap;
+    transition:color 0.3s;
+  }
+  .step-item.active .step-label,
+  .step-item.done .step-label{
+    color:var(--slate-700);
+  }
+
+  /* ── 2FA step panels ── */
+  .step-panel{display:none}
+  .step-panel.active{display:block;animation:fadeUp 0.35s ease}
+
+  /* ── Verification method toggle ── */
+  .verify-methods{
+    display:flex;
+    gap:0;
+    margin-bottom:20px;
+    border:1px solid var(--slate-200);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .verify-method{
+    flex:1;
+    padding:10px;
+    font-size:13px;
+    font-weight:500;
+    color:var(--slate-500);
+    text-align:center;
+    cursor:pointer;
+    border:none;
+    background:var(--slate-50);
+    font-family:inherit;
+    transition:all 0.2s;
+  }
+  .verify-method.active{
+    background:var(--blue-600);
+    color:#fff;
+  }
+
+  /* ── Bound contact info ── */
+  .bound-info{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:20px;
+    font-size:13px;
+    color:var(--slate-500);
+    line-height:1.5;
+  }
+  .bound-info svg{
+    width:15px;height:15px;
+    flex-shrink:0;
+    stroke:var(--slate-400);fill:none;stroke-width:1.8;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+  .bound-info .bound-label{color:var(--slate-400)}
+  .bound-info .bound-value{
+    color:var(--slate-700);
+    font-weight:500;
+    font-variant-numeric:tabular-nums;
+    letter-spacing:0.02em;
+  }
+
+  /* ── Back button ── */
+  .btn-back{
+    width:100%;
+    padding:11px;
+    margin-top:12px;
+    background:transparent;
+    border:1px solid var(--slate-200);
+    border-radius:var(--radius);
+    color:var(--slate-600);
+    font-family:inherit;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .btn-back:hover{
+    background:var(--slate-50);
+    border-color:var(--slate-300);
+  }
+
+  /* ── Verify hint ── */
+  .verify-hint{
+    font-size:13px;
+    color:var(--slate-500);
+    line-height:1.6;
+    margin-bottom:20px;
+    padding:12px 14px;
+    background:var(--blue-50);
+    border-radius:8px;
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .verify-hint svg{
+    width:16px;height:16px;
+    flex-shrink:0;
+    margin-top:1px;
+    stroke:var(--blue-600);fill:none;stroke-width:1.8;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  /* ── Options row ── */
+  .options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:28px;
+  }
+  .remember{
+    display:flex;align-items:center;gap:8px;
+    cursor:pointer;
+  }
+  .remember input{display:none}
+  .remember .check{
+    width:16px;height:16px;
+    border:1.5px solid var(--slate-300);
+    border-radius:4px;
+    display:flex;align-items:center;justify-content:center;
+    transition:all 0.2s;
+    flex-shrink:0;
+  }
+  .remember input:checked + .check{
+    background:var(--blue-600);
+    border-color:var(--blue-600);
+  }
+  .remember input:checked + .check svg{
+    opacity:1;
+  }
+  .remember .check svg{
+    width:10px;height:10px;
+    stroke:#fff;fill:none;stroke-width:2.5;
+    opacity:0;transition:opacity 0.2s;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+  .remember span{
+    font-size:13px;color:var(--slate-500);
+  }
+  .forgot{
+    font-size:13px;
+    color:var(--blue-600);
+    text-decoration:none;
+    transition:color 0.2s;
+  }
+  .forgot:hover{color:var(--blue-200)}
+
+  /* ── Submit button ── */
+  .btn-login{
+    width:100%;
+    padding:13px;
+    background:var(--blue-600);
+    border:none;
+    border-radius:var(--radius);
+    color:#fff;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:background 0.2s,transform 0.15s,box-shadow 0.2s;
+  }
+  .btn-login:hover{
+    background:var(--blue-200);
+    transform:translateY(-1px);
+    box-shadow:0 6px 20px rgba(37,99,235,0.25);
+  }
+  .btn-login:active{
+    transform:translateY(0);
+    box-shadow:none;
+  }
+
+  /* ── Bottom links ── */
+  .bottom-links{
+    margin-top:28px;
+    text-align:center;
+    font-size:13px;
+    color:var(--slate-400);
+  }
+  .bottom-links a{
+    color:var(--blue-600);
+    text-decoration:none;
+    font-weight:500;
+    transition:color 0.2s;
+  }
+  .bottom-links a:hover{color:var(--blue-200)}
+
+  /* ── Legal notice ── */
+  .legal-notice{
+    position:absolute;
+    bottom:20px;left:40px;right:40px;
+    text-align:center;
+    font-size:11px;
+    color:var(--slate-300);
+    line-height:1.6;
+    opacity:0;
+    animation:riseIn 0.8s cubic-bezier(0.22,1,0.36,1) 1.2s forwards;
+  }
+
+  /* ── Keyframes ── */
+  @keyframes riseIn{
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  /* ── Forgot password form ── */
+  .forgot-form{
+    width:100%;
+    max-width:360px;
+    display:none;
+  }
+  .forgot-form.active{
+    display:block;
+    animation:fadeUp 0.35s ease;
+  }
+  .forgot-title{
+    font-size:24px;
+    font-weight:700;
+    color:var(--slate-800);
+    margin-bottom:8px;
+  }
+  .forgot-subtitle{
+    font-size:13px;
+    color:var(--slate-400);
+    margin-bottom:28px;
+  }
+  .forgot-form .steps-bar{
+    margin-bottom:28px;
+  }
+  .forgot-form .step-item{
+    flex:0 1 auto;
+  }
+  .forgot-form .step-item:not(:last-child)::after{
+    min-width:24px;
+  }
+
+  /* ── Success panel ── */
+  .success-panel{
+    text-align:center;
+    padding:20px 0;
+  }
+  .success-icon{
+    width:64px;height:64px;
+    margin:0 auto 20px;
+    border-radius:50%;
+    background:var(--blue-50);
+    display:flex;align-items:center;justify-content:center;
+    animation:successPop 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  .success-icon svg{
+    width:32px;height:32px;
+    stroke:var(--blue-600);fill:none;stroke-width:2.5;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+  @keyframes successPop{
+    0%{transform:scale(0);opacity:0}
+    60%{transform:scale(1.1)}
+    100%{transform:scale(1);opacity:1}
+  }
+  .success-title{
+    font-size:20px;
+    font-weight:600;
+    color:var(--slate-800);
+    margin-bottom:8px;
+  }
+  .success-desc{
+    font-size:14px;
+    color:var(--slate-500);
+    line-height:1.6;
+    margin-bottom:28px;
+  }
+
+  /* ── Password match hint ── */
+  .pwd-match-hint{
+    display:none;
+    align-items:center;
+    gap:4px;
+    margin-top:6px;
+    font-size:12px;
+  }
+  .pwd-match-hint.visible{display:flex}
+  .pwd-match-hint.match{color:#16A34A}
+  .pwd-match-hint.mismatch{color:#DC2626}
+  .pwd-match-hint svg{
+    width:14px;height:14px;
+    stroke:currentColor;fill:none;stroke-width:2;
+    stroke-linecap:round;stroke-linejoin:round;
+    flex-shrink:0;
+  }
+
+  /* ── Mobile ── */
+  @media(max-width:960px){
+    html,body{height:auto;min-height:100%}
+    body{overflow:auto}
+    .page{
+      grid-template-columns:1fr;
+      grid-template-rows:32vh 1fr;
+      height:auto;
+      min-height:100vh;
+    }
+    .brand-panel{
+      padding:clamp(20px,4vw,32px);
+      justify-content:flex-end;
+    }
+    .brand-mark img{height:44px}
+    .brand-headline img{height:clamp(56px,12vw,90px)}
+    .brand-headline{
+      bottom:clamp(40px,5vw,60px);
+      right:clamp(20px,5vw,32px);
+    }
+    .login-panel{
+      border-left:none;
+      border-top:1px solid var(--slate-100);
+      padding:32px 24px;
+      min-height:68vh;
+    }
+    .legal-notice{left:24px;right:24px;bottom:12px}
+  }
+  @media(max-width:480px){
+    .page{grid-template-rows:26vh 1fr}
+    .login-form{max-width:100%}
+    .brand-mark img{height:44px}
+    .brand-headline img{height:clamp(44px,11vw,70px)}
+    .brand-headline{
+      bottom:32px;
+      right:20px;
+    }
+    .login-panel{padding:28px 20px}
+    .login-title{font-size:22px;margin-bottom:24px}
+    .field{margin-bottom:16px}
+    .field-input input{padding:11px 42px 11px 42px;font-size:16px}
+    .btn-sms{padding:11px 12px;font-size:13px}
+    .btn-login{padding:12px;font-size:14px}
+    .tabs{margin-bottom:24px}
+    .tab{font-size:14px;padding:10px 0}
+    .options{margin-bottom:24px}
+    .legal-notice{left:20px;right:20px;bottom:10px;font-size:10px}
+  }
+  @media(max-width:360px){
+    .page{grid-template-rows:22vh 1fr}
+    .brand-mark img{height:40px}
+    .brand-headline img{height:clamp(40px,13vw,60px)}
+    .field-input--sms{gap:8px}
+    .btn-sms{padding:11px 10px;font-size:12px}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Brand Panel -->
+  <div class="brand-panel">
+    <div class="brand-bg"></div>
+    <div class="brand-overlay"></div>
+    <div class="brand-content">
+      <div class="brand-mark">
+        <img src="bt-st2.png" alt="广州仲裁委员会">
+      </div>
+      <div class="brand-headline"><img src="font.png" alt="立信铸就广仲 创新赢得未来"></div>
+      <p class="brand-footer">&copy; 1995–2026 广州仲裁委员会 版权所有</p>
+    </div>
+  </div>
+
+  <!-- Login Panel -->
+  <div class="login-panel">
+    <div class="login-form">
+
+      <h2 class="login-title">案件管理系统</h2>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="account" type="button">账号登录</button>
+        <button class="tab" data-tab="phone" type="button">手机登录</button>
+      </div>
+
+      <!-- Account Login -->
+      <div class="tab-content active" id="tab-account">
+
+        <!-- Step indicator -->
+        <div class="steps-bar">
+          <div class="step-item active" id="stepItem1">
+            <div class="step-num"><span>1</span></div>
+            <div class="step-label">账号验证</div>
+          </div>
+          <div class="step-item" id="stepItem2">
+            <div class="step-num"><span>2</span></div>
+            <div class="step-label">双因素校验</div>
+          </div>
+        </div>
+
+        <!-- Step 1: Account + Password -->
+        <div class="step-panel active" id="step1">
+          <div class="field">
+            <label>登录账号</label>
+            <div class="field-input">
+              <input type="text" placeholder="请输入账号/邮箱" autocomplete="username" id="acctInput">
+              <span class="icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
+              </span>
+            </div>
+          </div>
+          <div class="field">
+            <label>登录密码</label>
+            <div class="field-input">
+              <input type="password" placeholder="请输入密码" autocomplete="current-password" id="pwdInput">
+              <span class="icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              </span>
+              <button type="button" class="pwd-toggle" id="pwdToggle" aria-label="显示密码">
+                <svg viewBox="0 0 24 24" class="eye-open"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg viewBox="0 0 24 24" class="eye-closed" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><path d="M14.12 14.12a3 3 0 01-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+            <div class="caps-hint" id="capsHint">
+              <svg viewBox="0 0 24 24"><path d="M12 17a1 1 0 100-2 1 1 0 000 2z"/><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V10a2 2 0 00-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z"/></svg>
+              <span>大写锁定已开启</span>
+            </div>
+          </div>
+
+          <div class="options">
+            <label class="remember">
+              <input type="checkbox">
+              <span class="check">
+                <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
+              </span>
+              <span>下次自动登录</span>
+            </label>
+            <a href="#" class="forgot">忘记密码</a>
+          </div>
+
+          <button type="button" class="btn-login" id="btnStep1">下一步</button>
+
+          <div class="bottom-links">
+            没有账号？<a href="#">立即注册</a>
+          </div>
+        </div>
+
+        <!-- Step 2: Two-factor verification -->
+        <div class="step-panel" id="step2">
+          <div class="verify-hint">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>为保障账户安全，请完成双因素校验。验证码已发送至您的手机/邮箱，请输入收到的验证码。</span>
+          </div>
+
+          <div class="verify-methods">
+            <button type="button" class="verify-method active" data-method="sms" id="methodSms">短信验证码</button>
+            <button type="button" class="verify-method" data-method="email" id="methodEmail">邮件验证码</button>
+          </div>
+
+          <div class="bound-info" id="boundInfo">
+            <svg viewBox="0 0 24 24" id="boundIcon"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+            <span class="bound-label">接收验证码：</span>
+            <span class="bound-value" id="boundValue">138****8888</span>
+          </div>
+
+          <div class="field">
+            <label id="verifyLabel">短信验证码</label>
+            <div class="field-input--sms">
+              <div class="field-input">
+                <input type="text" placeholder="请输入验证码" autocomplete="one-time-code" id="verifyInput">
+                <span class="icon">
+                  <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15l3-3-3-3M13 15h4"/></svg>
+                </span>
+              </div>
+              <button type="button" class="btn-sms" id="btnVerifyCode">获取验证码</button>
+            </div>
+          </div>
+
+          <button type="button" class="btn-login" id="btnStep2">登 录</button>
+          <button type="button" class="btn-back" id="btnBack">返回上一步</button>
+        </div>
+
+      </div>
+
+      <!-- Phone Login -->
+      <div class="tab-content" id="tab-phone">
+        <div class="field">
+          <label>手机号码</label>
+          <div class="field-input">
+            <input type="tel" placeholder="请输入手机号码" autocomplete="tel">
+            <span class="icon">
+              <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+            </span>
+          </div>
+        </div>
+        <div class="field">
+          <label>验证码</label>
+          <div class="field-input--sms">
+            <div class="field-input">
+              <input type="text" placeholder="请输入短信验证码" autocomplete="one-time-code" id="smsInput">
+              <span class="icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15l3-3-3-3M13 15h4"/></svg>
+              </span>
+            </div>
+            <button type="button" class="btn-sms" id="btnSms">获取验证码</button>
+          </div>
+        </div>
+
+        <div class="options">
+          <label class="remember">
+            <input type="checkbox">
+            <span class="check">
+              <svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg>
+            </span>
+            <span>下次自动登录</span>
+          </label>
+          <a href="#" class="forgot">忘记密码</a>
+        </div>
+
+        <button type="submit" class="btn-login">登 录</button>
+
+        <div class="bottom-links">
+          没有账号？<a href="#">立即注册</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Forgot Password Form -->
+    <div class="forgot-form" id="forgotForm">
+      <h2 class="forgot-title">找回密码</h2>
+      <p class="forgot-subtitle">通过手机号验证身份，重置您的登录密码</p>
+
+      <!-- Step indicator -->
+      <div class="steps-bar">
+        <div class="step-item active" id="fpStepItem1">
+          <div class="step-num"><span>1</span></div>
+          <div class="step-label">身份验证</div>
+        </div>
+        <div class="step-item" id="fpStepItem2">
+          <div class="step-num"><span>2</span></div>
+          <div class="step-label">重置密码</div>
+        </div>
+        <div class="step-item" id="fpStepItem3">
+          <div class="step-num"><span>3</span></div>
+          <div class="step-label">完成</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Identity verification -->
+      <div class="step-panel active" id="fpStep1">
+        <div class="field">
+          <label>登录账号</label>
+          <div class="field-input">
+            <input type="text" placeholder="请输入登录账号" autocomplete="username" id="fpAccount">
+            <span class="icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
+            </span>
+          </div>
+        </div>
+        <div class="field">
+          <label>手机号码</label>
+          <div class="field-input">
+            <input type="tel" placeholder="请输入绑定的手机号码" autocomplete="tel" id="fpPhone">
+            <span class="icon">
+              <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+            </span>
+          </div>
+        </div>
+        <div class="field">
+          <label>短信验证码</label>
+          <div class="field-input--sms">
+            <div class="field-input">
+              <input type="text" placeholder="请输入验证码" autocomplete="one-time-code" id="fpCode">
+              <span class="icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15l3-3-3-3M13 15h4"/></svg>
+              </span>
+            </div>
+            <button type="button" class="btn-sms" id="btnFpCode">获取验证码</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn-login" id="btnFpStep1">下一步</button>
+        <button type="button" class="btn-back" id="btnFpBack1">返回登录</button>
+      </div>
+
+      <!-- Step 2: Reset password -->
+      <div class="step-panel" id="fpStep2">
+        <div class="field">
+          <label>新密码</label>
+          <div class="field-input">
+            <input type="password" placeholder="请输入新密码" autocomplete="new-password" id="fpNewPwd">
+            <span class="icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <button type="button" class="pwd-toggle" id="fpNewPwdToggle" aria-label="显示密码">
+              <svg viewBox="0 0 24 24" class="eye-open"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg viewBox="0 0 24 24" class="eye-closed" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><path d="M14.12 14.12a3 3 0 01-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="field">
+          <label>确认新密码</label>
+          <div class="field-input">
+            <input type="password" placeholder="请再次输入新密码" autocomplete="new-password" id="fpConfirmPwd">
+            <span class="icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <button type="button" class="pwd-toggle" id="fpConfirmPwdToggle" aria-label="显示密码">
+              <svg viewBox="0 0 24 24" class="eye-open"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg viewBox="0 0 24 24" class="eye-closed" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><path d="M14.12 14.12a3 3 0 01-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          <div class="pwd-match-hint" id="fpMatchHint">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="fpMatchText">两次密码一致</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-login" id="btnFpStep2">确认重置</button>
+        <button type="button" class="btn-back" id="btnFpBack2">上一步</button>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div class="step-panel" id="fpStep3">
+        <div class="success-panel">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3 class="success-title">密码重置成功</h3>
+          <p class="success-desc">您的密码已成功重置，请使用新密码重新登录。</p>
+          <button type="button" class="btn-login" id="btnFpDone">返回登录</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // ── Tab switching ──
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      // Reset to step 1 when switching to account tab
+      if (tab.dataset.tab === 'account') resetToStep1();
+    });
+  });
+
+  // ── Password visibility toggle ──
+  const pwdInput = document.getElementById('pwdInput');
+  const pwdToggle = document.getElementById('pwdToggle');
+  const eyeOpen = pwdToggle.querySelector('.eye-open');
+  const eyeClosed = pwdToggle.querySelector('.eye-closed');
+  pwdToggle.addEventListener('click', () => {
+    const isPassword = pwdInput.type === 'password';
+    pwdInput.type = isPassword ? 'text' : 'password';
+    eyeOpen.style.display = isPassword ? 'none' : '';
+    eyeClosed.style.display = isPassword ? '' : 'none';
+    pwdToggle.setAttribute('aria-label', isPassword ? '隐藏密码' : '显示密码');
+  });
+
+  // ── Caps Lock detection ──
+  const capsHint = document.getElementById('capsHint');
+  function checkCapsLock(e) {
+    capsHint.classList.toggle('visible', e.getModifierState && e.getModifierState('CapsLock'));
+  }
+  pwdInput.addEventListener('keyup', checkCapsLock);
+  pwdInput.addEventListener('keydown', checkCapsLock);
+  pwdInput.addEventListener('focus', checkCapsLock);
+
+  // ── 2FA: Step management ──
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const stepItem1 = document.getElementById('stepItem1');
+  const stepItem2 = document.getElementById('stepItem2');
+  const btnStep1 = document.getElementById('btnStep1');
+  const btnStep2 = document.getElementById('btnStep2');
+  const btnBack = document.getElementById('btnBack');
+  const acctInput = document.getElementById('acctInput');
+
+  function goToStep2() {
+    step1.classList.remove('active');
+    step2.classList.add('active');
+    stepItem1.classList.remove('active');
+    stepItem1.classList.add('done');
+    stepItem2.classList.add('active');
+    document.getElementById('verifyInput').focus();
+    // Auto-trigger verification code send
+    triggerVerifyCountdown();
+  }
+
+  function resetToStep1() {
+    step2.classList.remove('active');
+    step1.classList.add('active');
+    stepItem2.classList.remove('active');
+    stepItem1.classList.remove('done');
+    stepItem1.classList.add('active');
+    // Reset verify countdown if running
+    if (verifyTimer) { clearInterval(verifyTimer); verifyTimer = null; }
+    btnVerifyCode.disabled = false;
+    btnVerifyCode.textContent = '获取验证码';
+  }
+
+  btnStep1.addEventListener('click', () => {
+    if (!acctInput.value.trim()) { acctInput.focus(); return; }
+    if (!pwdInput.value.trim()) { pwdInput.focus(); return; }
+    goToStep2();
+  });
+
+  btnBack.addEventListener('click', resetToStep1);
+
+  // ── 2FA: Verification method toggle ──
+  const methodSms = document.getElementById('methodSms');
+  const methodEmail = document.getElementById('methodEmail');
+  const verifyLabel = document.getElementById('verifyLabel');
+  const boundValue = document.getElementById('boundValue');
+  const boundIcon = document.getElementById('boundIcon');
+  let currentMethod = 'sms';
+
+  // Mock bound contact data (replace with real data from backend)
+  const boundContacts = {
+    sms: '138****8888',
+    email: 'z***@gzac.org.cn'
+  };
+  const boundIcons = {
+    sms: '<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>',
+    email: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/>'
+  };
+
+  function updateBoundInfo(method) {
+    boundValue.textContent = boundContacts[method];
+    boundIcon.innerHTML = boundIcons[method];
+  }
+
+  methodSms.addEventListener('click', () => {
+    currentMethod = 'sms';
+    methodSms.classList.add('active');
+    methodEmail.classList.remove('active');
+    verifyLabel.textContent = '短信验证码';
+    document.getElementById('verifyInput').placeholder = '请输入短信验证码';
+    updateBoundInfo('sms');
+  });
+
+  methodEmail.addEventListener('click', () => {
+    currentMethod = 'email';
+    methodEmail.classList.add('active');
+    methodSms.classList.remove('active');
+    verifyLabel.textContent = '邮件验证码';
+    document.getElementById('verifyInput').placeholder = '请输入邮件验证码';
+    updateBoundInfo('email');
+  });
+
+  // ── 2FA: Verify code countdown ──
+  const btnVerifyCode = document.getElementById('btnVerifyCode');
+  let verifyTimer = null;
+
+  function triggerVerifyCountdown() {
+    let seconds = 60;
+    btnVerifyCode.disabled = true;
+    btnVerifyCode.textContent = seconds + 's 后重发';
+    verifyTimer = setInterval(() => {
+      seconds--;
+      if (seconds <= 0) {
+        clearInterval(verifyTimer);
+        verifyTimer = null;
+        btnVerifyCode.disabled = false;
+        btnVerifyCode.textContent = '获取验证码';
+      } else {
+        btnVerifyCode.textContent = seconds + 's 后重发';
+      }
+    }, 1000);
+  }
+
+  btnVerifyCode.addEventListener('click', () => {
+    if (btnVerifyCode.disabled) return;
+    triggerVerifyCountdown();
+  });
+
+  // ── Step 2 login ──
+  btnStep2.addEventListener('click', () => {
+    const verifyInput = document.getElementById('verifyInput');
+    if (!verifyInput.value.trim()) { verifyInput.focus(); return; }
+    // Here you would submit the form / call API
+    alert('双因素校验通过，登录成功！');
+  });
+
+  // ── Phone login: SMS countdown ──
+  const btnSms = document.getElementById('btnSms');
+  btnSms.addEventListener('click', () => {
+    let seconds = 60;
+    btnSms.disabled = true;
+    btnSms.textContent = seconds + 's 后重发';
+    const timer = setInterval(() => {
+      seconds--;
+      if (seconds <= 0) {
+        clearInterval(timer);
+        btnSms.disabled = false;
+        btnSms.textContent = '获取验证码';
+      } else {
+        btnSms.textContent = seconds + 's 后重发';
+      }
+    }, 1000);
+  });
+
+  // ════════════════════════════════════════════
+  // ── Forgot Password flow ──
+  // ════════════════════════════════════════════
+  const loginForm = document.querySelector('.login-form');
+  const forgotForm = document.getElementById('forgotForm');
+
+  // All "忘记密码" links trigger the forgot flow
+  document.querySelectorAll('.forgot').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      showForgot();
+    });
+  });
+
+  function showForgot() {
+    loginForm.style.display = 'none';
+    forgotForm.classList.add('active');
+    resetFpToStep1();
+  }
+
+  function hideForgot() {
+    forgotForm.classList.remove('active');
+    loginForm.style.display = '';
+  }
+
+  // ── FP step elements ──
+  const fpStep1 = document.getElementById('fpStep1');
+  const fpStep2 = document.getElementById('fpStep2');
+  const fpStep3 = document.getElementById('fpStep3');
+  const fpStepItem1 = document.getElementById('fpStepItem1');
+  const fpStepItem2 = document.getElementById('fpStepItem2');
+  const fpStepItem3 = document.getElementById('fpStepItem3');
+  const fpAccount = document.getElementById('fpAccount');
+  const fpPhone = document.getElementById('fpPhone');
+  const fpCode = document.getElementById('fpCode');
+  const fpNewPwd = document.getElementById('fpNewPwd');
+  const fpConfirmPwd = document.getElementById('fpConfirmPwd');
+
+  function setFpStep(step) {
+    [fpStep1, fpStep2, fpStep3].forEach(s => s.classList.remove('active'));
+    [fpStepItem1, fpStepItem2, fpStepItem3].forEach(s => {
+      s.classList.remove('active', 'done');
+    });
+    if (step === 1) {
+      fpStep1.classList.add('active');
+      fpStepItem1.classList.add('active');
+    } else if (step === 2) {
+      fpStep2.classList.add('active');
+      fpStepItem1.classList.add('done');
+      fpStepItem2.classList.add('active');
+    } else if (step === 3) {
+      fpStep3.classList.add('active');
+      fpStepItem1.classList.add('done');
+      fpStepItem2.classList.add('done');
+      fpStepItem3.classList.add('active');
+    }
+  }
+
+  function resetFpToStep1() {
+    setFpStep(1);
+    if (fpTimer) { clearInterval(fpTimer); fpTimer = null; }
+    btnFpCode.disabled = false;
+    btnFpCode.textContent = '获取验证码';
+  }
+
+  // ── FP Step 1 → 2 ──
+  document.getElementById('btnFpStep1').addEventListener('click', () => {
+    if (!fpAccount.value.trim()) { fpAccount.focus(); return; }
+    if (!fpPhone.value.trim()) { fpPhone.focus(); return; }
+    if (!fpCode.value.trim()) { fpCode.focus(); return; }
+    setFpStep(2);
+    fpNewPwd.focus();
+  });
+
+  // ── FP Step 2 → 3 ──
+  document.getElementById('btnFpStep2').addEventListener('click', () => {
+    if (!fpNewPwd.value.trim()) { fpNewPwd.focus(); return; }
+    if (!fpConfirmPwd.value.trim()) { fpConfirmPwd.focus(); return; }
+    if (fpNewPwd.value !== fpConfirmPwd.value) { fpConfirmPwd.focus(); return; }
+    setFpStep(3);
+  });
+
+  // ── FP back buttons ──
+  document.getElementById('btnFpBack1').addEventListener('click', hideForgot);
+  document.getElementById('btnFpBack2').addEventListener('click', () => {
+    setFpStep(1);
+  });
+  document.getElementById('btnFpDone').addEventListener('click', () => {
+    // Clear forgot form fields
+    fpAccount.value = '';
+    fpPhone.value = '';
+    fpCode.value = '';
+    fpNewPwd.value = '';
+    fpConfirmPwd.value = '';
+    hideForgot();
+  });
+
+  // ── FP password visibility toggles ──
+  function bindPwdToggle(toggleId, inputId) {
+    const toggle = document.getElementById(toggleId);
+    const input = document.getElementById(inputId);
+    const open = toggle.querySelector('.eye-open');
+    const closed = toggle.querySelector('.eye-closed');
+    toggle.addEventListener('click', () => {
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      open.style.display = isPassword ? 'none' : '';
+      closed.style.display = isPassword ? '' : 'none';
+    });
+  }
+  bindPwdToggle('fpNewPwdToggle', 'fpNewPwd');
+  bindPwdToggle('fpConfirmPwdToggle', 'fpConfirmPwd');
+
+  // ── FP password match check ──
+  const fpMatchHint = document.getElementById('fpMatchHint');
+  const fpMatchText = document.getElementById('fpMatchText');
+  function checkPwdMatch() {
+    const v1 = fpNewPwd.value;
+    const v2 = fpConfirmPwd.value;
+    if (!v2) {
+      fpMatchHint.classList.remove('visible', 'match', 'mismatch');
+      return;
+    }
+    fpMatchHint.classList.add('visible');
+    if (v1 === v2) {
+      fpMatchHint.classList.remove('mismatch');
+      fpMatchHint.classList.add('match');
+      fpMatchText.textContent = '两次密码一致';
+      fpMatchHint.querySelector('svg').innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+    } else {
+      fpMatchHint.classList.remove('match');
+      fpMatchHint.classList.add('mismatch');
+      fpMatchText.textContent = '两次输入的密码不一致';
+      fpMatchHint.querySelector('svg').innerHTML = '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
+    }
+  }
+  fpNewPwd.addEventListener('input', checkPwdMatch);
+  fpConfirmPwd.addEventListener('input', checkPwdMatch);
+
+  // ── FP SMS countdown ──
+  const btnFpCode = document.getElementById('btnFpCode');
+  let fpTimer = null;
+  btnFpCode.addEventListener('click', () => {
+    if (btnFpCode.disabled) return;
+    if (!fpPhone.value.trim()) { fpPhone.focus(); return; }
+    let seconds = 60;
+    btnFpCode.disabled = true;
+    btnFpCode.textContent = seconds + 's 后重发';
+    fpTimer = setInterval(() => {
+      seconds--;
+      if (seconds <= 0) {
+        clearInterval(fpTimer);
+        fpTimer = null;
+        btnFpCode.disabled = false;
+        btnFpCode.textContent = '获取验证码';
+      } else {
+        btnFpCode.textContent = seconds + 's 后重发';
+      }
+    }, 1000);
+  });
+</script>
+</body>
+</html>
