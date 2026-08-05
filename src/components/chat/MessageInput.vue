@@ -1,22 +1,31 @@
 <template>
   <div class="message-input">
-    <el-icon class="attach-btn" :size="18" @click="triggerFileInput"><Paperclip /></el-icon>
-    <textarea
-      ref="textareaRef"
-      v-model="text"
-      class="input-textarea"
-      placeholder="输入消息..."
-      rows="1"
-      @keydown.enter="handleEnter"
-      @keydown.shift.enter="handleShiftEnter"
-      @input="autoResize"
-    ></textarea>
-    <el-button
-      type="primary"
-      size="small"
-      :disabled="!text.trim()"
-      @click="sendText"
-    >发送</el-button>
+    <div class="input-container" :class="{ 'is-focused': isFocused }">
+      <button class="attach-btn" @click="triggerFileInput" aria-label="上传附件">
+        <el-icon :size="18"><Paperclip /></el-icon>
+      </button>
+      <textarea
+        ref="textareaRef"
+        v-model="text"
+        class="input-textarea"
+        placeholder="输入消息，回车发送..."
+        rows="1"
+        @keydown.enter="handleEnter"
+        @keydown.shift.enter="handleShiftEnter"
+        @input="autoResize"
+        @focus="isFocused = true"
+        @blur="isFocused = false"
+      ></textarea>
+      <button
+        class="send-btn"
+        :class="{ 'is-disabled': !text.trim() }"
+        :disabled="!text.trim()"
+        @click="sendText"
+        aria-label="发送"
+      >
+        <el-icon :size="16"><Promotion /></el-icon>
+      </button>
+    </div>
     <input
       ref="fileInputRef"
       type="file"
@@ -29,13 +38,14 @@
 <script setup>
 import { ref, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Paperclip } from '@element-plus/icons-vue'
+import { Paperclip, Promotion } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['send'])
 
 const text = ref('')
 const textareaRef = ref(null)
 const fileInputRef = ref(null)
+const isFocused = ref(false)
 
 // 发送文本消息
 const sendText = () => {
@@ -90,25 +100,50 @@ const autoResize = () => {
 
 <style scoped lang="scss">
 .message-input {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  padding: 8px 12px;
-  border-top: 1px solid var(--el-border-color-lighter);
-  background-color: #fff;
+  padding: 10px 12px 12px;
+  background: linear-gradient(180deg, #fafbfc 0%, #fff 100%);
+  border-top: 1px solid #f0f2f5;
 }
 
+.input-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  background: #f4f6fa;
+  border: 1px solid #e4e7ed;
+  border-radius: 10px;
+  padding: 4px 4px 4px 6px;
+  transition: all 0.25s ease;
+
+  &.is-focused {
+    background: #fff;
+    border-color: var(--el-color-primary);
+    box-shadow: 0 0 0 3px rgba(5, 61, 153, 0.08);
+  }
+}
+
+/* 附件按钮 */
 .attach-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
   cursor: pointer;
   color: var(--el-text-color-secondary);
   flex-shrink: 0;
-  padding: 4px;
+  transition: all 0.2s ease;
 
   &:hover {
+    background: #e8edf8;
     color: var(--el-color-primary);
   }
 }
 
+/* 输入框 */
 .input-textarea {
   flex: 1;
   border: none;
@@ -117,14 +152,54 @@ const autoResize = () => {
   font-size: 14px;
   line-height: 1.5;
   font-family: inherit;
-  background-color: #f2f5fa;
-  border-radius: 4px;
-  padding: 6px 10px;
+  background: transparent;
+  padding: 6px 4px;
   max-height: 100px;
   overflow-y: auto;
+  color: var(--el-text-color-primary);
 
   &::placeholder {
-    color: var(--el-text-color-placeholder);
+    color: #b8bcc4;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #dcdfe6;
+    border-radius: 2px;
+  }
+}
+
+/* 发送按钮 */
+.send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
+  box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
+  transition: all 0.2s ease;
+
+  &:hover:not(.is-disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(5, 61, 153, 0.3);
+  }
+
+  &:active:not(.is-disabled) {
+    transform: translateY(0);
+  }
+
+  &.is-disabled {
+    background: #c0c4cc;
+    box-shadow: none;
+    cursor: not-allowed;
   }
 }
 </style>
