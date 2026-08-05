@@ -21,8 +21,8 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
 <style scoped lang="scss">
 .floating-chat-btn {
   position: fixed;
-  bottom: 32px;
-  right: 32px;
+  bottom: 96px;
+  right: 24px;
   width: 56px;
   height: 56px;
   border-radius: 50%;
