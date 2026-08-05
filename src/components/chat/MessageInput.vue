@@ -117,8 +117,8 @@ const autoResize = () => {
 
   &.is-focused {
     background: #fff;
-    border-color: var(--el-color-primary);
-    box-shadow: 0 0 0 3px rgba(5, 61, 153, 0.08);
+    border-color: #3d4756;
+    box-shadow: 0 0 0 3px rgba(61, 71, 86, 0.08);
   }
 }
 
@@ -138,8 +138,8 @@ const autoResize = () => {
   transition: all 0.2s ease;
 
   &:hover {
-    background: #e8edf8;
-    color: var(--el-color-primary);
+    background: #ede8e1;
+    color: #6b5d4a;
   }
 }
 
@@ -183,13 +183,13 @@ const autoResize = () => {
   cursor: pointer;
   color: #fff;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
-  box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
+  background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
+  box-shadow: 0 2px 6px rgba(61, 71, 86, 0.25);
   transition: all 0.2s ease;
 
   &:hover:not(.is-disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(5, 61, 153, 0.3);
+    box-shadow: 0 4px 10px rgba(61, 71, 86, 0.3);
   }
 
   &:active:not(.is-disabled) {
