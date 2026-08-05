@@ -62,7 +62,7 @@ const close = () => {
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
+  background: linear-gradient(135deg, #445063 0%, #556273 100%);
   color: #fff;
   position: relative;
   overflow: hidden;
