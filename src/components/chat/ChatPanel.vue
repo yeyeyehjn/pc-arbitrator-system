@@ -69,7 +69,10 @@
             <div class="member-name">{{ member.name }}</div>
             <div class="member-role">{{ roleLabel(member.role) }}</div>
           </div>
-          <el-button type="primary" size="small" @click="startPrivateChat(member)">发消息</el-button>
+          <button class="private-msg-btn" @click="startPrivateChat(member)">
+            <el-icon :size="14"><ChatLineRound /></el-icon>
+            发消息
+          </button>
         </div>
       </div>
 
@@ -84,7 +87,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { ChatDotRound } from '@element-plus/icons-vue'
+import { ChatDotRound, ChatLineRound } from '@element-plus/icons-vue'
 import { useChatStore } from '@/stores/chat'
 import MessageList from './MessageList.vue'
 import MessageInput from './MessageInput.vue'
@@ -212,10 +215,11 @@ watch(
   }
 
   .drawer-conv-list {
-    width: 200px;
-    border-right: 1px solid var(--el-border-color-lighter);
+    width: 210px;
+    border-right: 1px solid #f0f2f5;
     flex-shrink: 0;
     overflow: hidden;
+    background: #fafbfc;
   }
 
   .drawer-chat-area {
@@ -223,18 +227,20 @@ watch(
     display: flex;
     flex-direction: column;
     min-width: 0;
+    background: #fff;
   }
 }
 
 .chat-header {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--el-border-color-lighter);
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f2f5;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: #fff;
 
   .chat-title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--el-text-color-regular);
   }
@@ -242,6 +248,9 @@ watch(
   .chat-participants-hint {
     font-size: 11px;
     color: var(--el-text-color-placeholder);
+    padding: 2px 8px;
+    background: #f4f6fa;
+    border-radius: 4px;
   }
 }
 
@@ -253,38 +262,50 @@ watch(
   height: 100%;
   color: var(--el-text-color-placeholder);
   font-size: 12px;
-  gap: 8px;
+  gap: 12px;
+
+  .el-icon {
+    opacity: 0.5;
+  }
 }
 
 /* ============ Embedded 模式 ============ */
 .mode-embedded {
   .conv-tabs {
     display: flex;
-    gap: 8px;
-    padding: 10px 12px 0;
+    gap: 6px;
+    padding: 12px 12px 0;
   }
 
   .conv-tab {
-    padding: 4px 12px;
+    padding: 6px 14px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 12px;
     cursor: pointer;
-    background-color: #f2f5fa;
+    background-color: #f4f6fa;
     color: var(--el-text-color-secondary);
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
+    font-weight: 500;
+
+    &:hover {
+      background-color: #e8edf8;
+      color: var(--el-color-primary);
+    }
 
     &.is-active {
-      background-color: var(--el-color-primary);
+      background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
       color: #fff;
+      box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
     }
   }
 
   .participants-bar {
-    margin: 8px 12px 0;
-    padding: 6px 10px;
-    background-color: #f8f8f9;
-    border-radius: 4px;
+    margin: 10px 12px 0;
+    padding: 8px 12px;
+    background: linear-gradient(90deg, #f8faff 0%, #f4f6fa 100%);
+    border: 1px solid #e8edf8;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -293,32 +314,45 @@ watch(
     .participants-label {
       font-size: 11px;
       color: var(--el-text-color-placeholder);
+      font-weight: 500;
     }
 
     .participant-tag {
-      background-color: #e4e7ed;
-      padding: 1px 6px;
-      border-radius: 3px;
+      background: #fff;
+      border: 1px solid #e4e7ed;
+      padding: 2px 8px;
+      border-radius: 4px;
       font-size: 11px;
       color: var(--el-text-color-regular);
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: var(--el-color-primary);
+        color: var(--el-color-primary);
+      }
     }
 
     .participants-hint {
       font-size: 11px;
       color: var(--el-text-color-placeholder);
       margin-left: auto;
+      font-style: italic;
     }
   }
 }
 
 /* ============ 私聊成员列表 ============ */
 .private-member-list {
-  padding: 12px;
+  padding: 16px 12px;
 
   .private-hint {
     font-size: 12px;
     color: var(--el-text-color-secondary);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background: #f4f6fa;
+    border-radius: 8px;
+    text-align: center;
   }
 }
 
@@ -326,30 +360,37 @@ watch(
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--el-border-color-lighter);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: #fff;
+  border: 1px solid #f0f2f5;
+  transition: all 0.2s ease;
 
-  &:last-child {
-    border-bottom: none;
+  &:hover {
+    border-color: #e0e8f5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transform: translateY(-1px);
   }
 }
 
 .member-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 14px;
   color: #fff;
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 
   &.avatar-secretary {
-    background-color: #909399;
+    background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
   }
   &.avatar-arbitrator {
-    background-color: var(--el-color-primary);
+    background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
   }
 }
 
@@ -359,11 +400,33 @@ watch(
   .member-name {
     font-size: 14px;
     color: var(--el-text-color-regular);
+    font-weight: 500;
   }
 
   .member-role {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--el-text-color-placeholder);
+    margin-top: 2px;
+  }
+}
+
+.private-msg-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, #053d99 0%, #0a5cb8 100%);
+  box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(5, 61, 153, 0.3);
   }
 }
 </style>
