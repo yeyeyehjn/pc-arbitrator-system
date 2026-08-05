@@ -1,6 +1,6 @@
 <template>
   <div class="floating-chat-btn" @click="$emit('click')">
-    <el-icon :size="24"><ChatDotRound /></el-icon>
+    <el-icon :size="24"><ChatLineRound /></el-icon>
     <span v-if="unreadCount > 0" class="unread-badge">
       {{ unreadCount > 99 ? '99+' : unreadCount }}
     </span>
@@ -9,7 +9,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { ChatDotRound } from '@element-plus/icons-vue'
+import { ChatLineRound } from '@element-plus/icons-vue'
 import { useChatStore } from '@/stores/chat'
 
 defineEmits(['click'])
