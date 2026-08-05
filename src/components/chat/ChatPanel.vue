@@ -139,14 +139,12 @@ const selectConversation = (convId) => {
 }
 
 // 抽屉模式：筛选 Tab
-const drawerFilter = ref('all')
+const drawerFilter = ref('discussion')
 const drawerTabs = [
-  { type: 'all', label: '全部' },
   { type: 'discussion', label: '案件讨论' },
   { type: 'evidence', label: '在线示证' },
 ]
 const filteredConversations = computed(() => {
-  if (drawerFilter.value === 'all') return store.conversations
   return store.conversations.filter((c) => c.type === drawerFilter.value)
 })
 const drawerHint = computed(() => {
@@ -251,10 +249,10 @@ watch(
 
   .drawer-conv-list {
     width: 210px;
-    border-right: 1px solid #efece8;
+    border-right: 1px solid #ebeef5;
     flex-shrink: 0;
     overflow: hidden;
-    background: #f9f8f6;
+    background: #f8f8f9;
     display: flex;
     flex-direction: column;
   }
@@ -274,17 +272,17 @@ watch(
     font-size: 11px;
     cursor: pointer;
     background: transparent;
-    color: #8a8580;
+    color: #606266;
     transition: all 0.2s ease;
     font-weight: 500;
 
     &:hover {
       background: rgba(139, 111, 71, 0.08);
-      color: #8b6f47;
+      color: #445063;
     }
 
     &.is-active {
-      background: #3d4756;
+      background: #445063;
       color: #fff;
     }
   }
@@ -295,7 +293,7 @@ watch(
     gap: 4px;
     padding: 4px 12px 8px;
     font-size: 10px;
-    color: #a8a298;
+    color: #a8abb2;
     flex-shrink: 0;
     line-height: 1.4;
   }
@@ -311,7 +309,7 @@ watch(
 
 .chat-header {
   padding: 12px 14px;
-  border-bottom: 1px solid #efece8;
+  border-bottom: 1px solid #ebeef5;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -325,9 +323,9 @@ watch(
 
   .chat-participants-hint {
     font-size: 11px;
-    color: #8b6f47;
+    color: #445063;
     padding: 2px 8px;
-    background: #f5f0ea;
+    background: #f2f5fa;
     border-radius: 4px;
   }
 }
@@ -361,28 +359,28 @@ watch(
     border-radius: 8px;
     font-size: 12px;
     cursor: pointer;
-    background-color: #f5f3f0;
-    color: #8a8580;
+    background-color: #f2f5fa;
+    color: #606266;
     transition: all 0.25s ease;
     font-weight: 500;
 
     &:hover {
-      background-color: #ede8e1;
-      color: #6b5d4a;
+      background-color: #e4e7ed;
+      color: #445063;
     }
 
     &.is-active {
-      background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
+      background: linear-gradient(135deg, #445063 0%, #556273 100%);
       color: #fff;
-      box-shadow: 0 2px 6px rgba(61, 71, 86, 0.25);
+      box-shadow: 0 2px 6px rgba(68, 80, 99, 0.25);
     }
   }
 
   .participants-bar {
     margin: 10px 12px 0;
     padding: 8px 12px;
-    background: linear-gradient(90deg, #f9f8f6 0%, #f5f3f0 100%);
-    border: 1px solid #ede8e1;
+    background: linear-gradient(90deg, #f8f8f9 0%, #f2f5fa 100%);
+    border: 1px solid #e4e7ed;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -391,13 +389,13 @@ watch(
 
     .participants-label {
       font-size: 11px;
-      color: #a8a298;
+      color: #a8abb2;
       font-weight: 500;
     }
 
     .participant-tag {
       background: #fff;
-      border: 1px solid #e4ddd3;
+      border: 1px solid #e4e7ed;
       padding: 2px 8px;
       border-radius: 4px;
       font-size: 11px;
@@ -405,14 +403,14 @@ watch(
       transition: all 0.2s ease;
 
       &:hover {
-        border-color: #8b6f47;
-        color: #6b5d4a;
+        border-color: #445063;
+        color: #445063;
       }
     }
 
     .participants-hint {
       font-size: 11px;
-      color: #8b6f47;
+      color: #445063;
       margin-left: auto;
       font-style: italic;
     }
@@ -425,10 +423,10 @@ watch(
 
   .private-hint {
     font-size: 12px;
-    color: #8a8580;
+    color: #606266;
     margin-bottom: 16px;
     padding: 8px 12px;
-    background: #f5f3f0;
+    background: #f2f5fa;
     border-radius: 8px;
     text-align: center;
   }
@@ -442,11 +440,11 @@ watch(
   border-radius: 10px;
   margin-bottom: 8px;
   background: #fff;
-  border: 1px solid #efece8;
+  border: 1px solid #ebeef5;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #ddd5c8;
+    border-color: #dcdfe6;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transform: translateY(-1px);
   }
@@ -468,7 +466,7 @@ watch(
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
   }
   &.avatar-arbitrator {
-    background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
+    background: linear-gradient(135deg, #445063 0%, #556273 100%);
   }
 }
 
@@ -483,7 +481,7 @@ watch(
 
   .member-role {
     font-size: 11px;
-    color: #a8a298;
+    color: #a8abb2;
     margin-top: 2px;
   }
 }
@@ -498,13 +496,13 @@ watch(
   font-size: 12px;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, #3d4756 0%, #525e70 100%);
-  box-shadow: 0 2px 6px rgba(61, 71, 86, 0.25);
+  background: linear-gradient(135deg, #445063 0%, #556273 100%);
+  box-shadow: 0 2px 6px rgba(68, 80, 99, 0.25);
   transition: all 0.2s ease;
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(61, 71, 86, 0.3);
+    box-shadow: 0 4px 10px rgba(68, 80, 99, 0.3);
   }
 }
 </style>
