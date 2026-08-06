@@ -38,7 +38,7 @@ defineProps({
 
 <style scoped lang="scss">
 .summary-card {
-  border: 1px solid #e4e7ed;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   overflow: hidden;
 
@@ -52,7 +52,7 @@ defineProps({
     .summary-case-no {
       font-size: 14px;
       font-weight: 600;
-      color: #303133;
+      color: var(--el-text-color-regular);
     }
   }
 
@@ -64,7 +64,7 @@ defineProps({
     display: flex;
     padding: 6px 0;
     border-bottom: 1px solid #f5f5f5;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
 
     &:last-child { border-bottom: none; }
@@ -72,11 +72,12 @@ defineProps({
     .label {
       flex-shrink: 0;
       width: 70px;
-      color: #909399;
+      font-size: 12px;
+      color: var(--el-text-color-secondary);
     }
     .value {
       flex: 1;
-      color: #303133;
+      color: var(--el-text-color-regular);
     }
   }
 }

@@ -29,7 +29,7 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
+  background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -54,7 +54,7 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 2px solid #1565c0;
+  border: 2px solid var(--el-color-primary);
   animation: pulse-ring 2s ease-out infinite;
   pointer-events: none;
 }
@@ -67,6 +67,15 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
   100% {
     transform: scale(1.5);
     opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-ring {
+    animation: none;
+  }
+  .floating-chat-btn {
+    transition: none;
   }
 }
 

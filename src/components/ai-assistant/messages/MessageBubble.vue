@@ -1,11 +1,11 @@
 <template>
   <div class="message-bubble" :class="message.role">
     <!-- AI 头像 -->
-    <div v-if="message.role === 'assistant'" class="bubble-avatar">AI</div>
+    <div v-if="message.role === 'assistant'" class="bubble-avatar" role="img" aria-label="AI" :style="{ backgroundImage: `url('${aiAvatar}'), linear-gradient(135deg, #6b4fbb, #9254de)` }"></div>
 
     <div class="bubble-content-wrapper">
       <!-- 文本内容 -->
-      <div class="bubble-text" v-if="message.content">{{ message.content }}</div>
+      <div class="bubble-text" v-if="shownText">{{ shownText }}</div>
 
       <!-- pending 态 -->
       <div v-if="message.pending" class="bubble-pending">
@@ -50,16 +50,71 @@
 </template>
 
 <script setup>
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import LegalCards from './LegalCards.vue'
 import CaseCards from './CaseCards.vue'
 import DraftPreview from './DraftPreview.vue'
 import GuideSteps from './GuideSteps.vue'
 import SummaryCard from './SummaryCard.vue'
 
-defineProps({
+const props = defineProps({
   message: { type: Object, required: true },
 })
-defineEmits(['fill-editor', 'quote-law'])
+const emit = defineEmits(['fill-editor', 'quote-law', 'type-tick'])
+
+// AI 头像图片：必须拼接 BASE_URL（vite base 为 /pc-arbitrator-system/）
+const aiAvatar = `${import.meta.env.BASE_URL}tu/AI-write.png`
+
+// ============ 打字机效果（AI 回复逐字显示） ============
+const displayText = ref('')
+let typeTimer = null
+// 组件挂载时已存在的内容（历史消息 / 欢迎语直接显示，不做打字机）
+const initialContent = props.message.content
+
+// 无障碍降级：系统开启减少动态效果时直接显示全文
+const prefersReducedMotion =
+  typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+watch(
+  () => props.message.content,
+  (val, old) => {
+    if (props.message.role !== 'assistant' || !val) {
+      displayText.value = val || ''
+      return
+    }
+    // 挂载时已有内容（历史消息 / 欢迎语）：直接显示
+    if (val === initialContent) {
+      displayText.value = val
+      return
+    }
+    // 新回复：逐字显示（content 从空填充为完整回复）
+    if (prefersReducedMotion || old) {
+      displayText.value = val
+      return
+    }
+    let i = 0
+    displayText.value = ''
+    typeTimer = setInterval(() => {
+      i += 2
+      displayText.value = val.slice(0, i)
+      emit('type-tick')
+      if (i >= val.length) {
+        clearInterval(typeTimer)
+        typeTimer = null
+      }
+    }, 30)
+  },
+  { immediate: true }
+)
+
+onBeforeUnmount(() => {
+  if (typeTimer) clearInterval(typeTimer)
+})
+
+// 用户消息直接显示全文；AI 消息显示打字进度
+const shownText = computed(() =>
+  props.message.role === 'user' ? props.message.content : displayText.value
+)
 </script>
 
 <style scoped lang="scss">
@@ -72,7 +127,7 @@ defineEmits(['fill-editor', 'quote-law'])
     justify-content: flex-end;
 
     .bubble-text {
-      background-color: #053d99;
+      background: linear-gradient(135deg, #6b4fbb, #9254de);
       color: #fff;
       border-radius: 12px 12px 2px 12px;
     }
@@ -81,8 +136,8 @@ defineEmits(['fill-editor', 'quote-law'])
   &.assistant {
     .bubble-text {
       background-color: #fff;
-      color: #303133;
-      border: 1px solid #e4e7ed;
+      color: var(--el-text-color-regular);
+      border: 1px solid var(--el-border-color-light);
       border-radius: 12px 12px 12px 2px;
     }
   }
@@ -93,16 +148,18 @@ defineEmits(['fill-editor', 'quote-law'])
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #053d99, #3a6bb5);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
   &.user-avatar {
-    background: linear-gradient(135deg, #053d99, #3a6bb5);
+    background: linear-gradient(135deg, #6b4fbb, #9254de);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -126,22 +183,22 @@ defineEmits(['fill-editor', 'quote-law'])
   gap: 4px;
   padding: 10px 14px;
   background-color: #fff;
-  border: 1px solid #e4e7ed;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 12px 12px 12px 2px;
 
   .dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: #c0c4cc;
+    background-color: var(--el-text-color-placeholder);
     animation: dot-pulse 1.4s infinite ease-in-out;
 
     &:nth-child(2) { animation-delay: 0.2s; }
     &:nth-child(3) { animation-delay: 0.4s; }
   }
   .pending-text {
-    font-size: 13px;
-    color: #909399;
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
     margin-left: 4px;
   }
 }

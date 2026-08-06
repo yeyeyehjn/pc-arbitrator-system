@@ -30,14 +30,14 @@ const aiStore = useAiAssistantStore()
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background-color: #d5e3f2;
-  border-bottom: 1px solid #c6daf0;
+  background-color: #f3effc;
+  border-bottom: 1px solid #e2d9f5;
   flex-shrink: 0;
 
   .context-info {
     flex: 1;
-    font-size: 13px;
-    color: #053d99;
+    font-size: 12px;
+    color: #6b4fbb;
     font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -47,7 +47,7 @@ const aiStore = useAiAssistantStore()
   .context-close {
     flex-shrink: 0;
     cursor: pointer;
-    color: #053d99;
+    color: #6b4fbb;
     opacity: 0.6;
     transition: opacity 0.2s ease;
 

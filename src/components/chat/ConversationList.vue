@@ -3,7 +3,7 @@
     <!-- 空状态 -->
     <div v-if="conversations.length === 0" class="conv-empty">
       <div class="empty-icon-wrap">
-        <el-icon :size="28" color="#7ba8d4"><ChatLineSquare /></el-icon>
+        <el-icon :size="28" color="var(--el-text-color-placeholder)"><ChatLineSquare /></el-icon>
       </div>
       <p>暂无会话</p>
     </div>
@@ -91,7 +91,7 @@ const avatarText = (type) => ({
     width: 4px;
   }
   &::-webkit-scrollbar-thumb {
-    background: #b8d4ee;
+    background: var(--el-border-color);
     border-radius: 2px;
   }
   &::-webkit-scrollbar-track {
@@ -112,11 +112,11 @@ const avatarText = (type) => ({
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #f5faff 0%, #cfe2f7 100%);
+    background: #f5f7fa;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #b8d4ee;
+    border: 1px solid var(--el-border-color-light);
   }
 
   p {
@@ -150,7 +150,7 @@ const avatarText = (type) => ({
   }
 
   &:hover {
-    background-color: #f5faff;
+    background-color: #f5f7fa;
 
     .conv-avatar {
       transform: scale(1.05);
@@ -158,7 +158,7 @@ const avatarText = (type) => ({
   }
 
   &.is-active {
-    background: linear-gradient(90deg, #ebf4fc 0%, #f5faff 100%);
+    background: #f2f5fa;
 
     .active-indicator {
       opacity: 1;
@@ -166,7 +166,7 @@ const avatarText = (type) => ({
     }
 
     .conv-title {
-      color: #1565c0;
+      color: #053d99;
     }
   }
 }
@@ -179,7 +179,7 @@ const avatarText = (type) => ({
   transform: translateY(-50%) scaleY(0);
   width: 3px;
   height: 24px;
-  background: linear-gradient(180deg, #1565c0 0%, #3a8bde 100%);
+  background: linear-gradient(180deg, #053d99 0%, #3a6bb5 100%);
   border-radius: 0 2px 2px 0;
   opacity: 0;
   transition: all 0.25s ease;
@@ -193,14 +193,14 @@ const avatarText = (type) => ({
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 12px;
   color: #fff;
   flex-shrink: 0;
   transition: transform 0.2s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 
   &.avatar-discussion {
-    background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
+    background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
   }
   &.avatar-evidence {
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
@@ -255,6 +255,12 @@ const avatarText = (type) => ({
   50% { transform: scale(1.08); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .conv-unread {
+    animation: none;
+  }
+}
+
 .conv-bottom-row {
   display: flex;
   justify-content: space-between;
@@ -263,7 +269,7 @@ const avatarText = (type) => ({
 }
 
 .conv-last-msg {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--el-text-color-secondary);
   white-space: nowrap;
   overflow: hidden;

@@ -38,7 +38,7 @@
             <MessageInput @send="handleSend" />
           </template>
           <div v-else class="no-conv-selected">
-            <el-icon :size="40" color="#c0c4cc"><ChatDotRound /></el-icon>
+            <el-icon :size="40" color="var(--el-text-color-placeholder)"><ChatDotRound /></el-icon>
             <p>选择一个会话开始聊天</p>
           </div>
         </div>
@@ -249,10 +249,10 @@ watch(
 
   .drawer-conv-list {
     width: 210px;
-    border-right: 1px solid #e0ecfa;
+    border-right: 1px solid var(--el-border-color-lighter);
     flex-shrink: 0;
     overflow: hidden;
-    background: #f5faff;
+    background: #f7f7f7;
     display: flex;
     flex-direction: column;
   }
@@ -269,20 +269,20 @@ watch(
     padding: 5px 0;
     border: none;
     border-radius: 6px;
-    font-size: 11px;
+    font-size: 12px;
     cursor: pointer;
     background: transparent;
-    color: #4577b5;
+    color: var(--el-text-color-secondary);
     transition: all 0.2s ease;
     font-weight: 500;
 
     &:hover {
-      background: rgba(139, 111, 71, 0.08);
-      color: #1565c0;
+      background: #f2f5fa;
+      color: #053d99;
     }
 
     &.is-active {
-      background: #1565c0;
+      background: #053d99;
       color: #fff;
     }
   }
@@ -293,7 +293,7 @@ watch(
     gap: 4px;
     padding: 4px 12px 8px;
     font-size: 10px;
-    color: #7ba8d4;
+    color: var(--el-text-color-secondary);
     flex-shrink: 0;
     line-height: 1.4;
   }
@@ -309,23 +309,23 @@ watch(
 
 .chat-header {
   padding: 12px 14px;
-  border-bottom: 1px solid #e0ecfa;
+  border-bottom: 1px solid var(--el-border-color-lighter);
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #fff;
 
   .chat-title {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--el-text-color-regular);
   }
 
   .chat-participants-hint {
-    font-size: 11px;
-    color: #1565c0;
+    font-size: 12px;
+    color: #053d99;
     padding: 2px 8px;
-    background: #ebf4fc;
+    background: #f2f5fa;
     border-radius: 4px;
   }
 }
@@ -359,28 +359,28 @@ watch(
     border-radius: 8px;
     font-size: 12px;
     cursor: pointer;
-    background-color: #ebf4fc;
-    color: #4577b5;
+    background-color: #f5f7fa;
+    color: var(--el-text-color-secondary);
     transition: all 0.25s ease;
     font-weight: 500;
 
     &:hover {
-      background-color: #cfe2f7;
-      color: #1565c0;
+      background-color: #f2f5fa;
+      color: #053d99;
     }
 
     &.is-active {
-      background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
+      background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
       color: #fff;
-      box-shadow: 0 2px 6px rgba(21, 101, 192, 0.25);
+      box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
     }
   }
 
   .participants-bar {
     margin: 10px 12px 0;
     padding: 8px 12px;
-    background: linear-gradient(90deg, #f5faff 0%, #ebf4fc 100%);
-    border: 1px solid #cfe2f7;
+    background: #f5f7fa;
+    border: 1px solid var(--el-border-color-light);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -388,29 +388,29 @@ watch(
     flex-wrap: wrap;
 
     .participants-label {
-      font-size: 11px;
-      color: #7ba8d4;
+      font-size: 12px;
+      color: var(--el-text-color-secondary);
       font-weight: 500;
     }
 
     .participant-tag {
       background: #fff;
-      border: 1px solid #cfe2f7;
+      border: 1px solid var(--el-border-color-light);
       padding: 2px 8px;
       border-radius: 4px;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--el-text-color-regular);
       transition: all 0.2s ease;
 
       &:hover {
-        border-color: #1565c0;
-        color: #1565c0;
+        border-color: #053d99;
+        color: #053d99;
       }
     }
 
     .participants-hint {
-      font-size: 11px;
-      color: #1565c0;
+      font-size: 12px;
+      color: #053d99;
       margin-left: auto;
       font-style: italic;
     }
@@ -423,10 +423,10 @@ watch(
 
   .private-hint {
     font-size: 12px;
-    color: #4577b5;
+    color: var(--el-text-color-secondary);
     margin-bottom: 16px;
     padding: 8px 12px;
-    background: #ebf4fc;
+    background: #f5f7fa;
     border-radius: 8px;
     text-align: center;
   }
@@ -440,11 +440,11 @@ watch(
   border-radius: 10px;
   margin-bottom: 8px;
   background: #fff;
-  border: 1px solid #e0ecfa;
+  border: 1px solid var(--el-border-color-light);
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #b8d4ee;
+    border-color: var(--el-border-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transform: translateY(-1px);
   }
@@ -466,7 +466,7 @@ watch(
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
   }
   &.avatar-arbitrator {
-    background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
+    background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
   }
 }
 
@@ -480,8 +480,8 @@ watch(
   }
 
   .member-role {
-    font-size: 11px;
-    color: #7ba8d4;
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
     margin-top: 2px;
   }
 }
@@ -496,13 +496,13 @@ watch(
   font-size: 12px;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
-  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.25);
+  background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
+  box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
   transition: all 0.2s ease;
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
+    box-shadow: 0 4px 10px rgba(5, 61, 153, 0.3);
   }
 }
 </style>

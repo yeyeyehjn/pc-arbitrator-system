@@ -1,41 +1,65 @@
 <template>
   <el-tooltip content="AI 办案助手" placement="bottom" :show-after="300">
-    <el-icon
+    <div
       class="ai-icon-btn"
       :class="{ active: aiStore.visible }"
-      :size="20"
       role="button"
       tabindex="0"
       aria-label="AI 办案助手"
       @click="aiStore.toggle()"
       @keydown.enter="aiStore.toggle()"
     >
-      <ChatLineSquare />
-    </el-icon>
+      <img class="ai-icon icon-default" :src="iconDefault" alt="AI 办案助手" />
+      <img class="ai-icon icon-hover" :src="iconHover" alt="AI 办案助手" />
+    </div>
   </el-tooltip>
 </template>
 
 <script setup>
-import { ChatLineSquare } from '@element-plus/icons-vue'
 import { useAiAssistantStore } from '@/stores/aiAssistant'
 
 const aiStore = useAiAssistantStore()
+
+// 图标：正常态 / hover 态
+const iconDefault = `${import.meta.env.BASE_URL}tu/AI-top.png`
+const iconHover = `${import.meta.env.BASE_URL}tu/AI-top-hover.png`
 </script>
 
 <style scoped lang="scss">
 .ai-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   cursor: pointer;
-  color: var(--el-text-color-regular);
-  transition: color 0.2s ease;
+  position: relative;
 
-  &:hover,
-  &:focus-visible {
-    color: #053d99;
-    outline: none;
+  .ai-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity 0.2s ease;
   }
 
+  .icon-hover {
+    opacity: 0;
+  }
+
+  &:hover,
+  &:focus-visible,
   &.active {
-    color: #053d99;
+    outline: none;
+
+    .icon-default {
+      opacity: 0;
+    }
+
+    .icon-hover {
+      opacity: 1;
+    }
   }
 }
 

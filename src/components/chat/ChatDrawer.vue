@@ -45,7 +45,7 @@ const close = () => {
 <!-- 非 scoped：el-drawer 通过 teleport 挂载到 body，scoped 样式无法命中 -->
 <style lang="scss">
 .chat-drawer.el-drawer:not(.is-fullscreen) {
-  width: 700px !important;
+  width: 70% !important;
   border-radius: 16px 0 0 16px;
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
 }
@@ -62,46 +62,31 @@ const close = () => {
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
+  background: #fff;
+  border-bottom: 1px solid var(--el-border-color-lighter);
 
   .header-left {
     display: flex;
     align-items: center;
     gap: 10px;
-    position: relative;
-    z-index: 1;
   }
 
   .header-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.15);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(4px);
   }
 
   .drawer-title {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.5px;
+    color: var(--el-text-color-regular);
   }
 }
 
@@ -115,13 +100,12 @@ const close = () => {
   background: transparent;
   border-radius: 8px;
   cursor: pointer;
-  color: #fff;
+  color: var(--el-text-color-secondary);
   transition: all 0.2s ease;
-  position: relative;
-  z-index: 1;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.15);
+    color: #053d99;
+    background-color: rgba(5, 61, 153, 0.08);
   }
 
   &:active {

@@ -11,7 +11,7 @@
       <!-- ① 头部 -->
       <div class="ai-drawer-header">
         <div class="header-left">
-          <div class="ai-avatar">AI</div>
+          <div class="ai-avatar" role="img" aria-label="AI 办案助手" :style="{ backgroundImage: `url('${aiAvatar}'), linear-gradient(135deg, #6b4fbb, #9254de)` }"></div>
           <div class="header-titles">
             <span class="header-title">AI 办案助手</span>
             <span class="header-status"><span class="status-dot"></span> 在线</span>
@@ -52,7 +52,7 @@
             v-model="inputText"
             type="textarea"
             :autosize="{ minRows: 1, maxRows: 4 }"
-            placeholder="输入您的问题…"
+            placeholder="输入您的问题，按 Enter 发送，Shift+Enter 换行,AI 助手仅供参考"
             maxlength="2000"
             resize="none"
             @keydown="handleKeydown"
@@ -61,15 +61,9 @@
             class="send-btn"
             type="primary"
             :icon="Promotion"
-            :disabled="!inputText.trim() || aiStore.loading"
+            :disabled="!inputText.trim()"
             @click="handleSend"
           />
-        </div>
-        <div class="input-hints">
-          <span class="hint-left">
-            <kbd>Enter</kbd> 发送&nbsp;&nbsp;<kbd>Shift</kbd>+<kbd>Enter</kbd> 换行
-          </span>
-          <span class="hint-right">AI 助手仅供参考</span>
         </div>
       </div>
     </div>
@@ -90,11 +84,14 @@ const route = useRoute()
 const aiStore = useAiAssistantStore()
 const caseStore = useCaseDetailStore()
 
+// AI 头像图片：必须拼接 BASE_URL（vite base 为 /pc-arbitrator-system/）
+const aiAvatar = `${import.meta.env.BASE_URL}tu/AI-write.png`
+
 const inputText = ref('')
 const inputRef = ref(null)
 
 const drawerWidth = computed(() => {
-  return window.innerWidth <= 768 ? '100%' : '700px'
+  return window.innerWidth <= 768 ? '100%' : '70%'
 })
 
 // 回车发送 / Shift+回车换行
@@ -107,7 +104,7 @@ const handleKeydown = (e) => {
 
 const handleSend = () => {
   const text = inputText.value.trim()
-  if (!text || aiStore.loading) return
+  if (!text) return
   aiStore.sendMessage(text)
   inputText.value = ''
 }
@@ -172,25 +169,23 @@ watch(
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
+  background: #fff;
+  border-bottom: 1px solid var(--el-border-color-lighter);
   flex-shrink: 0;
 
   .header-left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 
     .ai-avatar {
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #053d99, #3a6bb5);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      flex-shrink: 0;
     }
 
     .header-titles {
@@ -201,11 +196,11 @@ watch(
       .header-title {
         font-size: 14px;
         font-weight: 600;
-        color: #303133;
+        color: var(--el-text-color-regular);
       }
       .header-status {
         font-size: 12px;
-        color: #67c23a;
+        color: var(--el-text-color-secondary);
         display: flex;
         align-items: center;
         gap: 4px;
@@ -227,20 +222,22 @@ watch(
 
     .header-btn {
       font-size: 16px;
-      color: #909399;
+      color: var(--el-text-color-secondary);
       cursor: pointer;
-      transition: color 0.2s ease;
+      border-radius: 6px;
+      transition: color 0.2s ease, background-color 0.2s ease;
 
       &:hover,
       &:focus-visible {
-        color: #053d99;
+        color: #6b4fbb;
+        background-color: rgba(107, 79, 187, 0.08);
         outline: none;
       }
 
       &.header-btn-disabled {
-        opacity: 0.4;
+        opacity: 0.45;
         cursor: not-allowed;
-        &:hover { color: #909399; }
+        &:hover { color: var(--el-text-color-secondary); background-color: transparent; }
       }
     }
   }
@@ -248,7 +245,7 @@ watch(
 
 .ai-input-area {
   padding: 12px 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--el-border-color-lighter);
   flex-shrink: 0;
 
   .input-row {
@@ -269,32 +266,8 @@ watch(
       height: 36px;
       border-radius: 8px;
       padding: 0;
-      background-color: #053d99;
-      border-color: #053d99;
-    }
-  }
-
-  .input-hints {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 6px;
-    font-size: 11px;
-    color: #c0c4cc;
-
-    kbd {
-      display: inline-block;
-      padding: 1px 4px;
-      border: 1px solid #dcdfe6;
-      border-radius: 3px;
-      background-color: #f5f7fa;
-      font-size: 10px;
-      font-family: inherit;
-      color: #909399;
-    }
-
-    .hint-right {
-      font-style: italic;
+      background: linear-gradient(135deg, #6b4fbb, #9254de);
+      border-color: #6b4fbb;
     }
   }
 }

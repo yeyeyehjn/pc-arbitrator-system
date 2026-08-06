@@ -1,9 +1,9 @@
-﻿<template>
+<template>
   <div class="message-list" ref="listRef">
     <!-- 空状态 -->
     <div v-if="messages.length === 0" class="message-empty">
       <div class="empty-icon-wrap">
-        <el-icon :size="32" color="#7ba8d4"><ChatDotRound /></el-icon>
+        <el-icon :size="32" color="var(--el-text-color-placeholder)"><ChatDotRound /></el-icon>
       </div>
       <p>暂无消息，发送第一条消息开始讨论</p>
     </div>
@@ -119,7 +119,7 @@ const roleLabel = (role) => {
     width: 4px;
   }
   &::-webkit-scrollbar-thumb {
-    background: #b8d4ee;
+    background: var(--el-border-color);
     border-radius: 2px;
   }
   &::-webkit-scrollbar-track {
@@ -141,11 +141,11 @@ const roleLabel = (role) => {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #f5faff 0%, #ebf4fc 100%);
+    background: #f5f7fa;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #b8d4ee;
+    border: 1px solid var(--el-border-color-light);
   }
 
   p {
@@ -173,10 +173,10 @@ const roleLabel = (role) => {
     }
 
     .message-bubble {
-      background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
+      background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
       color: #fff;
       border-radius: 12px 4px 12px 12px;
-      box-shadow: 0 2px 8px rgba(21, 101, 192, 0.2);
+      box-shadow: 0 2px 8px rgba(5, 61, 153, 0.2);
     }
 
     .message-time {
@@ -197,18 +197,18 @@ const roleLabel = (role) => {
       .system-line {
         flex: 1;
         height: 1px;
-        background: linear-gradient(90deg, transparent, #b8d4ee, transparent);
+        background: linear-gradient(90deg, transparent, var(--el-border-color), transparent);
         min-width: 20px;
       }
 
       .system-text {
-        font-size: 11px;
+        font-size: 12px;
         color: var(--el-text-color-placeholder);
-        background: #f5faff;
+        background: #f5f7fa;
         padding: 3px 14px;
         border-radius: 12px;
         white-space: nowrap;
-        border: 1px solid #e0ecfa;
+        border: 1px solid var(--el-border-color-light);
       }
     }
   }
@@ -232,7 +232,7 @@ const roleLabel = (role) => {
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
   }
   &.avatar-arbitrator {
-    background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
+    background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
   }
   &.avatar-party {
     background: linear-gradient(135deg, #6bb07a 0%, #4a9d5e 100%);
@@ -265,10 +265,10 @@ const roleLabel = (role) => {
     color: #fff;
 
     &.avatar-secretary {
-      background-color: #909399;
+      background-color: var(--el-text-color-secondary);
     }
     &.avatar-arbitrator {
-      background-color: #1565c0;
+      background-color: #053d99;
     }
     &.avatar-party {
       background-color: #74c080;
@@ -284,7 +284,7 @@ const roleLabel = (role) => {
   font-size: 14px;
   line-height: 1.6;
   word-break: break-word;
-  border: 1px solid #e0ecfa;
+  border: 1px solid var(--el-border-color-extra-light);
   transition: box-shadow 0.2s ease;
 
   &:hover {
@@ -318,8 +318,8 @@ const roleLabel = (role) => {
   }
 
   .message-item:not(.is-mine) & .attachment-icon {
-    background: #ebf4fc;
-    color: #1565c0;
+    background: #f5f7fa;
+    color: #053d99;
   }
 
   .attachment-info {
@@ -328,7 +328,7 @@ const roleLabel = (role) => {
   }
 
   .attachment-name {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;

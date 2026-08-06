@@ -14,6 +14,7 @@
         </a>
         <el-button
           v-if="item.relevance === '高'"
+          class="legal-quote-btn"
           text
           size="small"
           type="primary"
@@ -47,9 +48,8 @@ const relevanceTag = (relevance) => {
 }
 
 .legal-card {
-  border-left: 3px solid #053d99;
-  background-color: #f0f5ff;
-  border-radius: 0 4px 4px 0;
+  background-color: #f7f5ff;
+  border-radius: 4px;
   padding: 12px;
 
   .legal-card-header {
@@ -62,14 +62,14 @@ const relevanceTag = (relevance) => {
     .legal-name {
       font-size: 14px;
       font-weight: 600;
-      color: #303133;
+      color: var(--el-text-color-regular);
     }
   }
 
   .legal-snippet {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
-    color: #606266;
+    color: var(--el-text-color-secondary);
     margin: 0 0 8px;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -84,7 +84,7 @@ const relevanceTag = (relevance) => {
 
     .legal-link {
       font-size: 12px;
-      color: #053d99;
+      color: #6b4fbb;
       text-decoration: none;
       &:hover { text-decoration: underline; }
     }

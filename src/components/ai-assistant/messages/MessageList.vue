@@ -21,28 +21,24 @@ defineEmits(['fill-editor', 'quote-law'])
 
 const listRef = ref(null)
 
+const scrollToBottom = () => {
+  nextTick(() => {
+    if (listRef.value) {
+      listRef.value.scrollTop = listRef.value.scrollHeight
+    }
+  })
+}
+
 // 新消息自动滚动到底部
 watch(
   () => props.messages.length,
-  () => {
-    nextTick(() => {
-      if (listRef.value) {
-        listRef.value.scrollTop = listRef.value.scrollHeight
-      }
-    })
-  }
+  () => scrollToBottom()
 )
 
 // pending 状态变化时也滚动
 watch(
   () => props.messages.map(m => m.pending).join(''),
-  () => {
-    nextTick(() => {
-      if (listRef.value) {
-        listRef.value.scrollTop = listRef.value.scrollHeight
-      }
-    })
-  }
+  () => scrollToBottom()
 )
 </script>
 

@@ -51,17 +51,13 @@
             <el-tag :type="row.status === '已结' ? 'success' : 'warning'" size="small">{{ row.status }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="发放日期" width="140" align="center">
+        <el-table-column label="发放日期" width="140" >
           <template #default="{ row }">
             {{ row.payDate || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="secretary" label="办案秘书" width="120" align="center" />
-        <el-table-column label="操作" width="110" align="center">
-          <template #default>
-            <el-button type="primary" link size="small" @click="handleViewDetail">查看明细</el-button>
-          </template>
-        </el-table-column>
+        <el-table-column prop="secretary" label="办案秘书" width="120" />
+        
         <template #empty>
           <ProfileEmptyState text="暂无酬金记录" />
         </template>

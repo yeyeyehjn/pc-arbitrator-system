@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="message-input">
     <div class="input-container" :class="{ 'is-focused': isFocused }">
       <button class="attach-btn" @click="triggerFileInput" aria-label="上传附件">
@@ -8,7 +8,7 @@
         ref="textareaRef"
         v-model="text"
         class="input-textarea"
-        placeholder="输入消息，回车发送..."
+        placeholder="输入消息，按 Enter 发送，Shift+Enter 换行"
         rows="1"
         @keydown.enter="handleEnter"
         @keydown.shift.enter="handleShiftEnter"
@@ -26,6 +26,9 @@
         <el-icon :size="16"><Promotion /></el-icon>
       </button>
     </div>
+    <!-- <div class="input-hints">
+      <span><kbd>Enter</kbd> 发送 <kbd>Shift</kbd>+<kbd>Enter</kbd> 换行</span>
+    </div> -->
     <input
       ref="fileInputRef"
       type="file"
@@ -110,15 +113,15 @@ const autoResize = () => {
   align-items: flex-end;
   gap: 4px;
   background: #f4f6fa;
-  border: 1px solid #cfe2f7;
+  border: 1px solid var(--el-border-color);
   border-radius: 10px;
   padding: 4px 4px 4px 6px;
   transition: all 0.25s ease;
 
   &.is-focused {
     background: #fff;
-    border-color: #1565c0;
-    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
+    border-color: #053d99;
+    box-shadow: 0 0 0 3px rgba(5, 61, 153, 0.08);
   }
 }
 
@@ -138,8 +141,8 @@ const autoResize = () => {
   transition: all 0.2s ease;
 
   &:hover {
-    background: #cfe2f7;
-    color: #1565c0;
+    background: #f5f7fa;
+    color: #053d99;
   }
 }
 
@@ -159,14 +162,14 @@ const autoResize = () => {
   color: var(--el-text-color-primary);
 
   &::placeholder {
-    color: #b8bcc4;
+    color: var(--el-text-color-placeholder);
   }
 
   &::-webkit-scrollbar {
     width: 4px;
   }
   &::-webkit-scrollbar-thumb {
-    background: #dcdfe6;
+    background: var(--el-border-color);
     border-radius: 2px;
   }
 }
@@ -183,13 +186,13 @@ const autoResize = () => {
   cursor: pointer;
   color: #fff;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #1565c0 0%, #3a8bde 100%);
-  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.25);
+  background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
+  box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
   transition: all 0.2s ease;
 
   &:hover:not(.is-disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
+    box-shadow: 0 4px 10px rgba(5, 61, 153, 0.3);
   }
 
   &:active:not(.is-disabled) {
@@ -197,9 +200,27 @@ const autoResize = () => {
   }
 
   &.is-disabled {
-    background: #c0c4cc;
+    background: var(--el-text-color-placeholder);
     box-shadow: none;
     cursor: not-allowed;
+  }
+}
+
+/* 快捷键提示 */
+.input-hints {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--el-text-color-placeholder);
+
+  kbd {
+    display: inline-block;
+    padding: 1px 4px;
+    border: 1px solid var(--el-border-color);
+    border-radius: 3px;
+    background-color: #f5f7fa;
+    font-size: 10px;
+    font-family: inherit;
+    color: var(--el-text-color-secondary);
   }
 }
 </style>

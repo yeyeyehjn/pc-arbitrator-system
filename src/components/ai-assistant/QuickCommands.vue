@@ -25,9 +25,7 @@ const commands = [
 ]
 
 const handleClick = (cmd) => {
-  if (!aiStore.loading) {
-    aiStore.runQuickCommand(cmd)
-  }
+  aiStore.runQuickCommand(cmd)
 }
 </script>
 
@@ -37,23 +35,23 @@ const handleClick = (cmd) => {
   flex-wrap: wrap;
   gap: 8px;
   padding: 8px 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--el-border-color-lighter);
   flex-shrink: 0;
 }
 
 .quick-cmd {
   padding: 4px 12px;
-  border: 1px solid #053d99;
+  border: 1px solid #6b4fbb;
   border-radius: 12px;
   background-color: #fff;
-  color: #053d99;
+  color: #6b4fbb;
   font-size: 12px;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
 
   &:hover:not(:disabled) {
-    background-color: #053d99;
+    background-color: #6b4fbb;
     color: #fff;
   }
 

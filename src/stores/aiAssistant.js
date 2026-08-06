@@ -6,7 +6,7 @@ import { useCaseDetailStore } from '@/stores/caseDetail'
 
 const STORAGE_KEY = 'ai_assistant_session'
 let msgIdCounter = 0
-const genMsgId = () => `msg-${++msgIdCounter}`
+const genMsgId = () => `msg-${Date.now()}-${++msgIdCounter}`
 
 // 欢迎语
 const WELCOME_MESSAGE = {
@@ -148,11 +148,18 @@ export const useAiAssistantStore = defineStore('aiAssistant', () => {
     }
   }
 
-  // 发送消息主流程
-  const sendMessage = async (text) => {
+  // 发送队列：Promise 链串行调度，loading 期间可继续排队发送
+  let sendChain = Promise.resolve()
+
+  // 公开入口：入队执行
+  const sendMessage = (text) => {
     const trimmed = text.trim()
     if (!trimmed) return
+    sendChain = sendChain.then(() => doSendMessage(trimmed))
+  }
 
+  // 内部执行：发送消息主流程
+  const doSendMessage = async (trimmed) => {
     // 1. 乐观插入 user msg
     const userMsg = {
       id: genMsgId(),
@@ -178,31 +185,51 @@ export const useAiAssistantStore = defineStore('aiAssistant', () => {
     messages.value.push(assistantMsg)
     loading.value = true
 
-    // 3. 路由 + 生成 Mock 响应
-    const intent = routeIntent(trimmed)
-    const response = generateMockResponse(intent, trimmed)
+    try {
+      // 3. 路由 + 生成 Mock 响应
+      const intent = routeIntent(trimmed)
+      const response = generateMockResponse(intent, trimmed)
 
-    // 4. setTimeout 模拟延迟
-    await new Promise(resolve => setTimeout(resolve, 600 + Math.random() * 400))
+      // 4. setTimeout 模拟延迟
+      await new Promise(resolve => setTimeout(resolve, 600 + Math.random() * 400))
 
-    // 5. 填充响应（通过 splice 替换强制触发响应式）
-    const targetIndex = messages.value.findIndex(m => m.id === assistantMsg.id)
-    if (targetIndex !== -1) {
-      messages.value.splice(targetIndex, 1, {
-        ...messages.value[targetIndex],
-        content: response.content,
-        cards: response.cards,
-        pending: false,
-      })
+      // 5. 填充响应（通过 splice 替换强制触发响应式）
+      const targetIndex = messages.value.findIndex(m => m.id === assistantMsg.id)
+      if (targetIndex !== -1) {
+        messages.value.splice(targetIndex, 1, {
+          ...messages.value[targetIndex],
+          content: response.content,
+          cards: response.cards,
+          pending: false,
+        })
+      }
+    } catch (e) {
+      // 兜底：即使生成/填充异常，也结束 pending 并给出提示，保证队列不卡死
+      const targetIndex = messages.value.findIndex(m => m.id === assistantMsg.id)
+      if (targetIndex !== -1) {
+        messages.value.splice(targetIndex, 1, {
+          ...messages.value[targetIndex],
+          content: '抱歉，AI 助手暂时无法回复，请稍后重试。',
+          cards: [],
+          pending: false,
+        })
+      }
+      console.error('[AiAssistant] 回复生成失败：', e)
+    } finally {
+      loading.value = false
     }
-    loading.value = false
 
     // 6. 持久化
     persistSession()
   }
 
-  // 快捷指令入口
-  const runQuickCommand = async (cmd) => {
+  // 快捷指令入口：入队执行
+  const runQuickCommand = (cmd) => {
+    sendChain = sendChain.then(() => doRunQuickCommand(cmd))
+  }
+
+  // 内部执行：快捷指令
+  const doRunQuickCommand = async (cmd) => {
     // cmd: 'guide' | 'legal' | 'draft' | 'summary'
     const cmdTextMap = {
       guide: '操作指引',
@@ -236,31 +263,45 @@ export const useAiAssistantStore = defineStore('aiAssistant', () => {
     messages.value.push(assistantMsg)
     loading.value = true
 
-    // 生成响应
-    let response
-    if (cmd === 'summary') {
-      response = generateSummaryResponse()
-    } else if (cmd === 'guide') {
-      response = generateMockResponse('guide', '操作指引')
-    } else if (cmd === 'legal') {
-      response = generateMockResponse('legal', '法条')
-    } else if (cmd === 'draft') {
-      response = generateMockResponse('draft', '草拟裁决书')
-    }
+    try {
+      // 生成响应
+      let response
+      if (cmd === 'summary') {
+        response = generateSummaryResponse()
+      } else if (cmd === 'guide') {
+        response = generateMockResponse('guide', '操作指引')
+      } else if (cmd === 'legal') {
+        response = generateMockResponse('legal', '法条')
+      } else if (cmd === 'draft') {
+        response = generateMockResponse('draft', '草拟裁决书')
+      }
 
-    await new Promise(resolve => setTimeout(resolve, 600 + Math.random() * 400))
+      await new Promise(resolve => setTimeout(resolve, 600 + Math.random() * 400))
 
-    // 通过 splice 替换强制触发响应式
-    const targetIndex = messages.value.findIndex(m => m.id === assistantMsg.id)
-    if (targetIndex !== -1) {
-      messages.value.splice(targetIndex, 1, {
-        ...messages.value[targetIndex],
-        content: response.content,
-        cards: response.cards,
-        pending: false,
-      })
+      // 通过 splice 替换强制触发响应式
+      const targetIndex = messages.value.findIndex(m => m.id === assistantMsg.id)
+      if (targetIndex !== -1) {
+        messages.value.splice(targetIndex, 1, {
+          ...messages.value[targetIndex],
+          content: response.content,
+          cards: response.cards,
+          pending: false,
+        })
+      }
+    } catch (e) {
+      const targetIndex = messages.value.findIndex(m => m.id === assistantMsg.id)
+      if (targetIndex !== -1) {
+        messages.value.splice(targetIndex, 1, {
+          ...messages.value[targetIndex],
+          content: '抱歉，AI 助手暂时无法回复，请稍后重试。',
+          cards: [],
+          pending: false,
+        })
+      }
+      console.error('[AiAssistant] 快捷指令响应失败：', e)
+    } finally {
+      loading.value = false
     }
-    loading.value = false
     persistSession()
   }
 
@@ -294,7 +335,11 @@ export const useAiAssistantStore = defineStore('aiAssistant', () => {
       if (raw) {
         const data = JSON.parse(raw)
         if (Array.isArray(data) && data.length > 0) {
-          messages.value = [{ ...WELCOME_MESSAGE, timestamp: Date.now() }, ...data]
+          // 清理残留 pending 消息（上次会话中断时未完成的回复），避免界面永远停留在"AI 思考中"
+          const cleaned = data
+            .filter(m => m && !m.pending)
+            .map(m => ({ ...m, pending: false }))
+          messages.value = [{ ...WELCOME_MESSAGE, timestamp: Date.now() }, ...cleaned]
           return
         }
       }

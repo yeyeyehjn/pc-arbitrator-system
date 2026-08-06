@@ -37,7 +37,7 @@ defineProps({
 }
 
 .case-card {
-  border: 1px solid #e4e7ed;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   padding: 12px;
 
@@ -51,31 +51,31 @@ defineProps({
     .case-no {
       font-size: 14px;
       font-weight: 600;
-      color: #303133;
+      color: var(--el-text-color-regular);
     }
   }
 
   .case-meta {
     font-size: 12px;
-    color: #909399;
+    color: var(--el-text-color-secondary);
     margin-bottom: 8px;
   }
 
   .case-focus {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
-    color: #606266;
+    color: var(--el-text-color-secondary);
     margin-bottom: 8px;
 
     .focus-label {
       font-weight: 600;
-      color: #303133;
+      color: var(--el-text-color-regular);
     }
   }
 
   .case-link {
     font-size: 12px;
-    color: #053d99;
+    color: #6b4fbb;
     text-decoration: none;
     &:hover { text-decoration: underline; }
   }

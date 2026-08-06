@@ -38,12 +38,12 @@ const handleFill = () => {
 
 <style scoped lang="scss">
 .draft-preview {
-  border: 1px solid #e4e7ed;
+  border: 1px solid var(--el-border-color-light);
   border-radius: 4px;
   overflow: hidden;
 
   .draft-header {
-    background-color: #053d99;
+    background: linear-gradient(135deg, #6b4fbb, #9254de);
     color: #fff;
     padding: 8px 12px;
     display: flex;
@@ -64,9 +64,9 @@ const handleFill = () => {
     padding: 12px;
     max-height: 240px;
     overflow-y: auto;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.8;
-    color: #303133;
+    color: var(--el-text-color-regular);
 
     :deep(h4) {
       font-size: 14px;
@@ -77,7 +77,7 @@ const handleFill = () => {
     }
     :deep(hr) {
       border: none;
-      border-top: 1px solid #e4e7ed;
+      border-top: 1px solid var(--el-border-color-light);
       margin: 8px 0;
     }
   }
@@ -87,7 +87,7 @@ const handleFill = () => {
     justify-content: flex-end;
     gap: 8px;
     padding: 8px 12px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--el-border-color-lighter);
   }
 }
 </style>

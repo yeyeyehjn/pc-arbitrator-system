@@ -18,8 +18,18 @@ defineProps({
   payload: { type: Object, required: true },
 })
 
+// 先转义 HTML 再替换 **加粗** 标记，避免注入脚本
+const escapeHtml = (s) =>
+  s.replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[c]))
+
 const renderStep = (step) => {
-  return step.replace(/\*\*(.+?)\*\*/g, '<strong class="step-highlight">$1</strong>')
+  return escapeHtml(step).replace(/\*\*(.+?)\*\*/g, '<strong class="step-highlight">$1</strong>')
 }
 </script>
 
@@ -27,7 +37,7 @@ const renderStep = (step) => {
 .guide-steps {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .guide-step {
@@ -40,7 +50,7 @@ const renderStep = (step) => {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: #053d99;
+    background-color: #6b4fbb;
     color: #fff;
     font-size: 12px;
     font-weight: 600;
@@ -51,12 +61,12 @@ const renderStep = (step) => {
   }
 
   .step-text {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
-    color: #606266;
+    color: var(--el-text-color-secondary);
 
     :deep(.step-highlight) {
-      color: #053d99;
+      color: #6b4fbb;
       font-weight: 600;
     }
   }
