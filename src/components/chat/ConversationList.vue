@@ -175,7 +175,7 @@ const avatarText = (type) => ({
 .active-indicator {
   position: absolute;
   left: 0;
-  top: 50%;
+  top: 32%;
   transform: translateY(-50%) scaleY(0);
   width: 3px;
   height: 24px;

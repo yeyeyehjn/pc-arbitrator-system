@@ -6,6 +6,12 @@
           <span class="calendar-title-text">{{ formatCalendarHeader(date) }}</span>
           <div class="header-actions">
             <el-button
+              class="calendar-nav-btn rule-btn"
+              aria-label="周期规则"
+              @click="ruleDialogVisible = true"
+            >⚙ 周期规则</el-button>
+            <span class="action-divider"></span>
+            <el-button
               class="calendar-nav-btn"
               :icon="ArrowLeft"
               aria-label="上一月"
@@ -25,9 +31,16 @@
         </div>
       </template>
       <template #date-cell="{ data }">
-        <div class="date-cell" :class="{ 'is-selected': isSelected(data.day) }">
+        <div
+          class="date-cell"
+          :class="getDateCellClass(data.day)"
+          role="button"
+          tabindex="0"
+          @click="openSettingDialog(data.day)"
+          @keydown.enter="openSettingDialog(data.day)"
+        >
           <span class="date-day">{{ data.day.split('-').slice(2).join('-') }}</span>
-          <el-badge v-if="hasEvent(data.day)" is-dot type="primary" class="event-dot" />
+          <span v-if="getDateBadge(data.day)" class="date-badge">{{ getDateBadge(data.day) }}</span>
         </div>
       </template>
     </el-calendar>
@@ -63,24 +76,68 @@
       </ul>
       <div v-else class="empty-task">暂无到期案件</div>
     </div>
+
+    <!-- 单日设置弹窗 -->
+    <DateSettingDialog
+      v-model:visible="settingDialogVisible"
+      :date="settingDialogDate"
+      @saved="handleCalendarRefresh"
+    />
+    <!-- 周期规则弹窗 -->
+    <RecurringRuleDialog v-model:visible="ruleDialogVisible" />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
+import { useCalendarStore } from '@/stores/calendar'
+import DateSettingDialog from './DateSettingDialog.vue'
+import RecurringRuleDialog from './RecurringRuleDialog.vue'
+
+const calendarStore = useCalendarStore()
 
 const currentDate = ref(new Date())
 
-// Mock data for events on calendar
-const events = ref([
-  '2026-07-16', // Today
-  '2026-07-20',
-  '2026-07-25',
-])
+// 弹窗状态
+const settingDialogVisible = ref(false)
+const settingDialogDate = ref('')
+const ruleDialogVisible = ref(false)
 
-const hasEvent = (day) => {
-  return events.value.includes(day)
+const openSettingDialog = (day) => {
+  settingDialogDate.value = day
+  settingDialogVisible.value = true
+}
+
+// 弹窗保存后回调（store 响应式驱动日历刷新，此处无需额外操作）
+const handleCalendarRefresh = () => {
+  // 预留：后续对接 API 时可在此触发数据重新拉取
+}
+
+// 今日开庭日期集合（来自现有 todayHearings mock，本期仅今日）
+const todayHearingDates = computed(() => {
+  const today = new Date().toISOString().slice(0, 10)
+  return todayHearings.value.length > 0 ? new Set([today]) : new Set()
+})
+
+// 日期格样式 class
+const getDateCellClass = (day) => {
+  // 1. 已约庭（hearing 数据，优先级最高）
+  if (todayHearingDates.value.has(day)) {
+    return 'is-hearing'
+  }
+  // 2. 调用 store 计算仲裁员自设状态
+  const status = calendarStore.getDayStatus(day)
+  return `is-${status.status}`
+}
+
+// 日期格标识文字（庭/休/半）
+const getDateBadge = (day) => {
+  if (todayHearingDates.value.has(day)) return '庭'
+  const status = calendarStore.getDayStatus(day)
+  if (status.status === 'unavailable') return '休'
+  if (status.status === 'partial') return '半'
+  return ''
 }
 
 // 将 "2026 July" 格式化为 "2026年7月"
@@ -97,10 +154,6 @@ const formatCalendarHeader = (dateStr) => {
     return `${year}年${month}月`
   }
   return dateStr
-}
-
-const isSelected = (day) => {
-  return day === new Date().toISOString().slice(0, 10)
 }
 
 const selectDate = (type) => {
@@ -141,7 +194,7 @@ const todayDueCases = ref([
 <style scoped lang="scss">
 .calendar-board {
   .el-calendar {
-    --el-calendar-cell-width: 38px; // Adjust cell width for compactness
+    --el-calendar-cell-width: 38px;
     :deep(.el-calendar__header) {
       padding: 0;
       border-bottom: none;
@@ -151,7 +204,7 @@ const todayDueCases = ref([
       padding: 10px 0;
     }
     :deep(.el-calendar__button-group) {
-      display: none; // Hide default buttons
+      display: none;
     }
     :deep(.el-calendar__title) {
       font-size: 16px;
@@ -216,6 +269,16 @@ const todayDueCases = ref([
         padding: 0 10px;
         font-size: 12px;
       }
+      .rule-btn {
+        padding: 0 10px;
+        font-size: 12px;
+      }
+      .action-divider {
+        width: 1px;
+        height: 16px;
+        background-color: var(--el-border-color);
+        margin: 0 4px;
+      }
     }
   }
 
@@ -227,21 +290,52 @@ const todayDueCases = ref([
     align-items: center;
     justify-content: center;
     position: relative;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
 
     .date-day {
       font-size: 12px;
       color: var(--el-text-color-regular);
     }
 
-    .event-dot {
+    .date-badge {
       position: absolute;
-      bottom: -8px;
-      :deep(.el-badge__content.is-dot) {
-        height: 6px;
-        width: 6px;
-        right: 0px;
-        top: 0px;
+      top: 2px;
+      right: 2px;
+      font-size: 10px;
+      line-height: 1;
+      padding: 1px 3px;
+      border-radius: 2px;
+    }
+
+    &.is-available {
+      background-color: #fff;
+    }
+    &.is-hearing {
+      background-color: #ecf5ff;
+      .date-badge {
+        color: var(--el-color-primary);
       }
+    }
+    &.is-unavailable {
+      background-color: #fef0f0;
+      .date-day {
+        color: var(--el-color-danger);
+      }
+      .date-badge {
+        color: var(--el-color-danger);
+      }
+    }
+    &.is-partial {
+      background: linear-gradient(to bottom, #fff 0%, #fff 50%, #fef0f0 50%, #fef0f0 100%);
+      .date-badge {
+        color: var(--el-color-danger);
+      }
+    }
+
+    &:hover {
+      box-shadow: inset 0 0 0 1px var(--el-color-primary);
     }
   }
 
@@ -271,7 +365,6 @@ const todayDueCases = ref([
       }
     }
 
-    // 今日开庭提醒：表格式三列
     .hearing-list {
       background-color: #F5F7FA;
       border-radius: 4px;
@@ -313,7 +406,6 @@ const todayDueCases = ref([
       }
     }
 
-    // 今日到期案件：仅案号
     .case-list {
       list-style: none;
       padding: 0;
