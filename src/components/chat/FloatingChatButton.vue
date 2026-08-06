@@ -87,10 +87,9 @@ const unreadCount = computed(() => chatStore.totalUnreadCount)
   background: linear-gradient(135deg, #f56c6c 0%, #e8494a 100%);
   color: #fff;
   font-size: 10px;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 10px;
   line-height: 1.2;
-  min-width: 18px;
   text-align: center;
   border: 2px solid #fff;
   font-weight: 600;

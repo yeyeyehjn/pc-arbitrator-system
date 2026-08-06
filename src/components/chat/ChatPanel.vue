@@ -350,7 +350,7 @@ watch(
   .conv-tabs {
     display: flex;
     gap: 6px;
-    padding: 12px 12px 0;
+    padding: 0 0 12px;
   }
 
   .conv-tab {

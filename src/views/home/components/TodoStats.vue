@@ -121,7 +121,7 @@ const goToTodoDetail = (path) => {
     justify-content: center;
     margin-right: 14px;
     flex-shrink: 0;
-    background-color: #F5F7FA;
+    background-color: var(--el-fill-color-light);
     color: var(--el-color-primary);
     position: relative;
   }
@@ -142,7 +142,7 @@ const goToTodoDetail = (path) => {
     flex-direction: column;
     .stat-title {
       font-size: 12px;
-      color: var(--el-text-color-regular);
+      color: var(--el-text-color-secondary);
       margin-bottom: 6px;
       letter-spacing: 0.3px;
     }
@@ -153,6 +153,12 @@ const goToTodoDetail = (path) => {
       color: var(--el-text-color-primary);
       font-family: 'DIN Alternate', 'Helvetica Neue', sans-serif;
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .todo-stat-card {
+    transition: none;
   }
 }
 </style>

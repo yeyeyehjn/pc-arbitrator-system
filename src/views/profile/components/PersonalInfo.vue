@@ -92,9 +92,9 @@
               >
                 <div class="address-row-head">
                   <span class="address-type">{{ addr.label }}</span>
-                  <el-tag v-if="addr.preferred" size="small" type="primary" effect="light" class="preferred-tag">首选</el-tag>
                 </div>
                 <div class="address-text">{{ addr.value || '未填写' }}</div>
+                <el-tag v-if="addr.preferred" size="small" type="primary" effect="light" class="preferred-tag">首选</el-tag>
               </div>
             </div>
           </div>
@@ -427,7 +427,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 12px;
-    width: 100%;
+    width: 96%;
 
     .el-input {
       flex: 1;
@@ -450,6 +450,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-width: 0;
 }
 
 /* 主体行 */
@@ -565,6 +566,7 @@ onBeforeUnmount(() => {
 .address-section {
   padding-top: 18px;
   border-top: 1px solid var(--el-border-color-lighter);
+  min-width: 0;
 }
 
 .address-section-label {
@@ -575,6 +577,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
 }
 
 .address-row {
@@ -617,6 +620,7 @@ onBeforeUnmount(() => {
 
 .preferred-tag {
   flex-shrink: 0;
+  align-self: center;
 }
 
 .address-text {
@@ -679,6 +683,10 @@ onBeforeUnmount(() => {
     padding-left: 0;
     border-left: none;
     width: 100%;
+  }
+
+  .personal-info .address-row {
+    width: 90%;
   }
 }
 

@@ -121,7 +121,7 @@ const close = () => {
 /* 移动端 */
 @media (max-width: 768px) {
   .chat-drawer.el-drawer:not(.is-fullscreen) {
-    width: 92% !important;
+    width: 100% !important;
   }
 }
 </style>

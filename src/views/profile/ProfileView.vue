@@ -94,6 +94,7 @@ const handleMenuSelect = (key) => {
 
 .profile-content {
   flex: 1;
+  min-width: 0; // flex 子项可收缩，防止内部长内容撑开整个布局链
   padding: 20px;
   background-color: var(--el-bg-color-page);
   overflow: auto;
@@ -101,6 +102,7 @@ const handleMenuSelect = (key) => {
   // 个人中心模块：去掉 section-card 最外层边框
   :deep(.section-card) {
     border: none !important;
+    min-width: 0; // 卡片内长内容（身份证号/邮箱等）可收缩，避免溢出
   }
 }
 

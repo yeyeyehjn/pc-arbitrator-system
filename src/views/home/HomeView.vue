@@ -20,7 +20,7 @@
               <div class="card-title">
                 <span>近期开庭</span>
               </div>
-              <el-link type="primary" :underline="false">查看全部</el-link>
+              <el-link type="primary" :underline="false" @click="router.push('/cases/list')">查看全部</el-link>
             </div>
           </template>
           <HearingList />
@@ -57,8 +57,11 @@
 
 <script setup>
 import { defineAsyncComponent } from 'vue'
+import { useRouter } from 'vue-router'
 import TodoStats from './components/TodoStats.vue'
 import HearingList from './components/HearingList.vue'
+
+const router = useRouter()
 // 右列非首屏组件懒加载，减小首屏 bundle
 const CalendarBoard = defineAsyncComponent(() => import('./components/CalendarBoard.vue'))
 const LegalSearch = defineAsyncComponent(() => import('./components/LegalSearch.vue'))
@@ -82,7 +85,11 @@ const LegalSearch = defineAsyncComponent(() => import('./components/LegalSearch.
 .dashboard-card {
   margin-bottom: 20px;
   border: none;
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  transition: box-shadow 0.25s ease;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   &:hover {
     box-shadow: 0 6px 20px rgba(5, 61, 153, 0.08);
@@ -120,8 +127,11 @@ const LegalSearch = defineAsyncComponent(() => import('./components/LegalSearch.
       letter-spacing: 0.5px;
     }
   }
-  .mb-20 {
-    margin-bottom: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-card {
+    transition: none;
   }
 }
 </style>

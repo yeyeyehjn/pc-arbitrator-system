@@ -9,7 +9,10 @@
               class="calendar-nav-btn rule-btn"
               aria-label="周期规则"
               @click="ruleDialogVisible = true"
-            >⚙ 周期规则</el-button>
+            >
+              <el-icon><Setting /></el-icon>
+              <span>周期规则</span>
+            </el-button>
             <span class="action-divider"></span>
             <el-button
               class="calendar-nav-btn"
@@ -49,12 +52,15 @@
       <h4 class="summary-title">今日开庭提醒</h4>
       <div v-if="todayHearings.length > 0" class="hearing-list">
         <div
-          v-for="(item, index) in todayHearings"
-          :key="index"
-          class="hearing-row"
-          role="button"
-          tabindex="0"
-        >
+            v-for="(item, index) in todayHearings"
+            :key="index"
+            class="hearing-row"
+            role="button"
+            tabindex="0"
+            :aria-label="`${item.caseNumber} ${item.time} ${item.room}`"
+            @click="goToCases"
+            @keydown.enter="goToCases"
+          >
           <span class="hearing-cell case-number" :title="item.caseNumber">{{ item.caseNumber }}</span>
           <span class="hearing-cell hearing-time">{{ item.time }}</span>
           <span class="hearing-cell hearing-room" :title="item.room">{{ item.room }}</span>
@@ -70,6 +76,9 @@
           class="case-item"
           role="button"
           tabindex="0"
+          :aria-label="`${caseItem.caseNumber}，点击查看案件`"
+          @click="goToCases"
+          @keydown.enter="goToCases"
         >
           <span class="case-number-text">{{ caseItem.caseNumber }}</span>
         </li>
@@ -90,12 +99,18 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+import { ArrowLeft, ArrowRight, Setting } from '@element-plus/icons-vue'
 import { useCalendarStore } from '@/stores/calendar'
 import DateSettingDialog from './DateSettingDialog.vue'
 import RecurringRuleDialog from './RecurringRuleDialog.vue'
 
+const router = useRouter()
 const calendarStore = useCalendarStore()
+
+const goToCases = () => {
+  router.push('/cases/list')
+}
 
 const currentDate = ref(new Date())
 
@@ -272,6 +287,12 @@ const todayDueCases = ref([
       .rule-btn {
         padding: 0 10px;
         font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        .el-icon {
+          font-size: 14px;
+        }
       }
       .action-divider {
         width: 1px;
@@ -445,7 +466,7 @@ const todayDueCases = ref([
 
     .empty-task {
       font-size: 12px;
-      color: var(--el-text-color-regular);
+      color: var(--el-text-color-secondary);
       padding: 8px 10px;
     }
   }

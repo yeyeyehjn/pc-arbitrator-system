@@ -104,6 +104,7 @@ const download = (row) => {
 .award-list {
   .category-bar {
     margin-bottom: 16px;
+    padding: 0;
 
     .filter-items {
       display: flex;

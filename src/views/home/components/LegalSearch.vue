@@ -129,12 +129,12 @@ const handleSearch = () => {
     line-height: 1;
     .hot-label {
       font-size: 12px;
-      color: var(--el-text-color-regular);
+      color: var(--el-text-color-secondary);
       margin-right: 2px;
     }
     .hot-tag {
       font-size: 12px;
-      color: var(--el-text-color-regular);
+      color: var(--el-text-color-secondary);
       padding: 3px 8px;
       border-radius: 3px;
       cursor: pointer;
