@@ -1,6 +1,6 @@
 <template>
   <div class="section-card auxiliary-view">
-    <h1 class="page-title">辅助功能</h1>
+    <h1 class="page-title">文书指引</h1>
     <el-tabs v-model="activeTab" class="auxiliary-tabs">
       <el-tab-pane label="审理指引" name="guideline">
         <GuidelineList />

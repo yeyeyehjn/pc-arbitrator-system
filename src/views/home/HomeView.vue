@@ -7,18 +7,18 @@
           <template #header>
             <div class="card-header">
               <div class="card-title">
-                <span>待办中心</span>
+                <span>待办中心<template v-if="todoTotal > 0">（{{ todoTotal }}）</template></span>
               </div>
             </div>
           </template>
-          <TodoStats />
+          <TodoStats @total-change="handleTodoTotalChange" />
         </el-card>
 
         <el-card shadow="hover" class="dashboard-card mb-20">
           <template #header>
             <div class="card-header">
               <div class="card-title">
-                <span>近期开庭</span>
+                <span>待开庭</span>
               </div>
               <el-link type="primary" :underline="false" @click="router.push('/cases/list')">查看全部</el-link>
             </div>
@@ -56,12 +56,17 @@
 </template>
 
 <script setup>
-import { defineAsyncComponent } from 'vue'
+import { ref, defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import TodoStats from './components/TodoStats.vue'
 import HearingList from './components/HearingList.vue'
 
 const router = useRouter()
+// 待办中心总数（由 TodoStats 通过 total-change 事件上报）
+const todoTotal = ref(0)
+const handleTodoTotalChange = (val) => {
+  todoTotal.value = val ?? 0
+}
 // 右列非首屏组件懒加载，减小首屏 bundle
 const CalendarBoard = defineAsyncComponent(() => import('./components/CalendarBoard.vue'))
 const LegalSearch = defineAsyncComponent(() => import('./components/LegalSearch.vue'))

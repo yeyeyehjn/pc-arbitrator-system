@@ -68,22 +68,55 @@
       </div>
       <div v-else class="empty-task">今日无开庭安排</div>
 
-      <h4 class="summary-title summary-title--mt">今日到期案件</h4>
-      <ul v-if="todayDueCases.length > 0" class="case-list">
+      <h4 class="summary-title summary-title--mt summary-title--with-action">
+        <span class="summary-title-text">即将延期案件</span>
+        <el-link
+          type="primary"
+          :underline="false"
+          class="more-link"
+          @click="goToExpiringCases"
+        >查看更多</el-link>
+      </h4>
+      <ul v-if="expiringSoonCases.length > 0" class="case-list">
         <li
-          v-for="(caseItem, index) in todayDueCases"
+          v-for="(caseItem, index) in expiringSoonCases"
+          :key="index"
+          class="case-item case-item--warning"
+          role="button"
+          tabindex="0"
+          :aria-label="`${caseItem.caseNo}，剩余 ${caseItem.remainDays} 天，点击查看案件`"
+          @click="goToCases"
+          @keydown.enter="goToCases"
+        >
+          <span class="case-number-text">{{ caseItem.caseNo }}</span>
+        </li>
+      </ul>
+      <div v-else class="empty-task">暂无即将延期案件</div>
+
+      <h4 class="summary-title summary-title--mt summary-title--with-action">
+        <span class="summary-title-text">已延期</span>
+        <el-link
+          type="primary"
+          :underline="false"
+          class="more-link"
+          @click="goToOverdueCases"
+        >查看更多</el-link>
+      </h4>
+      <ul v-if="overdueCases.length > 0" class="case-list">
+        <li
+          v-for="(caseItem, index) in overdueCases"
           :key="index"
           class="case-item"
           role="button"
           tabindex="0"
-          :aria-label="`${caseItem.caseNumber}，点击查看案件`"
+          :aria-label="`${caseItem.caseNo}，已延期，点击查看案件`"
           @click="goToCases"
           @keydown.enter="goToCases"
         >
-          <span class="case-number-text">{{ caseItem.caseNumber }}</span>
+          <span class="case-number-text">{{ caseItem.caseNo }}</span>
         </li>
       </ul>
-      <div v-else class="empty-task">暂无到期案件</div>
+      <div v-else class="empty-task">暂无已延期案件</div>
     </div>
 
     <!-- 单日设置弹窗 -->
@@ -102,14 +135,26 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ArrowLeft, ArrowRight, Setting } from '@element-plus/icons-vue'
 import { useCalendarStore } from '@/stores/calendar'
+import { useCaseStore } from '@/stores/case'
 import DateSettingDialog from './DateSettingDialog.vue'
 import RecurringRuleDialog from './RecurringRuleDialog.vue'
 
 const router = useRouter()
 const calendarStore = useCalendarStore()
+const caseStore = useCaseStore()
 
 const goToCases = () => {
   router.push('/cases/list')
+}
+
+// 跳转到【我的案件】页面，并筛选已延期状态
+const goToOverdueCases = () => {
+  router.push('/cases/list?status=overdue')
+}
+
+// 跳转到【我的案件】页面，并筛选即将延期状态
+const goToExpiringCases = () => {
+  router.push('/cases/list?status=expiring')
 }
 
 const currentDate = ref(new Date())
@@ -199,11 +244,19 @@ const todayHearings = ref([
   },
 ])
 
-// 今日到期案件：只显示案号
-const todayDueCases = ref([
-  { caseNumber: '（2026）沪仲案字第001号' },
-  { caseNumber: '（2026）沪仲案字第007号' },
-])
+// 即将延期案件：剩余审限天数 > 0 且 ≤ 15 且未中止（最多显示 3 条）
+const expiringSoonCases = computed(() =>
+  caseStore.activeList
+    .filter((item) => item.remainDays > 0 && item.remainDays <= 15 && !item.isSuspended)
+    .slice(0, 3)
+)
+
+// 已延期案件：剩余审限天数 < 0（最多显示 3 条）
+const overdueCases = computed(() =>
+  caseStore.activeList
+    .filter((item) => item.remainDays < 0)
+    .slice(0, 3)
+)
 </script>
 
 <style scoped lang="scss">
@@ -381,6 +434,16 @@ const todayDueCases = ref([
         border-radius: 2px;
         margin-right: 8px;
       }
+      .summary-title-text {
+        flex: 1;
+        min-width: 0;
+      }
+      .more-link {
+        font-size: 12px;
+        font-weight: 400;
+        margin-left: auto;
+        flex-shrink: 0;
+      }
       &--mt {
         margin-top: 14px;
       }
@@ -456,6 +519,10 @@ const todayDueCases = ref([
         background-color: var(--el-color-danger);
         margin-right: 8px;
         flex-shrink: 0;
+      }
+      // 即将延期案件：小黄点
+      &--warning::before {
+        background-color: var(--el-color-warning);
       }
       &:hover,
       &:focus-visible {

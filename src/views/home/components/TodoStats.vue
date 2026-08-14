@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, onMounted, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   Document,
@@ -30,55 +30,42 @@ import {
   Finished,
   MessageBox,
   Calendar,
-  Management
+  ChatDotRound
 } from '@element-plus/icons-vue'
+import { useConsultStore } from '@/stores/consult'
 
 const router = useRouter()
+const consultStore = useConsultStore()
 
-// Mock 数据：path 待接入真实路由后按业务模块区分
-const todoItems = ref([
-  {
-    title: '总待办',
-    value: 12,
-    icon: Management,
-    path: '/todos'
-  },
-  {
-    title: '待签承诺书',
-    value: 3,
-    icon: Document,
-    path: '/todos/signature'
-  },
-  {
-    title: '待签笔录',
-    value: 5,
-    icon: Edit,
-    path: '/todos/signature'
-  },
-  {
-    title: '待审批延期',
-    value: 1,
-    icon: Calendar,
-    path: '/todos/center'
-  },
-  {
-    title: '待签文书',
-    value: 2,
-    icon: Finished,
-    path: '/todos/signature',
-    urgent: true
-  },
-  {
-    title: '待草拟裁决书',
-    value: 1,
-    icon: MessageBox,
-    path: '/todos/center'
-  },
+// 专家咨询待办数：取咨询 store 中未处理条目数
+const consultPendingCount = computed(() => consultStore.pendingCount)
+
+// 待办统计模块：基于 store/常量数据动态生成
+const todoItems = computed(() => [
+  { title: '待签承诺书', value: 3, icon: Document, path: '/todos/signature' },
+  { title: '待签笔录', value: 5, icon: Edit, path: '/todos/signature' },
+  { title: '待审批延期', value: 1, icon: Calendar, path: '/todos/center' },
+  { title: '待签文书', value: 2, icon: Finished, path: '/todos/signature', urgent: true },
+  { title: '待草拟裁决书', value: 1, icon: MessageBox, path: '/todos/center' },
+  { title: '专家咨询', value: consultPendingCount.value, icon: ChatDotRound, path: '/todos/consult' },
 ])
+
+// 待办总数：所有统计模块之和
+const totalCount = computed(() =>
+  todoItems.value.reduce((sum, item) => sum + item.value, 0)
+)
+
+const emit = defineEmits(['total-change'])
+watchEffect(() => emit('total-change', totalCount.value))
 
 const goToTodoDetail = (path) => {
   router.push(path)
 }
+
+onMounted(() => {
+  // 拉取专家咨询列表，得到真实 pendingCount
+  consultStore.fetchExpertList()
+})
 </script>
 
 <style scoped lang="scss">
@@ -88,9 +75,6 @@ const goToTodoDetail = (path) => {
   gap: 14px;
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
-  }
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
   }
 }
 

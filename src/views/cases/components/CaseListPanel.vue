@@ -74,12 +74,15 @@ const applyQueryFilters = () => {
     store.filters.caseType = roleMap[role] || role
   }
 
-  // 状态筛选（在办/已延期）
+  // 状态筛选（在办/已延期/即将延期）
   if (status === 'ongoing') {
     store.currentStatus = 'active'
   } else if (status === 'overdue') {
     store.currentStatus = 'active'
     store.quickFilters.expired = true
+  } else if (status === 'expiring') {
+    store.currentStatus = 'active'
+    store.quickFilters.expiringSoon = true
   }
 
   // 结案类型筛选 —— store 字段为 closedType，值为 ruling/mediation/withdraw

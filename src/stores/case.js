@@ -13,6 +13,7 @@ const createCase = (idx, overrides = {}) => ({
   respondent: ['上海远东物流有限公司', '张伟强', '北京恒盛投资集团', '陈建国', '深圳市宏基建材有限公司'][idx % 5],
   amount: [120, 580, 3500, 8.6, 4200, 15000, 320, 7600][idx % 8], // 万元
   secretary: ['刘秘书', '陈秘书', '王秘书', '赵秘书', '周秘书'][idx % 5],
+  agent: ['张律师', '李律师', '王律师', '赵律师', '钱律师'][idx % 5],
   tribunal: ['张三', '张三、李四、王五', '李四', '王五、张三、赵六'][idx % 4],
   caseType: ['solo', 'chief', 'solo', 'side'][idx % 4], // solo独任 / chief首席 / side边裁
   groupDate: `2026-0${(idx % 6) + 1}-1${idx % 9}`,
@@ -48,38 +49,40 @@ export const useCaseStore = defineStore('case', () => {
 
   // 已结案件全量 Mock 数据
   const closedList = ref([
-    createCase(12, { caseStatus: '已结案', closedType: 'ruling', amount: 1200 }),
-    createCase(13, { caseStatus: '已结案', closedType: 'mediation', amount: 580 }),
-    createCase(14, { caseStatus: '已结案', closedType: 'withdraw', amount: 350 }),
-    createCase(15, { caseStatus: '已结案', closedType: 'ruling', amount: 8900 }),
-    createCase(16, { caseStatus: '已结案', closedType: 'mediation', amount: 230 }),
-    createCase(17, { caseStatus: '已结案', closedType: 'ruling', amount: 16000 }),
-    createCase(18, { caseStatus: '已结案', closedType: 'withdraw', amount: 760 }),
-    createCase(19, { caseStatus: '已结案', closedType: 'mediation', amount: 4200 }),
-    createCase(20, { caseStatus: '已结案', closedType: 'ruling', amount: 980 }),
-    createCase(21, { caseStatus: '已结案', closedType: 'ruling', amount: 1500 }),
-    createCase(22, { caseStatus: '已结案', closedType: 'mediation', amount: 340 }),
-    createCase(23, { caseStatus: '已结案', closedType: 'withdraw', amount: 670 }),
-    createCase(24, { caseStatus: '已结案', closedType: 'ruling', amount: 2800 }),
-    createCase(25, { caseStatus: '已结案', closedType: 'mediation', amount: 1100 }),
-    createCase(26, { caseStatus: '已结案', closedType: 'ruling', amount: 450 }),
-    createCase(27, { caseStatus: '已结案', closedType: 'withdraw', amount: 890 }),
-    createCase(28, { caseStatus: '已结案', closedType: 'ruling', amount: 5200 }),
-    createCase(29, { caseStatus: '已结案', closedType: 'mediation', amount: 330 }),
+    createCase(12, { caseStatus: '已结案', closedType: 'ruling', amount: 1200, closedDate: '2026-03-15' }),
+    createCase(13, { caseStatus: '已结案', closedType: 'mediation', amount: 580, closedDate: '2026-04-20' }),
+    createCase(14, { caseStatus: '已结案', closedType: 'withdraw', amount: 350, closedDate: '2026-02-28' }),
+    createCase(15, { caseStatus: '已结案', closedType: 'ruling', amount: 8900, closedDate: '2026-05-10' }),
+    createCase(16, { caseStatus: '已结案', closedType: 'mediation', amount: 230, closedDate: '2026-01-18' }),
+    createCase(17, { caseStatus: '已结案', closedType: 'ruling', amount: 16000, closedDate: '2026-06-05' }),
+    createCase(18, { caseStatus: '已结案', closedType: 'withdraw', amount: 760, closedDate: '2026-03-22' }),
+    createCase(19, { caseStatus: '已结案', closedType: 'mediation', amount: 4200, closedDate: '2026-04-08' }),
+    createCase(20, { caseStatus: '已结案', closedType: 'ruling', amount: 980, closedDate: '2026-05-25' }),
+    createCase(21, { caseStatus: '已结案', closedType: 'ruling', amount: 1500, closedDate: '2026-02-14' }),
+    createCase(22, { caseStatus: '已结案', closedType: 'mediation', amount: 340, closedDate: '2026-06-18' }),
+    createCase(23, { caseStatus: '已结案', closedType: 'withdraw', amount: 670, closedDate: '2026-03-30' }),
+    createCase(24, { caseStatus: '已结案', closedType: 'ruling', amount: 2800, closedDate: '2026-04-12' }),
+    createCase(25, { caseStatus: '已结案', closedType: 'mediation', amount: 1100, closedDate: '2026-05-06' }),
+    createCase(26, { caseStatus: '已结案', closedType: 'ruling', amount: 450, closedDate: '2026-01-25' }),
+    createCase(27, { caseStatus: '已结案', closedType: 'withdraw', amount: 890, closedDate: '2026-06-22' }),
+    createCase(28, { caseStatus: '已结案', closedType: 'ruling', amount: 5200, closedDate: '2026-02-08' }),
+    createCase(29, { caseStatus: '已结案', closedType: 'mediation', amount: 330, closedDate: '2026-03-05' }),
   ])
 
   // 筛选状态
   const filters = ref({
-    caseNo: '',
-    applicant: '',
-    respondent: '',
-    caseReason: '',
-    secretary: '',
-    amountMin: null,
-    amountMax: null,
-    hearingDate: null,
-    caseType: '',
-    closedType: '',
+    caseYear: '',          // 案件年份
+    caseNo: '',            // 案件编号
+    party: '',             // 当事人（申请人或被申请人）
+    agent: '',             // 代理人
+    tribunal: '',          // 仲裁庭
+    secretary: '',         // 办案秘书
+    caseReason: '',        // 案由
+    groupDateRange: [],    // 组庭时间范围 [start, end]
+    closedDateRange: [],   // 结案时间范围 [start, end]
+    amountMin: null,       // 标的最小（万元）
+    amountMax: null,       // 标的最大（万元）
+    closedType: '',        // 结案方式（ruling/mediation/withdraw）
   })
 
   const quickFilters = ref({
@@ -100,18 +103,32 @@ export const useCaseStore = defineStore('case', () => {
 
     return list.filter((item) => {
       // 常规筛选
+      if (f.caseYear) {
+        const yearMatch = item.caseNo.match(/\((\d{4})\)/)
+        const itemYear = yearMatch ? yearMatch[1] : ''
+        if (itemYear !== f.caseYear) return false
+      }
       if (f.caseNo && !item.caseNo.includes(f.caseNo.trim())) return false
-      if (f.applicant && !item.applicant.includes(f.applicant.trim())) return false
-      if (f.respondent && !item.respondent.includes(f.respondent.trim())) return false
-      if (f.caseReason && !item.caseReason.includes(f.caseReason.trim())) return false
+      if (f.party) {
+        const kw = f.party.trim()
+        if (!item.applicant.includes(kw) && !item.respondent.includes(kw)) return false
+      }
+      if (f.agent && !item.agent.includes(f.agent.trim())) return false
+      if (f.tribunal && !item.tribunal.includes(f.tribunal.trim())) return false
       if (f.secretary && !item.secretary.includes(f.secretary.trim())) return false
+      if (f.caseReason && !item.caseReason.includes(f.caseReason.trim())) return false
+      // 组庭时间范围
+      if (f.groupDateRange && f.groupDateRange.length === 2) {
+        const [start, end] = f.groupDateRange
+        if (item.groupDate < start || item.groupDate > end) return false
+      }
+      // 结案时间范围（仅已结案件）
+      if (f.closedDateRange && f.closedDateRange.length === 2) {
+        const [start, end] = f.closedDateRange
+        if (!item.closedDate || item.closedDate < start || item.closedDate > end) return false
+      }
       if (f.amountMin != null && item.amount < f.amountMin) return false
       if (f.amountMax != null && item.amount > f.amountMax) return false
-      if (f.hearingDate) {
-        const filterDate = new Date(f.hearingDate).toISOString().slice(0, 10)
-        if (item.hearingDate !== filterDate) return false
-      }
-      if (f.caseType && item.caseType !== f.caseType) return false
       if (f.closedType && currentStatus.value === 'closed' && item.closedType !== f.closedType) return false
 
       // 快捷筛选（AND 关系）
@@ -135,9 +152,11 @@ export const useCaseStore = defineStore('case', () => {
     const f = filters.value
     const qf = quickFilters.value
     return Boolean(
-      f.caseNo || f.applicant || f.respondent || f.caseReason || f.secretary ||
-      f.amountMin != null || f.amountMax != null || f.hearingDate ||
-      f.caseType || f.closedType ||
+      f.caseYear || f.caseNo || f.party || f.agent || f.tribunal ||
+      f.secretary || f.caseReason ||
+      (f.groupDateRange && f.groupDateRange.length === 2) ||
+      (f.closedDateRange && f.closedDateRange.length === 2) ||
+      f.amountMin != null || f.amountMax != null || f.closedType ||
       qf.major || qf.expiringSoon || qf.expired
     )
   })
@@ -184,8 +203,10 @@ export const useCaseStore = defineStore('case', () => {
 
   const resetFilters = () => {
     filters.value = {
-      caseNo: '', applicant: '', respondent: '', caseReason: '', secretary: '',
-      amountMin: null, amountMax: null, hearingDate: null, caseType: '', closedType: '',
+      caseYear: '', caseNo: '', party: '', agent: '', tribunal: '',
+      secretary: '', caseReason: '',
+      groupDateRange: [], closedDateRange: [],
+      amountMin: null, amountMax: null, closedType: '',
     }
     quickFilters.value = { major: false, expiringSoon: false, expired: false }
     currentPage.value = 1

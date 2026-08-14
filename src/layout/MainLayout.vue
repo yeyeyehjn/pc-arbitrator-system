@@ -15,6 +15,7 @@
         <el-menu-item index="/">首页</el-menu-item>
         <el-menu-item index="/cases">我的案件</el-menu-item>
         <el-menu-item index="/todos">待办事项</el-menu-item>
+        <el-menu-item index="/auxiliary">文书指引</el-menu-item>
         <el-menu-item index="/profile">个人中心</el-menu-item>
       </el-menu>
       <div class="header-right">
@@ -38,7 +39,6 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="auxiliary">辅助功能</el-dropdown-item>
               <el-dropdown-item command="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -97,13 +97,13 @@
         <el-icon><List /></el-icon>
         <span>待办事项</span>
       </el-menu-item>
+      <el-menu-item index="/auxiliary">
+        <el-icon><Reading /></el-icon>
+        <span>文书指引</span>
+      </el-menu-item>
       <el-menu-item index="/profile">
         <el-icon><User /></el-icon>
         <span>个人中心</span>
-      </el-menu-item>
-      <el-menu-item index="/auxiliary">
-        <el-icon><Reading /></el-icon>
-        <span>辅助功能</span>
       </el-menu-item>
       <li class="drawer-divider" role="separator" aria-hidden="true"></li>
       <el-menu-item index="logout" class="logout-item">
@@ -174,8 +174,6 @@ const handleCommand = (command) => {
   if (command === 'logout') {
     authStore.logout()
     router.push('/login')
-  } else if (command === 'auxiliary') {
-    router.push('/auxiliary')
   }
 }
 

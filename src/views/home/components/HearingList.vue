@@ -2,8 +2,8 @@
   <div class="hearing-list">
     <!-- Tab 切换 -->
     <el-tabs v-model="activeTab" class="hearing-tabs" @tab-change="handleTabChange">
-      <el-tab-pane label="待开庭" name="待开庭" />
-      <el-tab-pane label="已开庭" name="已开庭" />
+      <el-tab-pane label="今日开庭" name="today" />
+      <el-tab-pane label="待开庭" name="pending" />
     </el-tabs>
 
     <!-- 筛选项 -->
@@ -54,7 +54,7 @@
       <el-table-column prop="secretary" label="经办秘书" width="100" />
       <el-table-column prop="status" label="状态" width="90" fixed="right">
         <template #default="scope">
-          <el-tag :type="scope.row.status === '待开庭' ? 'warning' : 'success'">{{ scope.row.status }}</el-tag>
+          <el-tag :type="scope.row.isToday ? 'danger' : 'warning'">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
       <template #empty>
@@ -84,83 +84,94 @@
 import { ref, computed } from 'vue'
 import { Search, User } from '@element-plus/icons-vue'
 
-// 全量 Mock 数据
+// 今日日期 YYYY-MM-DD
+const today = new Date().toISOString().slice(0, 10)
+
+// 全量 Mock 数据（统一为"待开庭"状态，按开庭日期区分今日/待开庭）
 const allData = ref([
   {
     caseNumber: '（2026）沪仲案字第001号',
     caseReason: '买卖合同纠纷',
-    time: '2026-07-20 09:30',
+    time: `${today} 09:30`,
     location: '上海仲裁委员会1号庭室',
     roomUsage: '庭审',
     secretary: '李明',
     status: '待开庭',
+    isToday: true,
   },
   {
     caseNumber: '（2026）沪仲案字第002号',
     caseReason: '房屋租赁合同纠纷',
-    time: '2026-07-21 14:00',
+    time: `${today} 14:00`,
     location: '上海仲裁委员会2号庭室',
     roomUsage: '庭审',
     secretary: '王芳',
     status: '待开庭',
+    isToday: true,
   },
   {
     caseNumber: '（2026）沪仲案字第003号',
     caseReason: '借款合同纠纷',
-    time: '2026-07-15 10:00',
+    time: '2026-08-15 10:00',
     location: '上海仲裁委员会3号庭室',
     roomUsage: '质证',
     secretary: '李明',
-    status: '已开庭',
+    status: '待开庭',
+    isToday: false,
   },
   {
     caseNumber: '（2026）沪仲案字第004号',
     caseReason: '服务合同纠纷',
-    time: '2026-07-16 15:30',
+    time: '2026-08-16 15:30',
     location: '上海仲裁委员会4号庭室',
     roomUsage: '合议',
     secretary: '张丽',
     status: '待开庭',
+    isToday: false,
   },
   {
     caseNumber: '（2026）沪仲案字第005号',
     caseReason: '建设工程合同纠纷',
-    time: '2026-07-22 09:00',
+    time: '2026-08-18 09:00',
     location: '上海仲裁委员会1号庭室',
     roomUsage: '庭审',
     secretary: '王芳',
     status: '待开庭',
+    isToday: false,
   },
   {
     caseNumber: '（2026）沪仲案字第006号',
     caseReason: '股权转让纠纷',
-    time: '2026-07-12 14:00',
+    time: '2026-08-20 14:00',
     location: '上海仲裁委员会2号庭室',
     roomUsage: '质证',
     secretary: '张丽',
-    status: '已开庭',
+    status: '待开庭',
+    isToday: false,
   },
   {
     caseNumber: '（2026）沪仲案字第007号',
     caseReason: '保险合同纠纷',
-    time: '2026-07-23 10:30',
+    time: '2026-08-22 10:30',
     location: '上海仲裁委员会5号庭室',
     roomUsage: '庭审',
     secretary: '李明',
     status: '待开庭',
+    isToday: false,
   },
   {
     caseNumber: '（2026）沪仲案字第008号',
     caseReason: '劳动争议',
-    time: '2026-07-10 09:00',
+    time: '2026-08-25 09:00',
     location: '上海仲裁委员会3号庭室',
     roomUsage: '合议',
     secretary: '王芳',
-    status: '已开庭',
+    status: '待开庭',
+    isToday: false,
   },
 ])
 
-const activeTab = ref('待开庭')
+const activeTab = ref('today')
 const filters = ref({
   caseNumber: '',
   secretary: '',
@@ -171,9 +182,14 @@ const currentPage = ref(1)
 const pageSize = ref(5)
 
 // 按 tab + 筛选条件过滤
+// today: 今日开庭（开庭日期 = 今日）
+// pending: 待开庭（开庭日期 ≠ 今日，统一为待开庭状态）
 const filteredData = computed(() => {
   return allData.value.filter((item) => {
-    if (item.status !== activeTab.value) return false
+    // tab 区分
+    if (activeTab.value === 'today' && !item.isToday) return false
+    if (activeTab.value === 'pending' && item.isToday) return false
+    // 常规筛选
     if (filters.value.caseNumber && !item.caseNumber.includes(filters.value.caseNumber)) return false
     if (filters.value.secretary && !item.secretary.includes(filters.value.secretary)) return false
     if (filters.value.date && !item.time.startsWith(filters.value.date)) return false
@@ -220,11 +236,21 @@ const handleReset = () => {
     padding: 0;
 
     .filter-fields {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
       flex: 1;
+      min-width: 0;
+    }
+    .filter-item {
+      min-width: 0;
+      :deep(.el-input),
+      :deep(.el-select),
+      :deep(.el-date-editor) {
+        width: auto;
+        flex: 1;
+        min-width: 0;
+      }
     }
     .filter-actions {
       display: flex;
@@ -232,6 +258,17 @@ const handleReset = () => {
       align-items: center;
       padding-left: 16px;
       border-left: 1px solid var(--el-border-color-lighter);
+    }
+
+    // 移动端：筛选项改为单列堆叠
+    @media (max-width: 768px) {
+      .filter-fields {
+        grid-template-columns: 1fr;
+      }
+      .filter-actions {
+        padding-left: 0;
+        border-left: none;
+      }
     }
   }
 

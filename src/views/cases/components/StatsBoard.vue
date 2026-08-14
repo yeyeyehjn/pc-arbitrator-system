@@ -215,7 +215,7 @@ defineEmits(['switch-status'])
     display: inline-flex;
     align-items: baseline;
     gap: 4px;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1;
 
     .sub-label {
