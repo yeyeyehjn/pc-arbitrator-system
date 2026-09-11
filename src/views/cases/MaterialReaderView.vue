@@ -301,12 +301,34 @@ const parties = computed(() => caseDetailStore.parties || { applicants: [], resp
 const evidence = computed(() => caseDetailStore.evidence)
 const attachments = computed(() => caseDetailStore.attachments)
 
-// 目录分组：整合案件全部材料
+// 目录分组：整合案件全部材料（证据按附件平铺为材料项）
 const catalogGroups = computed(() => [
-  { id: 'applicant', label: '申请人证据', items: evidence.value.applicant || [] },
-  { id: 'respondent', label: '被申请人证据', items: evidence.value.respondent || [] },
+  { id: 'applicant', label: '申请人证据', items: flattenEvidence(evidence.value.applicant) },
+  { id: 'respondent', label: '被申请人证据', items: flattenEvidence(evidence.value.respondent) },
+  { id: 'tribunal', label: '仲裁庭依职权调取证据', items: flattenEvidence(evidence.value.tribunal) },
   { id: 'attachment', label: '其他附件', items: attachments.value || [] },
 ])
+
+// 将证据类型数据平铺为材料项：每个证据的每个附件作为一项，type 回填所属证据名
+const flattenEvidence = (type) => {
+  const list = type?.list || []
+  return list.flatMap((ev) =>
+    (ev.files || []).map((f) => ({
+      id: f.id,
+      name: f.name,
+      fileType: f.fileType || 'pdf',
+      type: ev.name,
+      submitDate: findCatalogDate(type?.catalog, ev) || '暂无',
+      pages: 1,
+    })),
+  )
+}
+
+// 从证据目录回填提交日期
+const findCatalogDate = (catalog, ev) => {
+  const item = (catalog || []).find((c) => c.name === ev.name)
+  return item?.submitDate
+}
 
 // 搜索关键字
 const searchKeyword = ref('')
@@ -823,7 +845,7 @@ onMounted(async () => {
         }
 
         .item-type {
-          font-size: 10px;
+          font-size: 12px;
           color: var(--el-text-color-secondary);
           flex-shrink: 0;
         }
@@ -924,7 +946,7 @@ onMounted(async () => {
         position: absolute;
         bottom: 8px;
         right: 8px;
-        font-size: 10px;
+        font-size: 12px;
         color: #ffffff;
         background-color: rgba(0, 0, 0, 0.6);
         padding: 2px 6px;
@@ -948,7 +970,7 @@ onMounted(async () => {
       .cover-meta {
         display: flex;
         justify-content: space-between;
-        font-size: 10px;
+        font-size: 12px;
         color: var(--el-text-color-secondary);
       }
     }
