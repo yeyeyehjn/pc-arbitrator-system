@@ -11,7 +11,7 @@
           @click="activeType = type.key"
         >
           <span class="item-label">{{ type.label }}</span>
-          <span v-if="evidence[type.key]?.list?.length" class="item-badge">{{ evidence[type.key].list.length }}</span>
+          <span v-if="listCount(type.key)" class="item-badge">{{ listCount(type.key) }}</span>
         </div>
       </aside>
 
@@ -45,7 +45,7 @@
               <el-button size="small" :icon="Download" @click="downloadCatalog">下载目录文件</el-button>
             </div>
           </div>
-          <el-table v-if="current.catalog?.length" :data="current.catalog" style="width: 100%">
+          <el-table v-if="current.catalog && current.catalog.length" :data="current.catalog" style="width: 100%">
             <el-table-column label="序号" width="64">
               <template #default="{ $index }">{{ $index + 1 }}</template>
             </el-table-column>
@@ -100,6 +100,12 @@ const current = computed(
 const currentLabel = computed(
   () => types.find((t) => t.key === activeType.value)?.label || '',
 )
+
+// 侧栏徽标条数：有证据条数才返回 >0
+const listCount = (key) => {
+  const typeData = evidence.value[key]
+  return (typeData && typeData.list && typeData.list.length) || 0
+}
 
 const openMaterialReader = () => {
   const caseId = route.params.id

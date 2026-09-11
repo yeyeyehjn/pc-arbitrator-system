@@ -36,7 +36,7 @@
                 <span class="challenge-label">质证理由：</span>
                 <span>{{ row.challenge.reason }}</span>
               </div>
-              <div v-if="row.challenge.opinionFiles?.length" class="challenge-line">
+              <div v-if="row.challenge && row.challenge.opinionFiles && row.challenge.opinionFiles.length" class="challenge-line">
                 <span class="challenge-label">质证意见附件：</span>
                 <span
                   v-for="f in row.challenge.opinionFiles"
@@ -56,7 +56,7 @@
 
       <el-table-column label="编号" width="64">
         <template #default="{ $index }">
-          <span class="index-no" :class="{ has-challenge: filteredList[$index]?.challenge }">{{ $index + 1 }}</span>
+          <span class="index-no" :class="{ 'has-challenge': filteredList[$index] && filteredList[$index].challenge }">{{ $index + 1 }}</span>
         </template>
       </el-table-column>
 
@@ -76,7 +76,7 @@
               <span class="chip-name">{{ f.name }}</span>
               <el-icon class="chip-download" @click.stop="downloadFile(f)"><Download /></el-icon>
             </span>
-            <span v-if="!row.files?.length" class="none-text">无</span>
+            <span v-if="!row.files || !row.files.length" class="none-text">无</span>
           </div>
         </template>
       </el-table-column>
@@ -90,10 +90,10 @@
     </el-table>
 
     <!-- 预览弹窗 -->
-    <el-dialog v-model="previewVisible" :title="currentFile?.name || '文件预览'" width="60%" top="8vh">
+    <el-dialog v-model="previewVisible" :title="(currentFile && currentFile.name) || '文件预览'" width="60%" top="8vh">
       <div class="preview-content">
-        <div v-if="currentFile?.fileType === 'image'" class="preview-placeholder">[图片预览区] {{ currentFile?.name }}</div>
-        <div v-else-if="currentFile?.fileType === 'pdf'" class="preview-placeholder">[PDF 预览区] {{ currentFile?.name }}</div>
+        <div v-if="currentFile && currentFile.fileType === 'image'" class="preview-placeholder">[图片预览区] {{ currentFile.name }}</div>
+        <div v-else-if="currentFile && currentFile.fileType === 'pdf'" class="preview-placeholder">[PDF 预览区] {{ currentFile.name }}</div>
         <div v-else class="preview-placeholder">该文件类型暂不支持在线预览</div>
       </div>
     </el-dialog>
