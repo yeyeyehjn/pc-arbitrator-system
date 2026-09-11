@@ -32,98 +32,22 @@
       <PartyCompare :applicants="parties.applicants" :respondents="parties.respondents" />
     </div>
 
-    <!-- 请求答辩 -->
+    <!-- 请求和答辩 -->
     <div class="section-card" id="section-claim">
-      <div class="section-title">请求答辩</div>
+      <div class="section-title">请求和答辩</div>
+      <ClaimBlock :data="claims" />
+    </div>
 
-      <!-- 1. 仲裁条款约定情况 -->
-      <div class="claim-section">
-        <div class="claim-title">仲裁条款约定情况</div>
-        <div class="claim-content">{{ claims.arbitrationClause?.text || '—' }}</div>
-        <div v-if="claims.arbitrationClause?.attachments?.length" class="claim-files">
-          <el-link
-            v-for="file in claims.arbitrationClause.attachments"
-            :key="file.name"
-            type="primary"
-            :underline="false"
-            :icon="Document"
-            class="file-link"
-            @click="handleFile(file.name)"
-          >{{ file.name }}</el-link>
-        </div>
-      </div>
-
-      <!-- 2. 合同签订主体及签章情况 -->
-      <div class="claim-section">
-        <div class="claim-title">合同签订主体及签章情况</div>
-        <div class="claim-content">{{ claims.contractSign?.text || '—' }}</div>
-        <div v-if="claims.contractSign?.attachments?.length" class="claim-files">
-          <el-link
-            v-for="file in claims.contractSign.attachments"
-            :key="file.name"
-            type="primary"
-            :underline="false"
-            :icon="Document"
-            class="file-link"
-            @click="handleFile(file.name)"
-          >{{ file.name }}</el-link>
-        </div>
-      </div>
-
-      <!-- 3. 事实和理由 -->
-      <div class="claim-section">
-        <div class="claim-title">事实和理由</div>
-        <div class="claim-content long-text">{{ claims.factsAndReasons?.text || '—' }}</div>
-        <div v-if="claims.factsAndReasons?.attachments?.length" class="claim-files">
-          <el-link
-            v-for="file in claims.factsAndReasons.attachments"
-            :key="file.name"
-            type="primary"
-            :underline="false"
-            :icon="Document"
-            class="file-link"
-            @click="handleFile(file.name)"
-          >{{ file.name }}</el-link>
-        </div>
-      </div>
-
-      <!-- 4. 请求列表 -->
-      <div class="claim-section">
-        <div class="claim-title">请求列表</div>
-        <div class="claim-list">
-          <div v-for="(item, idx) in claims.claimList" :key="item.id" class="claim-list-item">
-            <span class="item-index">{{ idx + 1 }}</span>
-            <span class="item-content">{{ item.content }}</span>
-          </div>
-          <div v-if="!claims.claimList?.length" class="empty-inline">暂无请求</div>
-        </div>
-      </div>
-
-      <!-- 5. 答辩意见 -->
-      <div class="claim-section">
-        <div class="claim-title">答辩意见</div>
-        <div class="defense-list">
-          <div v-for="(defense, idx) in claims.defenseList" :key="defense.id" class="defense-item">
-            <div class="defense-head">
-              <span class="defense-index">答辩 {{ idx + 1 }}</span>
-              <span class="defense-respondent">{{ defense.respondent }}</span>
-            </div>
-            <div class="defense-content">{{ defense.content }}</div>
-            <div v-if="defense.files?.length" class="claim-files">
-              <el-link
-                v-for="file in defense.files"
-                :key="file.name"
-                type="primary"
-                :underline="false"
-                :icon="Document"
-                class="file-link"
-                @click="handleFile(file.name)"
-              >{{ file.name }}</el-link>
-            </div>
-          </div>
-          <div v-if="!claims.defenseList?.length" class="empty-inline">暂无答辩</div>
-        </div>
-      </div>
+    <!-- 反请求和答辩 -->
+    <div class="section-card" id="section-counter-claim">
+      <div class="section-title">反请求和答辩</div>
+      <ClaimBlock
+        :data="counterClaims"
+        :show-clause="false"
+        fact-label="反请求事实和理由"
+        list-label="反请求列表"
+        defense-label="反请求答辩意见"
+      />
     </div>
 
     <!-- 其他附件 -->
@@ -151,11 +75,9 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { Document } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-import { useCaseDetailStore } from '@/stores/caseDetail'
 import PartyCompare from './shared/PartyCompare.vue'
 import MaterialList from './shared/MaterialList.vue'
+import ClaimBlock from './shared/ClaimBlock.vue'
 
 const props = defineProps({
   caseInfo: {
@@ -167,6 +89,10 @@ const props = defineProps({
     default: () => ({}),
   },
   claims: {
+    type: Object,
+    default: () => ({}),
+  },
+  counterClaims: {
     type: Object,
     default: () => ({}),
   },
@@ -183,15 +109,12 @@ const remainDaysClass = computed(() => {
   return 'normal'
 })
 
-const handleFile = (name) => {
-  ElMessage.success(`《${name}》预览加载中`)
-}
-
 // ============ 锚点导航 ============
 const anchors = [
   { id: 'section-base', label: '基本信息' },
   { id: 'section-party', label: '当事人' },
   { id: 'section-claim', label: '请求和答辩' },
+  { id: 'section-counter-claim', label: '反请求和答辩' },
   { id: 'section-attachment', label: '其他附件' },
 ]
 const activeAnchor = ref('section-base')
@@ -343,145 +266,6 @@ onBeforeUnmount(() => {
 
       .extension-text {
         color: var(--el-text-color-secondary);
-      }
-    }
-
-    .claim-section {
-      margin-bottom: 16px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      .claim-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--el-text-color-regular);
-        position: relative;
-        padding-left: 10px;
-        margin-bottom: 8px;
-
-        &::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 4px;
-          bottom: 4px;
-          width: 2px;
-          background-color: var(--el-color-primary);
-        }
-      }
-
-      .claim-content {
-        font-size: 14px;
-        color: var(--el-text-color-secondary);
-        line-height: 1.8;
-        white-space: pre-wrap;
-        padding-left: 12px;
-
-        &.long-text {
-          text-indent: 2em;
-        }
-      }
-
-      .claim-files {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        padding: 8px 0 0 12px;
-
-        .file-link {
-          font-size: 12px;
-        }
-      }
-
-      .claim-list {
-        padding-left: 12px;
-
-        .claim-list-item {
-          display: flex;
-          align-items: flex-start;
-          gap: 10px;
-          padding: 8px 12px;
-          margin-bottom: 8px;
-          background-color: #f5f7fa;
-          border-radius: 4px;
-
-          &:last-child {
-            margin-bottom: 0;
-          }
-
-          .item-index {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 20px;
-            height: 20px;
-            background-color: var(--el-color-primary);
-            color: #ffffff;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: 600;
-            flex-shrink: 0;
-            margin-top: 1px;
-          }
-
-          .item-content {
-            font-size: 14px;
-            color: var(--el-text-color-regular);
-            line-height: 1.6;
-            flex: 1;
-          }
-        }
-      }
-
-      .defense-list {
-        padding-left: 12px;
-
-        .defense-item {
-          padding: 12px;
-          margin-bottom: 10px;
-          background-color: #f5f7fa;
-          border-radius: 4px;
-
-          &:last-child {
-            margin-bottom: 0;
-          }
-
-          .defense-head {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-
-            .defense-index {
-              font-size: 12px;
-              font-weight: 600;
-              color: var(--el-color-primary);
-              background-color: #f2f5fa;
-              padding: 2px 8px;
-              border-radius: 3px;
-            }
-
-            .defense-respondent {
-              font-size: 12px;
-              color: var(--el-text-color-secondary);
-            }
-          }
-
-          .defense-content {
-            font-size: 14px;
-            color: var(--el-text-color-regular);
-            line-height: 1.8;
-            margin-bottom: 8px;
-          }
-        }
-      }
-
-      .empty-inline {
-        font-size: 12px;
-        color: var(--el-text-color-secondary);
-        padding: 8px 0;
       }
     }
   }
