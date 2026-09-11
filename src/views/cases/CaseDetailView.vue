@@ -15,7 +15,10 @@
           <WorkTab :case-id="store.currentCaseId" @switch-tab="handleSwitchTab" @copy-to-editor="handleCopyToEditor" />
         </el-tab-pane>
         <el-tab-pane label="案情及当事人材料" name="info">
-          <InfoTab :case-info="store.caseInfo" :parties="store.parties" :claims="store.claims" :evidence="store.evidence" :attachments="store.attachments" />
+          <InfoTab :case-info="store.caseInfo" :parties="store.parties" :claims="store.claims" :counter-claims="store.counterClaims" :attachments="store.attachments" />
+        </el-tab-pane>
+        <el-tab-pane label="证据和质证" name="evidence">
+          <EvidenceTab :case-id="store.currentCaseId" />
         </el-tab-pane>
         <el-tab-pane label="仲裁文书" name="docs">
           <DocsTab :case-id="store.currentCaseId" />
@@ -43,6 +46,7 @@ import InfoTab from './components/detail/InfoTab.vue'
 import DocsTab from './components/detail/DocsTab.vue'
 import ServiceTab from './components/detail/ServiceTab.vue'
 import DiscussionTab from './components/detail/DiscussionTab.vue'
+import EvidenceTab from './components/detail/EvidenceTab.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -71,8 +75,14 @@ const loadDetail = (caseId) => {
   }
 }
 
+// 支持 /cases/:id?tab=xxx 直接定位指定 Tab（如待办文书签名跳转仲裁文书）
+const applyTabFromQuery = (tab) => {
+  if (tab) store.switchTab(tab)
+}
+
 onMounted(() => {
   loadDetail(route.params.id)
+  applyTabFromQuery(route.query.tab)
 })
 
 watch(
@@ -81,12 +91,23 @@ watch(
     loadDetail(newId)
   }
 )
+
+watch(
+  () => route.query.tab,
+  (tab) => {
+    applyTabFromQuery(tab)
+  }
+)
 </script>
 
 <style scoped lang="scss">
 .case-detail-view {
   padding-bottom: 20px;
   min-height: 60vh;
+
+  :deep(.section-title) {
+    font-size: 16px;
+  }
 }
 
 .detail-tabs {
