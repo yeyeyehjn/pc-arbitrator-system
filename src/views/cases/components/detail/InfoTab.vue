@@ -126,25 +126,6 @@
       </div>
     </div>
 
-    <!-- 证据 -->
-    <div class="section-card" id="section-evidence">
-      <div class="section-title-row">
-        <div class="section-title">证据</div>
-        <div class="section-actions">
-          <el-button size="small" :icon="Download" @click="handleDownloadAll">一键下载</el-button>
-          <el-button size="small" type="primary" :icon="Reading" @click="openMaterialReader">材料阅览</el-button>
-        </div>
-      </div>
-      <div class="evidence-group">
-        <div class="group-label">申请人证据</div>
-        <MaterialList :materials="evidence.applicant" />
-      </div>
-      <div class="evidence-group">
-        <div class="group-label">被申请人证据</div>
-        <MaterialList :materials="evidence.respondent" />
-      </div>
-    </div>
-
     <!-- 其他附件 -->
     <div class="section-card" id="section-attachment">
       <div class="section-title">其他附件</div>
@@ -170,8 +151,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { Document, Download, Reading } from '@element-plus/icons-vue'
+import { Document } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { useCaseDetailStore } from '@/stores/caseDetail'
 import PartyCompare from './shared/PartyCompare.vue'
@@ -190,28 +170,11 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  evidence: {
-    type: Object,
-    default: () => ({}),
-  },
   attachments: {
     type: Array,
     default: () => [],
   },
 })
-
-const route = useRoute()
-const router = useRouter()
-
-const handleDownloadAll = () => {
-  ElMessage.success('一键下载已开始，文件打包中...')
-}
-
-const openMaterialReader = () => {
-  const caseId = route.params.id
-  const url = router.resolve(`/cases/${caseId}/material-reader`).href
-  window.open(url, '_blank')
-}
 
 const remainDaysClass = computed(() => {
   const days = props.caseInfo.remainDays
@@ -229,7 +192,6 @@ const anchors = [
   { id: 'section-base', label: '基本信息' },
   { id: 'section-party', label: '当事人' },
   { id: 'section-claim', label: '请求和答辩' },
-  { id: 'section-evidence', label: '证据' },
   { id: 'section-attachment', label: '其他附件' },
 ]
 const activeAnchor = ref('section-base')
@@ -520,21 +482,6 @@ onBeforeUnmount(() => {
         font-size: 12px;
         color: var(--el-text-color-secondary);
         padding: 8px 0;
-      }
-    }
-
-    .evidence-group {
-      margin-bottom: 16px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      .group-label {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--el-text-color-secondary);
-        margin-bottom: 8px;
       }
     }
   }
