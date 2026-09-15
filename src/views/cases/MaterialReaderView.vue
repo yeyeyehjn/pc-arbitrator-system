@@ -92,6 +92,38 @@
               :prefix-icon="Search"
             />
           </div>
+          <!-- 组合筛选：收纳式 -->
+          <div class="sidebar-filter">
+            <button class="filter-toggle" type="button" aria-label="组合筛选" @click="filterPanelOpen = !filterPanelOpen">
+              <span>组合筛选</span>
+              <el-icon><ArrowDown v-if="filterPanelOpen" /><ArrowRight v-else /></el-icon>
+            </button>
+            <div v-show="filterPanelOpen" class="filter-panel">
+              <div class="filter-item"><span class="filter-label">提交主体</span>
+                <el-select v-model="filters.submitter" size="small" style="width:120px">
+                  <el-option label="全部" value="all" />
+                  <el-option label="申请人" value="applicant" />
+                  <el-option label="被申请人" value="respondent" />
+                  <el-option label="庭依职权" value="tribunal" />
+                  <el-option label="其他附件" value="attachment" />
+                </el-select>
+              </div>
+              <div class="filter-item"><span class="filter-label">文件类型</span>
+                <el-select v-model="filters.fileType" size="small" style="width:120px">
+                  <el-option label="全部" value="all" />
+                  <el-option label="PDF" value="pdf" />
+                  <el-option label="图片" value="image" />
+                  <el-option label="Excel" value="excel" />
+                </el-select>
+              </div>
+              <div class="filter-item"><span class="filter-label">提交日期</span>
+                <el-date-picker v-model="filters.dateRange" type="daterange" size="small" value-format="YYYY-MM-DD" start-placeholder="开始" end-placeholder="结束" style="width:180px" />
+              </div>
+              <div class="filter-actions">
+                <el-button size="small" @click="resetFilters">重置</el-button>
+              </div>
+            </div>
+          </div>
           <div class="catalog-tree">
             <div
               v-for="group in filteredCatalogGroups"
@@ -119,9 +151,17 @@
                   :class="{ active: activeMaterial?.id === item.id }"
                   @click="selectMaterial(group, item)"
                 >
+                  <el-checkbox
+                    :model-value="selectedIds.has(item.id)"
+                    size="small"
+                    @click.stop
+                    @change="(v) => toggleSelect(item, v)"
+                    aria-label="选择材料"
+                  />
                   <el-icon><Document /></el-icon>
                   <span class="item-name" :title="item.name">{{ item.name }}</span>
-                  <span class="item-type">{{ item.fileType?.toUpperCase() }}</span>
+                  <span v-if="item.fileType" class="item-type">{{ item.fileType.toUpperCase() }}</span>
+                  <span v-if="item.readStatus === 'unread'" class="unread-tag">未读</span>
                 </div>
                 <div v-if="!group.items.length" class="empty-inline">无匹配材料</div>
               </div>
@@ -291,6 +331,10 @@ import {
   ArrowDown, User, OfficeBuilding, DArrowLeft, DArrowRight,
 } from '@element-plus/icons-vue'
 import { useCaseDetailStore } from '@/stores/caseDetail'
+import { useMaterialFilters } from './components/material-reader/useMaterialFilters'
+import { useTextSelection } from './components/material-reader/useTextSelection'
+import { useNotes } from './components/material-reader/useNotes'
+import { useQuoteList } from './components/material-reader/useQuoteList'
 
 const route = useRoute()
 const router = useRouter()
@@ -300,6 +344,15 @@ const caseInfo = computed(() => caseDetailStore.caseInfo)
 const parties = computed(() => caseDetailStore.parties || { applicants: [], respondents: [] })
 const evidence = computed(() => caseDetailStore.evidence)
 const attachments = computed(() => caseDetailStore.attachments)
+
+const { filters, resetFilters, filteredGroups: applyFilters, groupIdFromSubmitter } = useMaterialFilters()
+const { selection, onSelect, clearSelection, onKeydown } = useTextSelection()
+const { notes, annotations, addNote, removeNote, addAnnotation, toggleHighlight, removeAnnotation, notesForMaterial, annotationsForMaterial } = useNotes()
+const { quoteList, addQuote, removeQuote, copyQuote } = useQuoteList()
+
+const filterPanelOpen = ref(false)
+const notesPanelVisible = ref(false)
+const selectedIds = ref(new Set())
 
 // 目录分组：整合案件全部材料（证据按附件平铺为材料项）
 const catalogGroups = computed(() => [
@@ -348,16 +401,15 @@ const findCatalogPages = (catalog, ev) => {
 const searchKeyword = ref('')
 
 // 过滤后的目录分组
-const filteredCatalogGroups = computed(() => {
+const searchFiltered = computed(() => {
   const kw = searchKeyword.value.trim().toLowerCase()
-  if (!kw) return catalogGroups.value
-  return catalogGroups.value
-    .map((g) => ({
-      ...g,
-      items: g.items.filter((it) => (it.name || '').toLowerCase().includes(kw)),
-    }))
+  const groups = catalogGroups.value
+  if (!kw) return groups
+  return groups
+    .map((g) => ({ ...g, items: g.items.filter((it) => (it.name || '').toLowerCase().includes(kw)) }))
     .filter((g) => g.items.length > 0)
 })
+const filteredCatalogGroups = computed(() => applyFilters(searchFiltered.value))
 
 // 所有材料平铺（用于双屏对照选择）
 const allMaterials = computed(() =>
@@ -436,21 +488,24 @@ const selectGroup = (group) => {
 const selectMaterial = (group, item) => {
   activeGroup.value = group.id
   activeMaterial.value = item
+  item.readStatus = 'read'
   viewMode.value = 'preview'
   splitMode.value = false
   summaryVisible.value = false
   caseInfoVisible.value = false
-  // 打开或激活对应 tab
+  notesPanelVisible.value = false
   const exist = openTabs.value.find((t) => t.id === item.id)
   if (!exist) {
-    openTabs.value.push({
-      id: item.id,
-      name: item.name,
-      group: group.id,
-      material: item,
-    })
+    openTabs.value.push({ id: item.id, name: item.name, group: group.id, material: item })
   }
   activeTabId.value = item.id
+  clearSelection()
+}
+
+const toggleSelect = (item, v) => {
+  const s = new Set(selectedIds.value)
+  if (v) s.add(item.id); else s.delete(item.id)
+  selectedIds.value = s
 }
 
 const switchTab = (tab) => {
@@ -779,6 +834,51 @@ onMounted(async () => {
     border-bottom: 1px solid var(--el-border-color-lighter);
   }
 
+  .sidebar-filter {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--el-border-color-lighter);
+
+    .filter-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+      background: none;
+      border: none;
+      font-size: 12px;
+      color: var(--el-text-color-secondary);
+      cursor: pointer;
+    }
+
+    .filter-panel {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .filter-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .filter-label {
+          width: 56px;
+          flex-shrink: 0;
+          font-size: 14px;
+          color: var(--el-text-color-regular);
+          text-align: left;
+        }
+      }
+
+      .filter-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 4px;
+      }
+    }
+  }
+
   .catalog-tree {
     flex: 1;
     overflow-y: auto;
@@ -862,6 +962,16 @@ onMounted(async () => {
           font-size: 12px;
           color: var(--el-text-color-secondary);
           flex-shrink: 0;
+        }
+
+        .unread-tag {
+          font-size: 10px;
+          color: #fff;
+          background-color: var(--el-color-primary);
+          border-radius: 3px;
+          padding: 1px 4px;
+          flex-shrink: 0;
+          margin-left: auto;
         }
 
         &:hover {
