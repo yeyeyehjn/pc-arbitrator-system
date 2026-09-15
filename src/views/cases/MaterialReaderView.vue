@@ -306,20 +306,28 @@ const catalogGroups = computed(() => [
   { id: 'applicant', label: '申请人证据', items: flattenEvidence(evidence.value.applicant) },
   { id: 'respondent', label: '被申请人证据', items: flattenEvidence(evidence.value.respondent) },
   { id: 'tribunal', label: '仲裁庭依职权调取证据', items: flattenEvidence(evidence.value.tribunal) },
-  { id: 'attachment', label: '其他附件', items: attachments.value || [] },
+  { id: 'attachment', label: '其他附件', items: (attachments.value || []).map((a) => ({
+    id: a.id, name: a.name, fileType: a.fileType || 'pdf', type: a.type,
+    submitDate: a.submitDate || '暂无', pages: a.pages || 1,
+    textSnippet: a.name, readStatus: 'unread', linkedEvidenceId: null,
+  })) },
 ])
 
 // 将证据类型数据平铺为材料项：每个证据的每个附件作为一项，type 回填所属证据名
 const flattenEvidence = (type) => {
   const list = type?.list || []
+  const catalog = type?.catalog || []
   return list.flatMap((ev) =>
     (ev.files || []).map((f) => ({
       id: f.id,
       name: f.name,
       fileType: f.fileType || 'pdf',
       type: ev.name,
-      submitDate: findCatalogDate(type?.catalog, ev) || '暂无',
-      pages: 1,
+      submitDate: findCatalogDate(catalog, ev) || '暂无',
+      pages: findCatalogPages(catalog, ev) || 1,
+      textSnippet: ev.content || f.name,
+      readStatus: 'unread',
+      linkedEvidenceId: ev.id || null,
     })),
   )
 }
@@ -328,6 +336,12 @@ const flattenEvidence = (type) => {
 const findCatalogDate = (catalog, ev) => {
   const item = (catalog || []).find((c) => c.name === ev.name)
   return item?.submitDate
+}
+
+// 从证据目录回填页数
+const findCatalogPages = (catalog, ev) => {
+  const item = (catalog || []).find((c) => c.name === ev.name)
+  return item?.pages
 }
 
 // 搜索关键字
@@ -1359,5 +1373,15 @@ onMounted(async () => {
   .summary-panel {
     width: 100%;
   }
+}
+</style>
+
+<!-- 非 scoped：隐藏页面右下角全局悬浮按钮（聊天浮球、AI 办案助手），
+     scoped 样式无法命中 MainLayout 中渲染的兄弟组件。
+     该样式块随本组件挂载/卸载，只影响材料阅读页。 -->
+<style lang="scss">
+.floating-chat-btn,
+.ai-floating-ball {
+  display: none !important;
 }
 </style>
