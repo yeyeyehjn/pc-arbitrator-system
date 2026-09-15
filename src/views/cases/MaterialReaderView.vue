@@ -71,11 +71,14 @@
           <div class="sidebar-title-row">
             <span class="sidebar-title">材料目录</span>
             <div class="sidebar-title-actions">
-              <el-tooltip content="展开全部" placement="bottom">
-                <el-button size="small" link :icon="Expand" aria-label="展开全部" @click="expandAll" />
-              </el-tooltip>
-              <el-tooltip content="折叠全部" placement="bottom">
-                <el-button size="small" link :icon="Fold" aria-label="折叠全部" @click="collapseAll" />
+              <el-tooltip :content="isAllExpanded ? '一键收起' : '一键展开'" placement="bottom">
+                <el-button
+                  size="small"
+                  link
+                  :icon="isAllExpanded ? Fold : Expand"
+                  :aria-label="isAllExpanded ? '一键收起' : '一键展开'"
+                  @click="toggleExpandAll"
+                />
               </el-tooltip>
               <el-tooltip content="收起目录" placement="bottom">
                 <el-button size="small" link :icon="DArrowLeft" aria-label="收起目录" @click="collapseSidebar" />
@@ -92,37 +95,15 @@
               :prefix-icon="Search"
             />
           </div>
-          <!-- 组合筛选：收纳式 -->
-          <div class="sidebar-filter">
-            <button class="filter-toggle" type="button" aria-label="组合筛选" @click="filterPanelOpen = !filterPanelOpen">
-              <span>组合筛选</span>
-              <el-icon><ArrowDown v-if="filterPanelOpen" /><ArrowRight v-else /></el-icon>
-            </button>
-            <div v-show="filterPanelOpen" class="filter-panel">
-              <div class="filter-item"><span class="filter-label">提交主体</span>
-                <el-select v-model="filters.submitter" size="small" style="width:120px">
-                  <el-option label="全部" value="all" />
-                  <el-option label="申请人" value="applicant" />
-                  <el-option label="被申请人" value="respondent" />
-                  <el-option label="庭依职权" value="tribunal" />
-                  <el-option label="其他附件" value="attachment" />
-                </el-select>
-              </div>
-              <div class="filter-item"><span class="filter-label">文件类型</span>
-                <el-select v-model="filters.fileType" size="small" style="width:120px">
-                  <el-option label="全部" value="all" />
-                  <el-option label="PDF" value="pdf" />
-                  <el-option label="图片" value="image" />
-                  <el-option label="Excel" value="excel" />
-                </el-select>
-              </div>
-              <div class="filter-item"><span class="filter-label">提交日期</span>
-                <el-date-picker v-model="filters.dateRange" type="daterange" size="small" value-format="YYYY-MM-DD" start-placeholder="开始" end-placeholder="结束" style="width:180px" />
-              </div>
-              <div class="filter-actions">
-                <el-button size="small" @click="resetFilters">重置</el-button>
-              </div>
+          <!-- 批量操作栏：勾选后出现 -->
+          <div v-if="selectedIds.size > 0" class="sidebar-batch">
+            <span class="batch-count">已选 {{ selectedIds.size }} 项</span>
+            <div class="batch-actions">
+              <el-button size="small" @click="batchMarkRead">标记已读</el-button>
+              <el-button size="small" @click="batchDownload">批量下载</el-button>
+              <el-button size="small" @click="batchExportCatalog">导出目录</el-button>
             </div>
+            <el-button size="small" link aria-label="清除勾选" @click="clearSelections">清除</el-button>
           </div>
           <div class="catalog-tree">
             <div
@@ -160,8 +141,7 @@
                   />
                   <el-icon><Document /></el-icon>
                   <span class="item-name" :title="item.name">{{ item.name }}</span>
-                  <span v-if="item.fileType" class="item-type">{{ item.fileType.toUpperCase() }}</span>
-                  <span v-if="item.readStatus === 'unread'" class="unread-tag">未读</span>
+                  <span v-if="item.readStatus === 'unread'" class="unread-dot" title="未读" />
                 </div>
                 <div v-if="!group.items.length" class="empty-inline">无匹配材料</div>
               </div>
@@ -199,7 +179,6 @@
                 <span class="page-badge">{{ item.pages || 1 }} 页</span>
               </div>
               <div class="cover-info">
-                <div v-if="item.linkedEvidenceId" class="link-badge" title="关联质证对象">关联质证</div>
                 <div class="cover-name" :title="item.name">{{ item.name }}</div>
                 <div class="cover-meta">
                   <span>{{ item.type }}</span>
@@ -238,15 +217,8 @@
                 下一份<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </div>
-            <div v-if="selectedIds.size > 0" class="toolbar-batch">
-              <span class="batch-count">已选 {{ selectedIds.size }} 项</span>
-              <el-button size="small" @click="batchExport">批量导出</el-button>
-              <el-button size="small" @click="batchPrint">打印</el-button>
-              <el-button size="small" @click="batchDownload">全选下载</el-button>
-            </div>
             <div class="toolbar-center">
               <span class="current-name">{{ activeMaterial?.name }}</span>
-              <span v-if="activeMaterial?.linkedEvidenceId" class="link-badge" title="关联质证对象">关联质证</span>
             </div>
             <div class="toolbar-right">
               <el-button size="small" :icon="InfoFilled" @click="toggleCaseInfo">案件信息</el-button>
@@ -406,7 +378,6 @@ import {
   Delete, CopyDocument,
 } from '@element-plus/icons-vue'
 import { useCaseDetailStore } from '@/stores/caseDetail'
-import { useMaterialFilters } from './components/material-reader/useMaterialFilters'
 import { useTextSelection } from './components/material-reader/useTextSelection'
 import { useNotes } from './components/material-reader/useNotes'
 import { useQuoteList } from './components/material-reader/useQuoteList'
@@ -420,12 +391,10 @@ const parties = computed(() => caseDetailStore.parties || { applicants: [], resp
 const evidence = computed(() => caseDetailStore.evidence)
 const attachments = computed(() => caseDetailStore.attachments)
 
-const { filters, resetFilters, filteredGroups: applyFilters, groupIdFromSubmitter } = useMaterialFilters()
 const { selection, onSelect, clearSelection, onKeydown } = useTextSelection()
 const { notes, annotations, addNote, removeNote, addAnnotation, toggleHighlight, removeAnnotation, notesForMaterial, annotationsForMaterial } = useNotes()
 const { quoteList, addQuote, removeQuote, copyQuote } = useQuoteList()
 
-const filterPanelOpen = ref(false)
 const notesPanelVisible = ref(false)
 const selectedIds = ref(new Set())
 const previewPaneEl = ref(null)
@@ -477,16 +446,17 @@ const findCatalogPages = (catalog, ev) => {
 // 搜索关键字
 const searchKeyword = ref('')
 
-// 过滤后的目录分组
-const searchFiltered = computed(() => {
+// 过滤后的目录分组（按名称搜索）
+const filteredCatalogGroups = computed(() => {
   const kw = searchKeyword.value.trim().toLowerCase()
-  const groups = catalogGroups.value
-  if (!kw) return groups
-  return groups
-    .map((g) => ({ ...g, items: g.items.filter((it) => (it.name || '').toLowerCase().includes(kw)) }))
+  if (!kw) return catalogGroups.value
+  return catalogGroups.value
+    .map((g) => ({
+      ...g,
+      items: g.items.filter((it) => (it.name || '').toLowerCase().includes(kw)),
+    }))
     .filter((g) => g.items.length > 0)
 })
-const filteredCatalogGroups = computed(() => applyFilters(searchFiltered.value))
 
 // 所有材料平铺（用于双屏对照选择）
 const allMaterials = computed(() =>
@@ -517,6 +487,14 @@ const collapseAll = () => {
   catalogGroups.value.forEach((g) => {
     expandedGroups[g.id] = false
   })
+}
+// 一键展开/收起：当前全展开则收起，否则展开
+const isAllExpanded = computed(() =>
+  catalogGroups.value.length > 0 && catalogGroups.value.every((g) => expandedGroups[g.id]),
+)
+const toggleExpandAll = () => {
+  if (isAllExpanded.value) collapseAll()
+  else expandAll()
 }
 
 // 左侧目录整体展开/收起
@@ -705,12 +683,24 @@ const submitNote = () => {
   newNote.value = ''
 }
 
-// 批量操作
+// 批量操作（目录侧栏，勾选后出现）
 const selectedMaterials = computed(() => allMaterials.value.filter((it) => selectedIds.value.has(it.id)))
-const batchNames = () => selectedMaterials.value.map((m) => m.name).join('、')
-const batchExport = () => ElMessage.success(`已批量导出：${batchNames()}`)
-const batchPrint = () => ElMessage.success(`开始打印 ${selectedIds.value.size} 份材料`)
-const batchDownload = () => ElMessage.success(`开始下载 ${selectedIds.value.size} 份材料`)
+const clearSelections = () => {
+  selectedIds.value = new Set()
+}
+const batchMarkRead = () => {
+  selectedMaterials.value.forEach((m) => {
+    m.readStatus = 'read'
+  })
+  ElMessage.success(`已将 ${selectedIds.value.size} 份材料标记为已读`)
+}
+const batchDownload = () => {
+  ElMessage.success(`开始下载 ${selectedIds.value.size} 份材料`)
+}
+const batchExportCatalog = () => {
+  const names = selectedMaterials.value.map((m) => m.name).join('、')
+  ElMessage.success(`已导出目录（${selectedIds.value.size} 项）：${names}`)
+}
 
 const handleClose = () => {
   window.close()
@@ -950,48 +940,23 @@ onMounted(async () => {
     border-bottom: 1px solid var(--el-border-color-lighter);
   }
 
-  .sidebar-filter {
+  // 批量操作栏：勾选后出现
+  .sidebar-batch {
     padding: 8px 12px;
     border-bottom: 1px solid var(--el-border-color-lighter);
+    background-color: #f5f7fa;
 
-    .filter-toggle {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 4px 0;
-      background: none;
-      border: none;
+    .batch-count {
+      display: block;
       font-size: 12px;
       color: var(--el-text-color-secondary);
-      cursor: pointer;
+      margin-bottom: 6px;
     }
 
-    .filter-panel {
-      margin-top: 8px;
+    .batch-actions {
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-
-      .filter-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        .filter-label {
-          width: 56px;
-          flex-shrink: 0;
-          font-size: 14px;
-          color: var(--el-text-color-regular);
-          text-align: left;
-        }
-      }
-
-      .filter-actions {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 4px;
-      }
+      align-items: center;
+      gap: 4px;
     }
   }
 
@@ -1074,18 +1039,12 @@ onMounted(async () => {
           white-space: nowrap;
         }
 
-        .item-type {
-          font-size: 12px;
-          color: var(--el-text-color-secondary);
-          flex-shrink: 0;
-        }
-
-        .unread-tag {
-          font-size: 10px;
-          color: #fff;
+        // 未读小圆点
+        .unread-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
           background-color: var(--el-color-primary);
-          border-radius: 3px;
-          padding: 1px 4px;
           flex-shrink: 0;
           margin-left: auto;
         }
@@ -1628,30 +1587,6 @@ onMounted(async () => {
       }
     }
   }
-}
-
-.toolbar-batch {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 8px;
-  padding-left: 8px;
-  border-left: 1px solid var(--el-border-color-lighter);
-
-  .batch-count {
-    font-size: 12px;
-    color: var(--el-text-color-secondary);
-  }
-}
-
-.link-badge {
-  font-size: 10px;
-  color: #fff;
-  background-color: #f59e0b;
-  border-radius: 3px;
-  padding: 1px 5px;
-  margin-left: 6px;
-  display: inline-block;
 }
 
 .fade-enter-active,
