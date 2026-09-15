@@ -199,6 +199,7 @@
                 <span class="page-badge">{{ item.pages || 1 }} 页</span>
               </div>
               <div class="cover-info">
+                <div v-if="item.linkedEvidenceId" class="link-badge" title="关联质证对象">关联质证</div>
                 <div class="cover-name" :title="item.name">{{ item.name }}</div>
                 <div class="cover-meta">
                   <span>{{ item.type }}</span>
@@ -237,13 +238,21 @@
                 下一份<el-icon class="el-icon--right"><ArrowRight /></el-icon>
               </el-button>
             </div>
+            <div v-if="selectedIds.size > 0" class="toolbar-batch">
+              <span class="batch-count">已选 {{ selectedIds.size }} 项</span>
+              <el-button size="small" @click="batchExport">批量导出</el-button>
+              <el-button size="small" @click="batchPrint">打印</el-button>
+              <el-button size="small" @click="batchDownload">全选下载</el-button>
+            </div>
             <div class="toolbar-center">
               <span class="current-name">{{ activeMaterial?.name }}</span>
+              <span v-if="activeMaterial?.linkedEvidenceId" class="link-badge" title="关联质证对象">关联质证</span>
             </div>
             <div class="toolbar-right">
               <el-button size="small" :icon="InfoFilled" @click="toggleCaseInfo">案件信息</el-button>
               <el-button size="small" :icon="Monitor" @click="toggleSplit">双屏对照</el-button>
               <el-button size="small" :icon="Notebook" @click="toggleSummary">摘要</el-button>
+              <el-button size="small" :icon="Notebook" @click="toggleNotes">笔记</el-button>
               <el-button size="small" :icon="CircleCheck" @click="handleVerify">验签</el-button>
               <el-button size="small" :icon="Download" @click="handleDownload">下载</el-button>
               <el-button size="small" :icon="FullScreen" @click="toggleFullscreen">全屏</el-button>
@@ -255,11 +264,33 @@
           <div class="preview-main">
             <div class="preview-body" :class="{ 'split-mode': splitMode }">
               <!-- 主预览区 -->
-              <div class="preview-pane">
-                <div class="pdf-placeholder">
-                  <el-icon :size="64"><Document /></el-icon>
-                  <p>{{ activeMaterial?.name }}</p>
-                  <p class="placeholder-tip">[PDF 预览区] 共 {{ activeMaterial?.pages || 1 }} 页</p>
+              <div class="preview-pane" :ref="(el) => (previewPaneEl = el)">
+                <div class="text-layer" tabindex="0" @mouseup="onSelect(previewPaneEl)" @keyup="onSelect(previewPaneEl)" @keydown="onKeydown">
+                  <p data-para="p1">{{ activeMaterial?.textSnippet || activeMaterial?.name || '该材料暂无文本内容。' }}</p>
+                </div>
+
+                <!-- 浮动工具条 -->
+                <transition name="fade">
+                  <div
+                    v-if="selection.active"
+                    class="floating-toolbar"
+                    :style="{ left: selection.x + 'px', top: (selection.y - 46 < 0 ? 8 : selection.y - 46) + 'px' }"
+                  >
+                    <el-button size="small" @click="doHighlight">高亮</el-button>
+                    <el-button size="small" @click="doAnnotate">批注</el-button>
+                    <el-button size="small" @click="doQuote">引用</el-button>
+                  </div>
+                </transition>
+
+                <!-- 侧条批注锚点：本材料 pinned 批注 -->
+                <div class="annotation-rail">
+                  <div
+                    v-for="ann in annotationsForMaterial(activeMaterial?.id)"
+                    :key="ann.id"
+                    class="annotation-dot"
+                    :title="ann.text"
+                    @click="activeAnnotation = ann"
+                  />
                 </div>
               </div>
 
@@ -313,6 +344,49 @@
                 </div>
               </div>
             </transition>
+
+            <!-- 阅卷笔记抽屉 -->
+            <transition name="slide-summary">
+              <div v-if="notesPanelVisible" class="notes-panel">
+                <div class="notes-header">
+                  <span class="notes-title">阅卷笔记</span>
+                  <el-button size="small" :icon="Close" link aria-label="关闭笔记" @click="notesPanelVisible = false" />
+                </div>
+                <div class="notes-body">
+                  <section class="notes-section">
+                    <h4 class="notes-sec-title">材料笔记</h4>
+                    <div v-for="n in notesForMaterial(activeMaterial?.id)" :key="n.id" class="note-item">
+                      <span class="note-content">{{ n.content }}</span>
+                      <el-button size="small" link :icon="Delete" aria-label="删除笔记" @click="removeNote(n.id)">删除</el-button>
+                    </div>
+                    <div class="note-input">
+                      <el-input v-model="newNote" size="small" placeholder="记一条笔记..." @keyup.enter="submitNote" />
+                      <el-button size="small" type="primary" @click="submitNote">保存</el-button>
+                    </div>
+                  </section>
+                  <section class="notes-section">
+                    <h4 class="notes-sec-title">划词/批注</h4>
+                    <div v-if="!annotationsForMaterial(activeMaterial?.id).length && !activeAnnotation" class="notes-empty">暂无划词批注</div>
+                    <div v-for="a in annotationsForMaterial(activeMaterial?.id)" :key="a.id" class="ann-item">
+                      <span class="ann-text">{{ a.text }}</span>
+                      <el-button size="small" link :icon="Delete" aria-label="删除批注" @click="removeAnnotation(a.id)">删除</el-button>
+                    </div>
+                  </section>
+                  <section class="notes-section">
+                    <h4 class="notes-sec-title">引用清单</h4>
+                    <div v-if="!quoteList.length" class="notes-empty">暂无引用</div>
+                    <div v-for="q in quoteList" :key="q.id" class="quote-item">
+                      <div class="quote-meta">【{{ q.caseNo }}】{{ q.materialName }} 第{{ q.page }}页</div>
+                      <div class="quote-excerpt">{{ q.excerpt }}</div>
+                      <div class="quote-actions">
+                        <el-button size="small" link :icon="CopyDocument" aria-label="复制引用" @click="copyQuote(q)">复制</el-button>
+                        <el-button size="small" link :icon="Delete" aria-label="删除引用" @click="removeQuote(q.id)">删除</el-button>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </transition>
           </div>
         </div>
       </main>
@@ -329,6 +403,7 @@ import {
   InfoFilled, Monitor, Notebook, CircleCheck, Download,
   FullScreen, MagicStick, Close, Search, Expand, Fold,
   ArrowDown, User, OfficeBuilding, DArrowLeft, DArrowRight,
+  Delete, CopyDocument,
 } from '@element-plus/icons-vue'
 import { useCaseDetailStore } from '@/stores/caseDetail'
 import { useMaterialFilters } from './components/material-reader/useMaterialFilters'
@@ -353,6 +428,8 @@ const { quoteList, addQuote, removeQuote, copyQuote } = useQuoteList()
 const filterPanelOpen = ref(false)
 const notesPanelVisible = ref(false)
 const selectedIds = ref(new Set())
+const previewPaneEl = ref(null)
+const activeAnnotation = ref(null)
 
 // 目录分组：整合案件全部材料（证据按附件平铺为材料项）
 const catalogGroups = computed(() => [
@@ -558,7 +635,7 @@ const goNext = () => {
 // 工具栏操作
 const toggleCaseInfo = () => {
   caseInfoVisible.value = !caseInfoVisible.value
-  if (caseInfoVisible.value) summaryVisible.value = false
+  if (caseInfoVisible.value) { summaryVisible.value = false; notesPanelVisible.value = false }
 }
 
 const toggleSplit = () => {
@@ -570,7 +647,12 @@ const toggleSplit = () => {
 
 const toggleSummary = () => {
   summaryVisible.value = !summaryVisible.value
-  if (summaryVisible.value) caseInfoVisible.value = false
+  if (summaryVisible.value) { caseInfoVisible.value = false; notesPanelVisible.value = false }
+}
+
+const toggleNotes = () => {
+  notesPanelVisible.value = !notesPanelVisible.value
+  if (notesPanelVisible.value) { summaryVisible.value = false; caseInfoVisible.value = false }
 }
 
 const handleVerify = () => {
@@ -595,6 +677,40 @@ const handleOCR = () => {
     ElMessage.success('OCR 提取完成，文本已生成')
   }, 1500)
 }
+
+// 划词工具栏动作
+const doHighlight = () => {
+  toggleHighlight(activeMaterial.value.id, { startOffset: selection.startOffset, endOffset: selection.endOffset, text: selection.text })
+  clearSelection()
+  notesPanelVisible.value = true
+  ElMessage.success('已高亮')
+}
+const doAnnotate = () => {
+  addAnnotation({ materialId: activeMaterial.value.id, page: 1, startOffset: selection.startOffset, endOffset: selection.endOffset, text: selection.text, highlight: false, comment: '', pinned: true })
+  clearSelection()
+  notesPanelVisible.value = true
+}
+const doQuote = () => {
+  addQuote({ materialId: activeMaterial.value.id, materialName: activeMaterial.value.name, caseNo: caseInfo.value.caseNo, page: 1, excerpt: selection.text })
+  clearSelection()
+  notesPanelVisible.value = true
+  ElMessage.success('已收录引用')
+}
+
+// 笔记抽屉
+const newNote = ref('')
+const submitNote = () => {
+  if (!activeMaterial.value?.id) return
+  addNote(activeMaterial.value.id, 1, newNote.value)
+  newNote.value = ''
+}
+
+// 批量操作
+const selectedMaterials = computed(() => allMaterials.value.filter((it) => selectedIds.value.has(it.id)))
+const batchNames = () => selectedMaterials.value.map((m) => m.name).join('、')
+const batchExport = () => ElMessage.success(`已批量导出：${batchNames()}`)
+const batchPrint = () => ElMessage.success(`开始打印 ${selectedIds.value.size} 份材料`)
+const batchDownload = () => ElMessage.success(`开始下载 ${selectedIds.value.size} 份材料`)
 
 const handleClose = () => {
   window.close()
@@ -1273,6 +1389,7 @@ onMounted(async () => {
     flex-direction: column;
     background-color: #ffffff;
     overflow: hidden;
+    position: relative;
 
     &.split-second {
       .split-selector {
@@ -1375,6 +1492,175 @@ onMounted(async () => {
 .slide-summary-enter-from,
 .slide-summary-leave-to {
   transform: translateX(100%);
+}
+
+// ============ 文本层 / 划词 / 笔记 ============
+.text-layer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px;
+  font-size: 14px;
+  line-height: 2;
+  color: var(--el-text-color-regular);
+  cursor: text;
+
+  p {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+}
+
+.floating-toolbar {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 4px;
+  padding: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.annotation-rail {
+  position: absolute;
+  right: 4px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+
+  .annotation-dot {
+    width: 8px;
+    height: 8px;
+    margin: 8px 0;
+    border-radius: 50%;
+    background-color: #f59e0b;
+    cursor: pointer;
+  }
+}
+
+.notes-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  background: #fff;
+  border-left: 1px solid var(--el-border-color-light);
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+
+  .notes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--el-border-color-lighter);
+
+    .notes-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--el-text-color-regular);
+    }
+  }
+
+  .notes-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .notes-section {
+      .notes-sec-title {
+        font-size: 12px;
+        color: var(--el-text-color-secondary);
+        margin: 0 0 8px;
+      }
+
+      .notes-empty {
+        font-size: 12px;
+        color: var(--el-text-color-placeholder);
+        padding: 8px 0;
+      }
+
+      .note-item,
+      .ann-item {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--el-border-color-lighter);
+        font-size: 12px;
+        color: var(--el-text-color-regular);
+      }
+
+      .quote-item {
+        padding: 8px 0;
+        border-bottom: 1px solid var(--el-border-color-lighter);
+
+        .quote-meta {
+          font-size: 12px;
+          color: var(--el-text-color-secondary);
+        }
+
+        .quote-excerpt {
+          font-size: 12px;
+          color: var(--el-text-color-regular);
+          margin: 4px 0;
+        }
+
+        .quote-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 4px;
+        }
+      }
+
+      .note-input {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+      }
+    }
+  }
+}
+
+.toolbar-batch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid var(--el-border-color-lighter);
+
+  .batch-count {
+    font-size: 12px;
+    color: var(--el-text-color-secondary);
+  }
+}
+
+.link-badge {
+  font-size: 10px;
+  color: #fff;
+  background-color: #f59e0b;
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-left: 6px;
+  display: inline-block;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 // ============ 移动端适配（≤768px） ============
@@ -1480,7 +1766,8 @@ onMounted(async () => {
   }
 
   // 摘要/案件信息侧栏：全宽覆盖
-  .summary-panel {
+  .summary-panel,
+  .notes-panel {
     width: 100%;
   }
 }
