@@ -1770,6 +1770,11 @@ onMounted(async () => {
   .notes-panel {
     width: 100%;
   }
+
+  // 浮动工具条：相对视口定位，避免溢出预览容器
+  .floating-toolbar {
+    position: fixed;
+  }
 }
 </style>
 
