@@ -93,6 +93,9 @@ const handleMenuSelect = (key) => {
 @media (max-width: 768px) {
   .cases-view {
     flex-direction: column;
+    // 桌面端 -20px 负边距为抵消 main 的 20px 内边距；移动端 main 内边距仅 12px，
+    // 保留负边距会撑出容器产生横向滚动条，需归零
+    margin: 0;
   }
 
   .todos-sidebar {

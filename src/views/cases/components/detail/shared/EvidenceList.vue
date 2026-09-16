@@ -33,6 +33,23 @@
               <div class="content-label">证据内容</div>
               <div class="content-text">{{ row.content || '暂无证据内容' }}</div>
             </div>
+            <!-- 附件：桌面在附件列展示，移动端隐藏附件列后在此展示 -->
+            <div v-if="row.files && row.files.length" class="expand-attachments">
+              <div class="content-label">证据附件</div>
+              <div class="attach-wrap">
+                <span
+                  v-for="f in row.files"
+                  :key="f.id"
+                  class="attach-chip"
+                  :title="f.name"
+                  @click="previewFile(f)"
+                >
+                  <el-icon><Document /></el-icon>
+                  <span class="chip-name">{{ f.name }}</span>
+                  <el-icon class="chip-download" @click.stop="downloadFile(f)"><Download /></el-icon>
+                </span>
+              </div>
+            </div>
             <div v-if="row.challenge" class="challenge-card">
               <div class="challenge-head">
                 <span class="challenge-tag">质证</span>
@@ -75,9 +92,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="证据名称" min-width="160" show-overflow-tooltip />
+      <el-table-column prop="name" label="证据名称" :min-width="isMobile ? 76 : 120" show-overflow-tooltip />
 
-      <el-table-column label="证据附件" min-width="240">
+      <!-- 附件列：移动端不渲染（附件信息在展开行查看），避免隐藏列残留宽度撑爆表格 -->
+      <el-table-column v-if="!isMobile" label="证据附件" min-width="240" class-name="attach-col">
         <template #default="{ row }">
           <div class="attach-wrap">
             <span
@@ -116,7 +134,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Document, Download, ArrowDownBold, ArrowUpBold } from '@element-plus/icons-vue'
 import CaseEmptyState from '../../shared/CaseEmptyState.vue'
@@ -127,6 +145,19 @@ const props = defineProps({
     default: () => [],
   },
 })
+
+// 移动端断点：附件列不渲染，名称列收窄
+const isMobile = ref(false)
+let mq = null
+if (typeof window !== 'undefined' && window.matchMedia) {
+  mq = window.matchMedia('(max-width: 768px)')
+  isMobile.value = mq.matches
+  const onChange = (e) => {
+    isMobile.value = e.matches
+  }
+  mq.addEventListener('change', onChange)
+  onBeforeUnmount(() => mq.removeEventListener('change', onChange))
+}
 
 const filter = ref('all')
 const filters = [
@@ -186,6 +217,9 @@ const downloadFile = (file) => {
 
 <style scoped lang="scss">
 .evidence-list {
+  // 展开行高度突变时禁用浏览器滚动锚定，避免页面滚动位置自动跳变造成抖动
+  overflow-anchor: none;
+
   .list-toolbar {
     display: flex;
     align-items: center;
@@ -305,9 +339,21 @@ const downloadFile = (file) => {
       }
     }
 
+    // 附件块：桌面附件在附件列展示，此处隐藏
+    .expand-attachments {
+      display: none;
+
+      .content-label {
+        font-size: 12px;
+        color: var(--el-text-color-secondary);
+        margin-bottom: 6px;
+      }
+    }
+
     .challenge-card {
       border-top: 1px dashed #f5d9a0;
       padding-top: 8px;
+      margin-top: 8px;
 
       .challenge-head {
         display: flex;
@@ -350,7 +396,6 @@ const downloadFile = (file) => {
       .challenge-line {
         display: flex;
         align-items: baseline;
-        gap: 4px;
         font-size: 12px;
         color: var(--el-text-color-regular);
         line-height: 1.6;
@@ -427,10 +472,27 @@ const downloadFile = (file) => {
     // 展开行缩进收窄，适配小屏
     .expand-body {
       margin-left: 12px;
+
+      // 附件列已隐藏，展开行内展示附件
+      .expand-attachments {
+        display: block;
+      }
     }
+
+    // 移动端：附件列已由 v-if 移除，编号/名称/质证三列一屏内全部可见
+    overflow-x: auto;
 
     :deep(.el-table) {
       width: 100%;
+    }
+
+    // 附件 chips 收紧，降低窄列内垂直堆叠的行高
+    .attach-chip {
+      padding: 1px 6px;
+
+      .chip-name {
+        max-width: 120px;
+      }
     }
   }
 }

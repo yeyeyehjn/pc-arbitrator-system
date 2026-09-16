@@ -10,7 +10,7 @@
       <DetailHeader :case-info="store.caseInfo" @back="goBack" />
 
       <!-- Tab 导航 -->
-      <el-tabs v-model="store.activeTab" class="detail-tabs" @tab-change="handleTabChange">
+      <el-tabs v-model="store.activeTab" class="detail-tabs" overflow="auto" @tab-change="handleTabChange">
         <el-tab-pane label="办案" name="work">
           <WorkTab :case-id="store.currentCaseId" @switch-tab="handleSwitchTab" @copy-to-editor="handleCopyToEditor" />
         </el-tab-pane>
@@ -132,6 +132,28 @@ watch(
   :deep(.el-tabs__item.is-active) {
     color: var(--el-color-primary);
     font-weight: 600;
+  }
+}
+
+// ============ 移动端（≤768px）：Tab 导航支持触摸横滑，标签不被截断 ============
+@media (max-width: 768px) {
+  .detail-tabs {
+    padding: 0 12px 16px;
+
+    :deep(.el-tabs__item) {
+      height: 44px;
+      line-height: 44px;
+    }
+
+    :deep(.el-tabs__nav-wrap) {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    // 隐藏 EP 溢出箭头，统一用触摸滑动
+    :deep(.el-tabs__nav-prev),
+    :deep(.el-tabs__nav-next) {
+      display: none;
+    }
   }
 }
 </style>

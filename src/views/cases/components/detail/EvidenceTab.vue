@@ -22,10 +22,10 @@
           <el-button size="small" :icon="Reading" @click="openMaterialReader">材料阅览</el-button>
         </div>
 
-        <!-- 质证通知 -->
-        <div class="section-card">
+        <!-- 质证通知：无数据时隐藏整个模块 -->
+        <div v-if="current.notice" class="section-card">
           <div class="section-title">质证通知</div>
-          <div v-if="current.notice" class="notice-file">
+          <div class="notice-file">
             <span class="file-chip"><el-icon><Document /></el-icon></span>
             <span class="file-name">{{ current.notice.name }}</span>
             <span class="file-divider" />
@@ -34,18 +34,17 @@
             <span class="file-meta">上传人：{{ current.notice.uploader }}</span>
             <el-button class="file-action" link size="small" :icon="Download" @click="downloadFile(current.notice)">下载</el-button>
           </div>
-          <div v-else class="empty-tip">暂无质证通知</div>
         </div>
 
-        <!-- 证据目录 -->
-        <div class="section-card">
+        <!-- 证据目录：无数据时隐藏整个模块 -->
+        <div v-if="current.catalog && current.catalog.length" class="section-card">
           <div class="section-title-row">
             <span class="section-title">证据目录</span>
             <div class="section-actions">
               <el-button size="small" :icon="Download" @click="downloadCatalog">下载目录文件</el-button>
             </div>
           </div>
-          <el-table v-if="current.catalog && current.catalog.length" :data="current.catalog" style="width: 100%">
+          <el-table :data="current.catalog" style="width: 100%">
             <el-table-column label="序号" width="64">
               <template #default="{ $index }">{{ $index + 1 }}</template>
             </el-table-column>
@@ -54,11 +53,10 @@
             <el-table-column prop="pages" label="页数" width="80" align="center" />
             <el-table-column prop="submitDate" label="提交日期" width="120" />
           </el-table>
-          <div v-else class="empty-tip">暂无证据目录</div>
         </div>
 
-        <!-- 证据清单 -->
-        <div class="section-card">
+        <!-- 证据清单：无数据时隐藏整个模块 -->
+        <div v-if="current.list && current.list.length" class="section-card">
           <div class="section-title">证据清单</div>
           <EvidenceList :list="current.list || []" />
         </div>
@@ -283,13 +281,6 @@ const downloadCatalog = () => {
       }
     }
   }
-
-  .empty-tip {
-    text-align: center;
-    font-size: 14px;
-    color: var(--el-text-color-secondary);
-    padding: 24px 0;
-  }
 }
 
 // ============ 移动端（≤768px）：侧栏折叠为顶部横向分类 ============
@@ -303,9 +294,11 @@ const downloadCatalog = () => {
     .evidence-sidebar {
       width: 100%;
       flex-direction: row;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       border: none;
-      padding: 0;
+      padding: 0 0 2px;
       gap: 8px;
 
       .sidebar-item {
@@ -314,6 +307,7 @@ const downloadCatalog = () => {
         border-radius: 999px;
         flex: 0 0 auto;
         font-size: 12px;
+        white-space: nowrap;
 
         &.active::before {
           display: none;
@@ -339,9 +333,33 @@ const downloadCatalog = () => {
         }
       }
 
-      // 表格在小屏下保持容器内横向滚动，不撑破卡片
+      // 表格在窄屏下启用横向滚动，列保持模板宽度，不压缩列、不撑破卡片
       :deep(.el-table) {
         width: 100%;
+        min-width: 0;
+      }
+
+      :deep(.el-table__inner-wrapper) {
+        min-width: max-content;
+      }
+
+      :deep(.el-table__body-wrapper) {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #c8ccd8 transparent;
+
+        &::-webkit-scrollbar {
+          height: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: #c8ccd8;
+          border-radius: 2px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
       }
     }
   }
