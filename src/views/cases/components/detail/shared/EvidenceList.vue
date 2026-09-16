@@ -283,9 +283,9 @@ const downloadFile = (file) => {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background-color: #f2f5fa;
-    border: 1px solid #d8ddf0;
-    border-radius: 4px;
+    // background-color: #f2f5fa;
+    // border: 1px solid #d8ddf0;
+    // border-radius: 4px;
     padding: 2px 8px;
     color: var(--el-color-primary);
     font-size: 12px;

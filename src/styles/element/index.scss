@@ -393,7 +393,7 @@ body.el-popup-parent--hidden .main-content-wrapper {
  */
 @media (max-width: 768px) {
   .el-drawer:not(.is-fullscreen) {
-    // width: 90% !important;
+    width: 100% !important;
   }
   .el-dialog:not(.is-fullscreen) {
     width: 92% !important;

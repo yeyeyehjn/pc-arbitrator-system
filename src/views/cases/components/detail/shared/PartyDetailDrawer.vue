@@ -182,4 +182,41 @@ const partyBadgeText = computed(() => {
 :global(.party-detail-drawer .el-drawer__title) {
   color: var(--el-text-color-regular);
 }
+
+// 移动端优化：标题单行省略、正文留白、描述列表单元格舒适排布
+@media (max-width: 768px) {
+  :global(.party-detail-drawer .el-drawer__title) {
+    max-width: calc(100% - 32px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.party-detail-drawer .el-drawer__body) {
+    padding: 12px 16px 24px;
+  }
+
+  :global(.party-detail-drawer .el-descriptions.is-bordered .el-descriptions__cell) {
+    padding: 10px 12px;
+  }
+
+  :global(.party-detail-drawer .el-descriptions__label.is-bordered-label) {
+    width: 96px;
+    flex-shrink: 0;
+  }
+
+  :global(.party-detail-drawer .el-descriptions__content.is-bordered-content) {
+    text-align: left;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .type-badge {
+    margin-bottom: 12px;
+  }
+
+  .doc-section {
+    margin-top: 20px;
+  }
+}
 </style>

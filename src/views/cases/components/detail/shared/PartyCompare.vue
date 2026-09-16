@@ -274,5 +274,27 @@ const openDetail = (data) => {
       }
     }
   }
+
+  // 移动端：双栏改单列纵向堆叠，全宽卡片 + 更优触控区
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+
+    .party-column {
+      width: 100%;
+    }
+
+    .party-card {
+      .party-head {
+        margin-bottom: 4px;
+      }
+
+      .party-body {
+        .agent-item {
+          padding: 12px 10px;
+        }
+      }
+    }
+  }
 }
 </style>

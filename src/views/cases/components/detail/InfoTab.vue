@@ -1,30 +1,7 @@
 <template>
   <div class="info-tab-wrapper">
     <div class="info-tab" ref="contentRef">
-    <!-- 基本信息 -->
-    <div class="section-card" id="section-base">
-      <div class="section-title">基本信息</div>
-      <el-descriptions :column="3" border>
-        <el-descriptions-item label="案号">{{ caseInfo.caseNo }}</el-descriptions-item>
-        <el-descriptions-item label="案由">{{ caseInfo.caseReason }}</el-descriptions-item>
-        <el-descriptions-item label="案件状态">{{ caseInfo.caseStatus }}</el-descriptions-item>
-        <el-descriptions-item label="立案日期">{{ caseInfo.filingDate }}</el-descriptions-item>
-        <el-descriptions-item label="办案秘书">{{ caseInfo.secretary }}</el-descriptions-item>
-        <el-descriptions-item label="秘书电话">{{ caseInfo.secretaryPhone || '—' }}</el-descriptions-item>
-        <el-descriptions-item label="秘书邮箱">{{ caseInfo.secretaryEmail || '—' }}</el-descriptions-item>
-        <el-descriptions-item label="仲裁庭">{{ caseInfo.tribunal }}</el-descriptions-item>
-        <el-descriptions-item label="组庭日期">{{ caseInfo.groupDate }}</el-descriptions-item>
-        <el-descriptions-item label="开庭日期">{{ caseInfo.hearingDate }}</el-descriptions-item>
-        <el-descriptions-item label="案件审限">
-          <span class="deadline-text">
-            {{ caseInfo.deadline }}
-            <span :class="remainDaysClass">（剩余 {{ caseInfo.remainDays }} 天）</span>
-            <el-tag v-if="caseInfo.isSuspended" size="small" type="info" class="suspend-tag">已中止</el-tag>
-            <span v-if="caseInfo.extensionCount > 0" class="extension-text">（延期 {{ caseInfo.extensionCount }} 次）</span>
-          </span>
-        </el-descriptions-item>
-      </el-descriptions>
-    </div>
+    
 
     <!-- 当事人 -->
     <div class="section-card">
