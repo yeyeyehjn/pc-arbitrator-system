@@ -4,6 +4,12 @@
     <div class="filter-bar">
       <div class="filter-items" :class="{ collapsed: isCollapsed }">
         <div class="filter-item">
+          <span class="filter-label">案件年份</span>
+          <el-select v-model="filters.caseYear" placeholder="全部" clearable>
+            <el-option v-for="y in yearOptions" :key="y" :label="y" :value="y" />
+          </el-select>
+        </div>
+        <div class="filter-item">
           <span class="filter-label">案件编号</span>
           <el-input v-model="filters.caseNo" placeholder="案件编号" clearable :prefix-icon="Search" />
         </div>
@@ -15,6 +21,13 @@
           <span class="filter-label">经办秘书</span>
           <el-select v-model="filters.secretary" placeholder="经办秘书" clearable>
             <el-option v-for="s in secretaryOptions" :key="s" :label="s" :value="s" />
+          </el-select>
+        </div>
+        <div class="filter-item">
+          <span class="filter-label">状态</span>
+          <el-select v-model="filters.status" placeholder="状态" clearable>
+            <el-option label="待审批" value="待审批" />
+            <el-option label="已审批" value="已审批" />
           </el-select>
         </div>
         <div class="flex-grow"></div>
@@ -34,16 +47,18 @@
     <div class="table-section">
       <div class="table-title">
         <span>案件列表&nbsp;&nbsp;<span class="title-count">共 {{ filteredData.length }} 条</span></span>
-        <el-button type="primary" plain :disabled="filteredData.length === 0" @click="handleBatchApprove">
-          <el-icon><Check /></el-icon>
-          一键同意
-        </el-button>
+        <div class="title-actions">
+          <el-button type="primary" plain :disabled="pendingData.length === 0" @click="handleBatchApprove">
+            <el-icon><Check /></el-icon>
+            一键同意
+          </el-button>
+        </div>
       </div>
       <el-table
         :data="pagedData"
         style="width: 100%"
       >
-        <el-table-column prop="caseNo" label="案号" min-width="160" fixed="left">
+        <el-table-column prop="caseNo" label="案件编号" min-width="160" fixed="left">
           <template #default="{ row }">
             <el-link type="primary" :underline="false" @click="goToCaseDetail(row)">{{ row.caseNo }}</el-link>
           </template>
@@ -77,7 +92,8 @@
         <el-table-column prop="submitTime" label="提交时间" min-width="140" />
         <el-table-column label="操作" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" link @click="$emit('approve', row)">审批</el-button>
+            <el-button v-if="row.status === '待审批'" type="primary" link @click="$emit('approve', row)">审批</el-button>
+            <el-button v-else type="primary" link @click="$emit('detail', row)">详情</el-button>
           </template>
         </el-table-column>
         <template #empty>
@@ -114,18 +130,33 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['approve', 'batch-approve'])
+const emit = defineEmits(['approve', 'detail', 'batch-approve'])
 
 const router = useRouter()
-const filters = ref({ caseNo: '', party: '', secretary: '' })
+const filters = ref({ caseYear: '', caseNo: '', party: '', secretary: '', status: '待审批' })
 const isCollapsed = ref(true)
 const currentPage = ref(1)
 const pageSize = ref(5)
+
+// 案件年份选项（近5年）
+const currentYear = new Date().getFullYear()
+const yearOptions = computed(() => {
+  const years = []
+  for (let y = currentYear; y >= currentYear - 4; y--) {
+    years.push(String(y))
+  }
+  return years
+})
 
 const secretaryOptions = computed(() => Array.from(new Set(props.data.map((i) => i.secretary))))
 
 const filteredData = computed(() => {
   return props.data.filter((item) => {
+    if (filters.value.status && item.status !== filters.value.status) return false
+    if (filters.value.caseYear) {
+      const yearMatch = item.caseNo.match(/[（(](\d{4})[）)]/)
+      if ((yearMatch ? yearMatch[1] : '') !== filters.value.caseYear) return false
+    }
     if (filters.value.caseNo && !item.caseNo.includes(filters.value.caseNo)) return false
     if (filters.value.party && !item.applicant.includes(filters.value.party) && !item.respondent.includes(filters.value.party)) return false
     if (filters.value.secretary && item.secretary !== filters.value.secretary) return false
@@ -133,16 +164,19 @@ const filteredData = computed(() => {
   })
 })
 
+// 一键同意仅针对待审批项
+const pendingData = computed(() => filteredData.value.filter((item) => item.status === '待审批'))
+
 const pagedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   return filteredData.value.slice(start, start + pageSize.value)
 })
 
 const handleSearch = () => { currentPage.value = 1 }
-const handleReset = () => { filters.value = { caseNo: '', party: '', secretary: '' }; currentPage.value = 1 }
+const handleReset = () => { filters.value = { caseYear: '', caseNo: '', party: '', secretary: '', status: '待审批' }; currentPage.value = 1 }
 
 const handleBatchApprove = () => {
-  emit('batch-approve', filteredData.value)
+  emit('batch-approve', pendingData.value)
 }
 
 const formatAmount = (val) => (val || val === 0 ? val.toLocaleString('zh-CN') : '-')

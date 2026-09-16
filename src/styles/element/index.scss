@@ -1,13 +1,34 @@
 /* Element Plus 主题定制 - 使用 CSS 变量覆盖方式 */
+
+/* ========== 全局基础重置 ========== */
+/* 1. body 默认 margin 会让 min-height:100vh 的内容超出视口，出现多余滚动条；
+   2. 非 Element Plus 元素（如 .page-breadcrumb）默认 content-box，height + border
+      会累计出 1px 溢出，使 el-main 的 overflow:auto 显示多余滚动条。 */
+html,
+body {
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
-  /* 品牌主题色 */
-  --el-color-primary: #053d99;
-  --el-color-primary-light-3: #3a6bb5;
-  --el-color-primary-light-5: #6a96cd;
-  --el-color-primary-light-7: #9abde0;
-  --el-color-primary-light-8: #b5d0e8;
-  --el-color-primary-light-9: #d5e3f2;
-  --el-color-primary-dark-2: #04307a;
+  /* 品牌主题色（主色 #0A1F8F；light-N/dark-2 按 Element Plus mix 公式计算：
+   *   light-N = 主色 × (1 - N/10) + 白 × N/10，dark-2 = 主色 × 80% + 黑 × 20% */
+  --el-color-primary: #0a1f8f;
+  --el-color-primary-light-3: #5462b1;
+  --el-color-primary-light-5: #858fc7;
+  --el-color-primary-light-7: #b6bcdd;
+  --el-color-primary-light-8: #ced2e9;
+  --el-color-primary-light-9: #e7e9f4;
+  --el-color-primary-dark-2: #081972;
+
+  /* 品牌辅助色 / 强调色（非 Element Plus 内置语义色，作为全局设计 token 使用） */
+  --app-color-secondary: #1d4ed8;
+  --app-color-accent: #f59e0b;
 
   /* 页面背景色 */
   --el-bg-color-page: #f7f7f7;
@@ -35,7 +56,7 @@
   width: 200px;
   flex-shrink: 0;
   background-color: #ffffff;
-  border-right: 1px solid var(--el-border-color-light);
+  border-right: 1px solid var(--el-border-color-extra-light);
   transition: width 0.3s ease;
 
   &.collapsed {
@@ -84,6 +105,7 @@
       line-height: 48px;
       position: relative;
       color: var(--el-text-color-secondary);
+      border-right: 1px solid var(--el-border-color-extra-light);
 
       .el-icon {
         font-size: 18px;
@@ -135,7 +157,22 @@
   border-bottom: var(--el-border-color-lighter) 1px solid;
 }
 
-/* ========== 全局筛选栏样式规范 ========== */
+/* ========== 全局筛选栏样式规范（系统强制，所有模块必须复用） ==========
+ * 用法规范（与 DESIGN.md「Filter Bar」一致，二者同步维护）：
+ * 1. 结构固定：.filter-bar > .filter-items > .filter-item（.filter-label + 控件）；
+ *    操作按钮（查询/重置等）必须置于 .filter-actions，禁止混入 .filter-items。
+ * 2. 控件宽度统一 180px（由下方全局规则强制）；数字框/短下拉可窄至 120px，
+ *    仅允许在组件内通过 :deep 局部覆盖，禁止修改本全局类。
+ * 3. 可选下拉（案件年份/经办秘书/结案类型等）：el-select 使用
+ *    placeholder="全部" + clearable；禁止添加 value 为空的「全部」el-option，
+ *    占位符即"全部"状态（空值/清除均视为不过滤）。
+ * 4. 必选单值下拉（核阅状态等）：不加 clearable，默认值由业务给定。
+ * 5. 文本输入一律 clearable，placeholder 使用「请输入…」句式；
+ *    模糊匹配字段可并列写目标，如「申请人/被申请人」。
+ * 6. 标签（.filter-label）14px secondary、宽 56px、左对齐；操作按钮 12px。
+ * 7. 禁止在组件 <style scoped> 中重定义 .filter-bar / .filter-item 全局结构
+ *    （历史遗留的组件内重定义应在触碰对应模块时迁移至本规范）。
+ */
 .filter-bar {
   margin-bottom: 16px;
   background: #ffffff;
@@ -203,8 +240,8 @@
 
 .table-title {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
@@ -215,6 +252,15 @@
     font-size: 12px;
     font-weight: 500;
     color: var(--el-text-color-placeholder);
+  }
+
+  /* 辅助操作按钮统一右侧对齐 */
+  .title-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
   }
 }
 
@@ -227,6 +273,7 @@
 }
 
 /* ========== 全局表单样式规范 ========== */
+/* label 统一左对齐；宽度由各表单自身的 label-width 属性控制 */
 .el-form-item__label {
   text-align: left;
   justify-content: flex-start;
@@ -254,6 +301,36 @@
 /* 对话框标题颜色 */
 .el-dialog__title {
   color: var(--el-text-color-regular);
+}
+
+/* ========== 弹窗通用滚动规范 ==========
+ * 弹窗固定最大高度，内容超高时仅弹窗内部滚动（标题/底栏固定），
+ * 背景页面禁止滚动。全局生效，组件内无需重复声明。
+ */
+.el-dialog:not(.is-fullscreen) {
+  display: flex;
+  flex-direction: column;
+  max-height: 84vh;
+  margin-top: 8vh;
+  margin-bottom: 0;
+
+  .el-dialog__header,
+  .el-dialog__footer {
+    flex-shrink: 0;
+  }
+
+  .el-dialog__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
+/* 弹窗/抽屉打开时锁定页面滚动：
+ * lock-scroll 默认只锁 body（el-popup-parent--hidden），
+ * 页面实际滚动发生在 el-main 内层容器，需一并锁定，禁止背景滚动 */
+body.el-popup-parent--hidden .main-content-wrapper {
+  overflow: hidden;
 }
 
 /* 移除水平菜单 hover/focus 背景色 */
@@ -321,5 +398,32 @@
   .el-dialog:not(.is-fullscreen) {
     width: 92% !important;
     margin: 5vh auto !important;
+  }
+
+  /* ========== 全局移动端触控目标规范（WCAG 2.5.8：最小 24×24） ========== */
+  /* 普通按钮（含表格内 签名/审批 等操作按钮）：最小高度 28px */
+  .el-button {
+    min-height: 28px;
+  }
+
+  /* 链接型按钮（表格内"展开/收起"、纯图标按钮等）：最小 24×24 */
+  .el-button.is-link {
+    min-width: 24px;
+    min-height: 24px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+
+  /* 文字链接（案件号、"查看全部"等 el-link）：最小高度 24px */
+  .el-link {
+    min-height: 24px;
+  }
+
+  /* 自定义文字链接（秘书电话/邮箱、手机号/邮箱等）：最小触控高度 24px */
+  a.meta-link,
+  a.link-text {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
   }
 }

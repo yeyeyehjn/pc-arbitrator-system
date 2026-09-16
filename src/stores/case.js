@@ -82,6 +82,7 @@ export const useCaseStore = defineStore('case', () => {
     closedDateRange: [],   // 结案时间范围 [start, end]
     amountMin: null,       // 标的最小（万元）
     amountMax: null,       // 标的最大（万元）
+    caseType: '',          // 类型（solo独任/chief首席/side边裁）
     closedType: '',        // 结案方式（ruling/mediation/withdraw）
   })
 
@@ -129,6 +130,7 @@ export const useCaseStore = defineStore('case', () => {
       }
       if (f.amountMin != null && item.amount < f.amountMin) return false
       if (f.amountMax != null && item.amount > f.amountMax) return false
+      if (f.caseType && item.caseType !== f.caseType) return false
       if (f.closedType && currentStatus.value === 'closed' && item.closedType !== f.closedType) return false
 
       // 快捷筛选（AND 关系）
@@ -156,7 +158,7 @@ export const useCaseStore = defineStore('case', () => {
       f.secretary || f.caseReason ||
       (f.groupDateRange && f.groupDateRange.length === 2) ||
       (f.closedDateRange && f.closedDateRange.length === 2) ||
-      f.amountMin != null || f.amountMax != null || f.closedType ||
+      f.amountMin != null || f.amountMax != null || f.caseType || f.closedType ||
       qf.major || qf.expiringSoon || qf.expired
     )
   })
@@ -206,7 +208,7 @@ export const useCaseStore = defineStore('case', () => {
       caseYear: '', caseNo: '', party: '', agent: '', tribunal: '',
       secretary: '', caseReason: '',
       groupDateRange: [], closedDateRange: [],
-      amountMin: null, amountMax: null, closedType: '',
+      amountMin: null, amountMax: null, caseType: '', closedType: '',
     }
     quickFilters.value = { major: false, expiringSoon: false, expired: false }
     currentPage.value = 1

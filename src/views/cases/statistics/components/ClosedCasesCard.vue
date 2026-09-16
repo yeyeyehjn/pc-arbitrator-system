@@ -61,6 +61,28 @@
           </div>
         </div>
       </div>
+
+      <!-- 底部弹性区：卡片与同行卡片等高时产生的剩余空间，装饰光环锚定其右下角 -->
+      <div class="card-footer" aria-hidden="true">
+        <svg class="card-decor" viewBox="0 0 140 140" preserveAspectRatio="xMaxYMax meet">
+          <defs>
+            <radialGradient id="closedDecorOrb" cx="38%" cy="32%" r="65%">
+              <stop offset="0%" stop-color="#0a1f8f" stop-opacity="0.14" />
+              <stop offset="55%" stop-color="#0a1f8f" stop-opacity="0.04" />
+              <stop offset="100%" stop-color="#0a1f8f" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <circle cx="70" cy="70" r="52" fill="url(#closedDecorOrb)" class="decor-breathe" />
+          <circle cx="70" cy="70" r="58" fill="none" stroke="#0a1f8f" stroke-opacity="0.16" />
+          <g class="decor-spin-rev">
+            <path d="M 70 14 A 56 56 0 0 0 14 70" fill="none" stroke="#2f7bff" stroke-opacity="0.6" stroke-width="1.5" stroke-linecap="round" />
+            <circle cx="14" cy="70" r="3" fill="#22d3ee" />
+          </g>
+          <circle cx="70" cy="70" r="42" fill="none" stroke="#0a1f8f" stroke-opacity="0.28" stroke-dasharray="3 6" />
+          <path d="M 58 70 L 67 79 L 84 61" fill="none" stroke="#0a1f8f" stroke-opacity="0.55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="94" cy="46" r="2.5" fill="#d4a017" />
+        </svg>
+      </div>
     </template>
   </div>
 </template>
@@ -103,8 +125,12 @@ const getBreakdownAriaLabel = (item) => {
 
 <style scoped lang="scss">
 .closed-cases-card {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  border: none;
+  border-radius: 0;
 
   .card-header {
     display: flex;
@@ -134,7 +160,7 @@ const getBreakdownAriaLabel = (item) => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px;
+    padding: 14px 16px;
     background-color: var(--el-fill-color-light);
     border: 1px solid transparent;
     border-radius: 10px;
@@ -205,7 +231,6 @@ const getBreakdownAriaLabel = (item) => {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    flex: 1; // 撑满剩余高度
   }
 
   .breakdown-cell {
@@ -214,7 +239,7 @@ const getBreakdownAriaLabel = (item) => {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 14px 10px;
+    padding: 12px 8px;
     background-color: var(--el-fill-color-light);
     border: 1px solid transparent;
     border-radius: 8px;
@@ -258,7 +283,7 @@ const getBreakdownAriaLabel = (item) => {
     }
 
     .breakdown-value {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--value-color, var(--el-color-primary));
       line-height: 1.2;
@@ -303,6 +328,53 @@ const getBreakdownAriaLabel = (item) => {
       color: var(--el-text-color-secondary);
     }
   }
+
+  // 底部弹性区：等高对齐后的剩余空间，装饰置于其中，结构上不会遮挡统计模块
+  .card-footer {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+  }
+}
+
+// 几何数据光环装饰：默认隐藏，仅桌面端展示（移动端不受影响）
+.card-decor {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .card-decor {
+    display: block;
+    position: absolute;
+    right: 2px; // 与上方统计模块右边缘对齐（= 卡片内边距）
+    bottom: 8px;
+    width: 104px;
+    height: 104px;
+    max-width: 100%;
+    max-height: 100%;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+// 光环动效：缓慢反向旋转 + 呼吸
+.decor-spin-rev {
+  transform-origin: 70px 70px;
+  animation: decor-rotate-rev 22s linear infinite;
+}
+
+.decor-breathe {
+  transform-origin: 70px 70px;
+  animation: decor-breathe 4s ease-in-out infinite;
+}
+
+@keyframes decor-rotate-rev {
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes decor-breathe {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
 }
 
 // 移动端
@@ -344,6 +416,10 @@ const getBreakdownAriaLabel = (item) => {
   }
   .mini-filled {
     transition: none;
+  }
+  .decor-spin-rev,
+  .decor-breathe {
+    animation: none;
   }
 }
 </style>

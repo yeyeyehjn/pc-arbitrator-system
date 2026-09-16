@@ -306,15 +306,42 @@ const downloadCatalog = () => {
       flex-wrap: wrap;
       border: none;
       padding: 0;
+      gap: 8px;
 
       .sidebar-item {
         padding: 6px 14px;
         border: 1px solid var(--el-border-color-lighter);
         border-radius: 999px;
+        flex: 0 0 auto;
+        font-size: 12px;
 
         &.active::before {
           display: none;
         }
+      }
+    }
+
+    .evidence-content {
+      width: 100%;
+      min-width: 0;
+      // 防止内容撑破页面产生横向滚动
+      overflow: hidden;
+
+      .content-toolbar {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      // 文件条换行时隐藏分隔竖线，避免孤立竖线
+      .notice-file {
+        .file-divider {
+          display: none;
+        }
+      }
+
+      // 表格在小屏下保持容器内横向滚动，不撑破卡片
+      :deep(.el-table) {
+        width: 100%;
       }
     }
   }

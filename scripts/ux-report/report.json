@@ -1,0 +1,500 @@
+{
+  "generatedAt": "2026-08-25T08:03:43.917Z",
+  "base": "http://localhost:5174/pc-arbitrator-system",
+  "profiles": [
+    {
+      "key": "pc",
+      "label": "PC 端 (1440×900)",
+      "pages": [
+        {
+          "route": "登录页",
+          "path": "/login",
+          "url": "http://localhost:5174/pc-arbitrator-system/login",
+          "loadMs": 3096,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "© 1995–2026 广州仲裁委员会 版权所有 案件管理系统 账号登录 手机登录 1 账号验证 2 双因素校验 登录账号 登录密码 下次自动登录 忘记密码 下一步 没有账号？立即注册 本系统由广州仲裁委员会运营，仅限授权人员使用。登录即表",
+          "issues": [],
+          "shot": "pc-_login.png"
+        },
+        {
+          "route": "首页工作台",
+          "path": "/",
+          "url": "http://localhost:5174/pc-arbitrator-system/",
+          "loadMs": 2100,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 关闭所有 待办中心（16） 待签承诺书 3 待签笔录 5 待审批延期 1 待签文书 2 待草拟裁决书 1 专家咨询 4 待开庭 查看全部 今日开庭 待开庭 案件年份",
+          "issues": [],
+          "shot": "pc-_.png"
+        },
+        {
+          "route": "待办-签名",
+          "path": "/todos/signature",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/signature",
+          "loadMs": 1895,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 签名列表 关闭所有 待办事项 签名列表 7 待办中心 5 裁决书核阅列表 5 专家咨询案件 4 承诺书签署 笔录签名 文书签名 案件年份 全部 案件编号 当事人 经",
+          "issues": [],
+          "shot": "pc-_todos_signature.png"
+        },
+        {
+          "route": "待办-待办中心",
+          "path": "/todos/center",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/center",
+          "loadMs": 1873,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 待办中心 关闭所有 待办事项 签名列表 7 待办中心 5 裁决书核阅列表 5 专家咨询案件 4 延期办理 选择首席 案件年份 全部 案件编号 当事人 经办秘书 经办",
+          "issues": [],
+          "shot": "pc-_todos_center.png"
+        },
+        {
+          "route": "待办-评审",
+          "path": "/todos/review",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/review",
+          "loadMs": 1880,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 裁决书核阅列表 关闭所有 待办事项 签名列表 7 待办中心 5 裁决书核阅列表 5 专家咨询案件 4 案件年份 全部 案件编号 当事人 经办秘书 全部 结案类型 全",
+          "issues": [],
+          "shot": "pc-_todos_review.png"
+        },
+        {
+          "route": "待办-排期",
+          "path": "/todos/scheduling",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/scheduling",
+          "loadMs": 1759,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 智能约庭 关闭所有 待办事项 签名列表 7 待办中心 5 裁决书核阅列表 5 专家咨询案件 4 智能约庭功能开发中，敬请期待 未来将支持自动匹配仲裁员排期、庭审场地",
+          "issues": [],
+          "shot": "pc-_todos_scheduling.png"
+        },
+        {
+          "route": "待办-咨询列表",
+          "path": "/todos/consult",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/consult",
+          "loadMs": 1719,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 专家咨询案件 关闭所有 待办事项 签名列表 7 待办中心 5 裁决书核阅列表 5 专家咨询案件 4 咨询标题 咨询秘书 咨询专业 全部 处理状态 全部 查询 重置 ",
+          "issues": [],
+          "shot": "pc-_todos_consult.png"
+        },
+        {
+          "route": "待办-咨询详情",
+          "path": "/todos/consult/ec1",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/consult/ec1",
+          "loadMs": 1683,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 专家咨询详情 关闭所有 待办事项 签名列表 7 待办中心 5 裁决书核阅列表 5 专家咨询案件 4 返回 关于某建设工程纠纷的专家咨询 待处理 回避 / 接受咨询 ",
+          "issues": [],
+          "shot": "pc-_todos_consult_ec1.png"
+        },
+        {
+          "route": "案件-列表",
+          "path": "/cases/list",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/list",
+          "loadMs": 1729,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 我的案件 关闭所有 我的案件 我的案件 数据统计 申请专家咨询案件 在办案件 12 审限正常 7 即将延期 3 已延期 1 已结案件 18 裁决 8 调解 6 撤案",
+          "issues": [],
+          "shot": "pc-_cases_list.png"
+        },
+        {
+          "route": "案件-统计",
+          "path": "/cases/statistics",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/statistics?start=2026-01-01&end=2026-08-25&preset=year",
+          "loadMs": 1715,
+          "redirected": true,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 数据统计 关闭所有 我的案件 我的案件 数据统计 申请专家咨询案件 数据统计 2026.01.01 ~ 2026.08.25 · 共 237 天 今年 近半年 近三",
+          "issues": [],
+          "shot": "pc-_cases_statistics.png"
+        },
+        {
+          "route": "案件-咨询",
+          "path": "/cases/consult",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/consult",
+          "loadMs": 1766,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 申请专家咨询案件 关闭所有 我的案件 我的案件 数据统计 申请专家咨询案件 咨询标题 咨询秘书 咨询专业 全部 查询 重置 咨询案件列表 共 5 条 序号 咨询标题",
+          "issues": [],
+          "shot": "pc-_cases_consult.png"
+        },
+        {
+          "route": "案件-详情",
+          "path": "/cases/case-0",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/case-0",
+          "loadMs": 1692,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 (2026)沪仲第1001号 关闭所有 (2026)沪仲第1001号 | 买卖合同纠纷 审理中 | 立案日期：2026-03-15 办案秘书：刘秘书 秘书电话：02",
+          "issues": [],
+          "shot": "pc-_cases_case-0.png"
+        },
+        {
+          "route": "案件-材料阅读",
+          "path": "/cases/case-0/material-reader",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/case-0/material-reader",
+          "loadMs": 1679,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 材料阅读 关闭所有 我的案件 我的案件 数据统计 申请专家咨询案件 材料阅览 (2026)沪仲第1001号 案由： 买卖合同纠纷 | 立案日期： 2026-03-1",
+          "issues": [],
+          "shot": "pc-_cases_case-0_material-reader.png"
+        },
+        {
+          "route": "通知中心",
+          "path": "/notifications",
+          "url": "http://localhost:5174/pc-arbitrator-system/notifications",
+          "loadMs": 1657,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 消息通知 关闭所有 消息状态 全部 查询 重置 消息通知列表 全部标为已读 消息内容 推送人 推送时间 操作 您有一个新的仲裁案件（案件号：2026沪仲案字第005",
+          "issues": [],
+          "shot": "pc-_notifications.png"
+        },
+        {
+          "route": "辅助工具",
+          "path": "/auxiliary",
+          "url": "http://localhost:5174/pc-arbitrator-system/auxiliary",
+          "loadMs": 1700,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 文书指引 关闭所有 文书指引 审理指引 裁决书及案例 仲裁员须知 标题 备注 操作 建设工程施工合同纠纷审理指引 适用于建设工程类案件的审理参考 预览 下载 民间借",
+          "issues": [],
+          "shot": "pc-_auxiliary.png"
+        },
+        {
+          "route": "个人-基本信息",
+          "path": "/profile/info",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/info",
+          "loadMs": 1628,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 个人信息 关闭所有 个人中心 个人信息 工作单位 个人履历 银行账号信息 仲裁员聘书 酬金单 基本信息 编辑 张三 男 · 中国 4401**********123",
+          "issues": [],
+          "shot": "pc-_profile_info.png"
+        },
+        {
+          "route": "个人-工作单位",
+          "path": "/profile/work",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/work",
+          "loadMs": 1659,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 工作单位 关闭所有 个人中心 个人信息 工作单位 个人履历 银行账号信息 仲裁员聘书 酬金单 工作单位 编辑 上海正义律师事务所 高级合伙人 · 商事仲裁部 在职 ",
+          "issues": [],
+          "shot": "pc-_profile_work.png"
+        },
+        {
+          "route": "个人-简历",
+          "path": "/profile/resume",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/resume",
+          "loadMs": 1656,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 个人履历 关闭所有 个人中心 个人信息 工作单位 个人履历 银行账号信息 仲裁员聘书 酬金单 教育背景 2 添加 华东政法学院 1999-09-01 ~ 2003-",
+          "issues": [],
+          "shot": "pc-_profile_resume.png"
+        },
+        {
+          "route": "个人-报酬",
+          "path": "/profile/fee",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/fee",
+          "loadMs": 1708,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 酬金单 关闭所有 个人中心 个人信息 工作单位 个人履历 银行账号信息 仲裁员聘书 酬金单 案件年份 全部 案件编号 发放状态 全部 查询 重置 酬金单列表 共 8",
+          "issues": [],
+          "shot": "pc-_profile_fee.png"
+        },
+        {
+          "route": "个人-银行账户",
+          "path": "/profile/bank",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/bank",
+          "loadMs": 2924,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 银行账号信息 关闭所有 个人中心 个人信息 工作单位 个人履历 银行账号信息 仲裁员聘书 酬金单 银行账号信息 编辑 中国工商银行 •••• •••• •••• 5",
+          "issues": [],
+          "shot": "pc-_profile_bank.png"
+        },
+        {
+          "route": "个人-证书",
+          "path": "/profile/certificate",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/certificate",
+          "loadMs": 2320,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "首页 我的案件 待办事项 文书指引 个人中心 3 走查仲裁员 仲裁员 首页 仲裁员聘书 关闭所有 个人中心 个人信息 工作单位 个人履历 银行账号信息 仲裁员聘书 酬金单 仲裁员聘书 · 第八届 已过期 聘任编号 上海仲字第2020-035",
+          "issues": [],
+          "shot": "pc-_profile_certificate.png"
+        }
+      ]
+    },
+    {
+      "key": "mobile",
+      "label": "移动端 (iPhone 390×844)",
+      "pages": [
+        {
+          "route": "登录页",
+          "path": "/login",
+          "url": "http://localhost:5174/pc-arbitrator-system/login",
+          "loadMs": 3433,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "© 1995–2026 广州仲裁委员会 版权所有 案件管理系统 账号登录 手机登录 1 账号验证 2 双因素校验 登录账号 登录密码 下次自动登录 忘记密码 下一步 没有账号？立即注册 本系统由广州仲裁委员会运营，仅限授权人员使用。登录即表",
+          "issues": [],
+          "shot": "mobile-_login.png"
+        },
+        {
+          "route": "首页工作台",
+          "path": "/",
+          "url": "http://localhost:5174/pc-arbitrator-system/",
+          "loadMs": 2031,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 待办中心（16） 待签承诺书 3 待签笔录 5 待审批延期 1 待签文书 2 待草拟裁决书 1 专家咨询 4 待开庭 查看全部 今日开庭 待开庭 案件年份 全部 案件编号 经办秘书 开庭时间 查询 重置 案件编号 案由 开庭时间 庭室地",
+          "issues": [],
+          "shot": "mobile-_.png"
+        },
+        {
+          "route": "待办-签名",
+          "path": "/todos/signature",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/signature",
+          "loadMs": 1917,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 签名列表 承诺书签署 笔录签名 文书签名 案件年份 全部 案件编号 当事人 经办秘书 经办秘书 状态 状态 查询 重置 展开 案件列表 共 3 条 案件编号 案由 申请人 被申请人 标的(元) 经办秘书 仲裁庭 案件状态 提交时间 操作",
+          "issues": [],
+          "shot": "mobile-_todos_signature.png"
+        },
+        {
+          "route": "待办-待办中心",
+          "path": "/todos/center",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/center",
+          "loadMs": 1909,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 待办中心 延期办理 选择首席 案件年份 全部 案件编号 当事人 经办秘书 经办秘书 状态 待审批 查询 重置 展开 案件列表 共 2 条 一键同意 案件编号 案由 申请人 被申请人 标的(元) 经办秘书 仲裁庭 组庭日期 案件期限 案件",
+          "issues": [],
+          "shot": "mobile-_todos_center.png"
+        },
+        {
+          "route": "待办-评审",
+          "path": "/todos/review",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/review",
+          "loadMs": 1816,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 裁决书核阅列表 案件年份 全部 案件编号 当事人 经办秘书 全部 结案类型 全部 核阅状态 待核阅 查询 重置 案件列表 共 5 条 案件编号 案由 申请人 被申请人 经办秘书 结案类型 提交时间 核阅状态 操作 (2026)沪仲第10",
+          "issues": [],
+          "shot": "mobile-_todos_review.png"
+        },
+        {
+          "route": "待办-排期",
+          "path": "/todos/scheduling",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/scheduling",
+          "loadMs": 1772,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 智能约庭 智能约庭功能开发中，敬请期待 未来将支持自动匹配仲裁员排期、庭审场地空闲时段， 避开冲突，一键生成排期表。 建议功能 · 后续迭代 3",
+          "issues": [],
+          "shot": "mobile-_todos_scheduling.png"
+        },
+        {
+          "route": "待办-咨询列表",
+          "path": "/todos/consult",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/consult",
+          "loadMs": 1700,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 签名列表 咨询标题 咨询秘书 咨询专业 全部 处理状态 全部 查询 重置 咨询案件列表 共 6 条 序号 咨询标题 咨询秘书 咨询专业 状态 操作 1 关于某建设工程纠纷的专家咨询 张秘书 建设工程 待处理 回避/接受咨询 退出咨询 2",
+          "issues": [],
+          "shot": "mobile-_todos_consult.png"
+        },
+        {
+          "route": "待办-咨询详情",
+          "path": "/todos/consult/ec1",
+          "url": "http://localhost:5174/pc-arbitrator-system/todos/consult/ec1",
+          "loadMs": 1713,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 签名列表 返回 关于某建设工程纠纷的专家咨询 待处理 回避 / 接受咨询 退出咨询 咨询信息 咨询专业 建设工程 咨询秘书 张秘书 关联案件 (2026)沪仲第1001号 争议焦点 工程款结算标准及违约金计算方式存在争议，涉及合同条款解",
+          "issues": [],
+          "shot": "mobile-_todos_consult_ec1.png"
+        },
+        {
+          "route": "案件-列表",
+          "path": "/cases/list",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/list",
+          "loadMs": 1639,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 我的案件 在办案件 12 审限正常 7 即将延期 3 已延期 1 已结案件 18 裁决 8 调解 6 撤案 4 案件年份 全部 案件编号 当事人 办案秘书 案由 快捷筛选 重大案件 即将延期 已延期 查询 重置 展开 在办案件 共 12",
+          "issues": [],
+          "shot": "mobile-_cases_list.png"
+        },
+        {
+          "route": "案件-统计",
+          "path": "/cases/statistics",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/statistics?start=2026-01-01&end=2026-08-25&preset=year",
+          "loadMs": 1687,
+          "redirected": true,
+          "title": "仲裁员办案系统",
+          "textHead": "3 数据统计 筛选： 今年 · 2026.01.01 ~ 2026.08.25 · 共 237 天 新收案件情况 86 件 独任 32 37.2% 首席 28 32.6% 边裁 26 30.2% 在办案件情况 在办合计 42 件 在办数 4",
+          "issues": [],
+          "shot": "mobile-_cases_statistics.png"
+        },
+        {
+          "route": "案件-咨询",
+          "path": "/cases/consult",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/consult",
+          "loadMs": 1664,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 申请专家咨询案件 咨询标题 咨询秘书 咨询专业 全部 查询 重置 咨询案件列表 共 5 条 序号 咨询标题 咨询秘书 咨询专业 操作 1 我的建设工程纠纷专家咨询 张秘书 建设工程 查看专家意见 2 金融借款利率合规咨询 陈秘书 金融投",
+          "issues": [],
+          "shot": "mobile-_cases_consult.png"
+        },
+        {
+          "route": "案件-详情",
+          "path": "/cases/case-0",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/case-0",
+          "loadMs": 1700,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 我的案件 (2026)沪仲第1001号 | 买卖合同纠纷 审理中 | 立案日期：2026-03-15 办案秘书：刘秘书 秘书电话：021-58888888 秘书邮箱：liu@gzac.org 返回 办案 案情及当事人材料 仲裁文书 电子",
+          "issues": [],
+          "shot": "mobile-_cases_case-0.png"
+        },
+        {
+          "route": "案件-材料阅读",
+          "path": "/cases/case-0/material-reader",
+          "url": "http://localhost:5174/pc-arbitrator-system/cases/case-0/material-reader",
+          "loadMs": 1686,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 我的案件 材料阅览 (2026)沪仲第1001号 关闭 材料目录 申请人证据 3 买卖合同 PDF 送货单（8 份） PDF 对账单 IMAGE 被申请人证据 2 质量检测报告 PDF 维修费用清单 IMAGE 其他附件 2 组庭通知书",
+          "issues": [],
+          "shot": "mobile-_cases_case-0_material-reader.png"
+        },
+        {
+          "route": "通知中心",
+          "path": "/notifications",
+          "url": "http://localhost:5174/pc-arbitrator-system/notifications",
+          "loadMs": 1659,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 消息状态 全部 查询 重置 消息通知列表 全部标为已读 消息内容 推送人 推送时间 操作 您有一个新的仲裁案件（案件号：2026沪仲案字第005号）待处理 系统 2026-07-29 09:25 标为已读 您提交的案件（2026沪仲案字",
+          "issues": [],
+          "shot": "mobile-_notifications.png"
+        },
+        {
+          "route": "辅助工具",
+          "path": "/auxiliary",
+          "url": "http://localhost:5174/pc-arbitrator-system/auxiliary",
+          "loadMs": 1641,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 文书指引 审理指引 裁决书及案例 仲裁员须知 标题 备注 操作 建设工程施工合同纠纷审理指引 适用于建设工程类案件的审理参考 预览 下载 民间借贷纠纷案件审理要点 含利率上限与证据认定要点 预览 下载 金融借款合同纠纷审理指引 — 预览",
+          "issues": [],
+          "shot": "mobile-_auxiliary.png"
+        },
+        {
+          "route": "个人-基本信息",
+          "path": "/profile/info",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/info",
+          "loadMs": 1686,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 个人信息 基本信息 编辑 张三 男 · 中国 4401**********1234 其他证件类型 身份证 其他证件号码 440106198505120001 证件有效期 2030-12-31 手机号码 13800138000 电子邮箱 ",
+          "issues": [],
+          "shot": "mobile-_profile_info.png"
+        },
+        {
+          "route": "个人-工作单位",
+          "path": "/profile/work",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/work",
+          "loadMs": 1628,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 工作单位 工作单位 编辑 上海正义律师事务所 高级合伙人 · 商事仲裁部 在职 单位电话 021-68880001 单位传真 021-68880002 单位地址 上海市浦东新区陆家嘴环路1000号恒生大厦18楼 备注 执业年限 20 年",
+          "issues": [],
+          "shot": "mobile-_profile_work.png"
+        },
+        {
+          "route": "个人-简历",
+          "path": "/profile/resume",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/resume",
+          "loadMs": 1645,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 个人履历 教育背景 2 添加 华东政法学院 1999-09-01 ~ 2003-06-30 编辑 删除 专业 法学 学历 本科 学位 法学学士 毕业证书.pdf 复旦大学 2003-09-01 ~ 2006-06-30 编辑 删除 专业",
+          "issues": [],
+          "shot": "mobile-_profile_resume.png"
+        },
+        {
+          "route": "个人-报酬",
+          "path": "/profile/fee",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/fee",
+          "loadMs": 1677,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 酬金单 案件年份 全部 案件编号 发放状态 全部 查询 重置 酬金单列表 共 8 条 报酬管理规则 案件编号 案件名称 酬金金额（元） 结算状态 发放日期 办案秘书 (2026)沪仲第1000号 上海宏图贸易有限公司诉上海远东物流有限公",
+          "issues": [],
+          "shot": "mobile-_profile_fee.png"
+        },
+        {
+          "route": "个人-银行账户",
+          "path": "/profile/bank",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/bank",
+          "loadMs": 1682,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 银行账号信息 银行账号信息 编辑 中国工商银行 •••• •••• •••• 5678 账户名称 张三 银行账号 •••••••••••••••5678 公务员/参公人员 否 其他依法不取酬人员 否 3",
+          "issues": [],
+          "shot": "mobile-_profile_bank.png"
+        },
+        {
+          "route": "个人-证书",
+          "path": "/profile/certificate",
+          "url": "http://localhost:5174/pc-arbitrator-system/profile/certificate",
+          "loadMs": 1627,
+          "redirected": false,
+          "title": "仲裁员办案系统",
+          "textHead": "3 仲裁员聘书 仲裁员聘书 · 第八届 已过期 聘任编号 上海仲字第2020-0358号 聘任期限 2020-06-01 ~ 2026-05-31 专业领域 买卖合同、建设工程 聘书扫描件 查看大图 下载 PDF 仲裁员聘书 · 第七届 已",
+          "issues": [],
+          "shot": "mobile-_profile_certificate.png"
+        }
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "profile": "pc",
+      "test": "登录页-空表单提交校验",
+      "pass": false,
+      "detail": "未检测到任何校验/提示反馈"
+    },
+    {
+      "profile": "mobile",
+      "test": "登录页-空表单提交校验",
+      "pass": false,
+      "detail": "未检测到任何校验/提示反馈"
+    },
+    {
+      "profile": "mobile",
+      "test": "移动端-汉堡菜单展开抽屉",
+      "pass": true,
+      "detail": "抽屉正常打开；菜单按钮尺寸 24×24；遮罩:未见"
+    }
+  ]
+}

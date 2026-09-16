@@ -34,6 +34,11 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .auxiliary-view {
+  border-width: 0;
+  border-style: solid;
+  border-color: #000000;
+  border-radius: 0;
+
   .page-title {
     margin: 0 0 16px;
     font-size: 16px;

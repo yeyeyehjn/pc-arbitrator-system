@@ -249,10 +249,10 @@ const handleCancel = () => {
   height: 180px;
   padding: 22px 24px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #053d99 0%, #0a5bc4 55%, #1e6fd6 100%);
+  background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 55%, var(--el-color-primary-light-5) 100%);
   color: #fff;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(5, 61, 153, 0.25);
+  box-shadow: 0 8px 24px rgba(10, 31, 143, 0.25);
 
   // 卡片背景纹理：斜向光泽
   &::before {
@@ -362,8 +362,8 @@ const handleCancel = () => {
   }
 
   .footer-label {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }

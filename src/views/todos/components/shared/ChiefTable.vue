@@ -4,6 +4,12 @@
     <div class="filter-bar">
       <div class="filter-items" :class="{ collapsed: isCollapsed }">
         <div class="filter-item">
+          <span class="filter-label">案件年份</span>
+          <el-select v-model="filters.caseYear" placeholder="全部" clearable>
+            <el-option v-for="y in yearOptions" :key="y" :label="y" :value="y" />
+          </el-select>
+        </div>
+        <div class="filter-item">
           <span class="filter-label">案件编号</span>
           <el-input v-model="filters.caseNo" placeholder="案件编号" clearable :prefix-icon="Search" />
         </div>
@@ -12,14 +18,20 @@
           <el-input v-model="filters.party" placeholder="当事人" clearable />
         </div>
         <div class="filter-item">
-          <span class="filter-label">经办秘书</span>
-          <el-select v-model="filters.secretary" placeholder="经办秘书" clearable>
+          <span class="filter-label">立案秘书</span>
+          <el-select v-model="filters.secretary" placeholder="立案秘书" clearable>
             <el-option v-for="s in secretaryOptions" :key="s" :label="s" :value="s" />
+          </el-select>
+        </div>
+        <div class="filter-item">
+          <span class="filter-label">状态</span>
+          <el-select v-model="filters.status" placeholder="状态" clearable>
+            <el-option label="未选定" value="未选定" />
+            <el-option label="已选定" value="已选定" />
           </el-select>
         </div>
       </div>
       <div class="filter-actions">
-        
         <el-button type="primary" @click="handleSearch">查询</el-button>
         <el-button @click="handleReset">重置</el-button>
         <el-button link @click="isCollapsed = !isCollapsed">
@@ -36,24 +48,28 @@
         :data="pagedData"
         style="width: 100%"
       >
-        <el-table-column prop="caseNo" label="案号" min-width="160">
+        <el-table-column prop="caseNo" label="案件编号" min-width="170" fixed="left">
           <template #default="{ row }">
             <el-link type="primary" :underline="false" @click="goToCaseDetail(row)">{{ row.caseNo }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column prop="caseReason" label="案由" min-width="140" show-overflow-tooltip />
-        <el-table-column prop="applicant" label="申请人" min-width="140" show-overflow-tooltip />
-        <el-table-column prop="respondent" label="被申请人" min-width="140" show-overflow-tooltip />
-        <el-table-column prop="amount" label="标的(元)" min-width="120" align="right">
-          <template #default="{ row }">{{ formatAmount(row.amount) }}</template>
-        </el-table-column>
-        <el-table-column prop="secretary" label="经办秘书" min-width="100" />
-        <el-table-column prop="caseStatus" label="案件状态" min-width="100">
+        <el-table-column label="边裁" min-width="200">
           <template #default="{ row }">
-            <el-tag size="small" type="info">{{ row.caseStatus }}</el-tag>
+            <div class="contact-cell">
+              <span class="contact-name">{{ row.sideArbitrator?.name }}</span>
+              <span class="contact-meta">{{ row.sideArbitrator?.phone }}</span>
+              <span class="contact-meta">{{ row.sideArbitrator?.email }}</span>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="submitTime" label="提交时间" min-width="140" />
+        <el-table-column label="立案秘书" min-width="160">
+          <template #default="{ row }">
+            <div class="contact-cell">
+              <span class="contact-name">{{ row.secretary?.name }}</span>
+              <span class="contact-meta">{{ row.secretary?.phone }}</span>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="100" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="$emit('select', row)">选择</el-button>
@@ -96,18 +112,33 @@ const props = defineProps({
 defineEmits(['select'])
 
 const router = useRouter()
-const filters = ref({ caseNo: '', party: '', secretary: '' })
+const filters = ref({ caseYear: '', caseNo: '', party: '', secretary: '', status: '' })
 const isCollapsed = ref(true)
 const currentPage = ref(1)
 const pageSize = ref(5)
 
-const secretaryOptions = computed(() => Array.from(new Set(props.data.map((i) => i.secretary))))
+// 案件年份选项（近5年）
+const currentYear = new Date().getFullYear()
+const yearOptions = computed(() => {
+  const years = []
+  for (let y = currentYear; y >= currentYear - 4; y--) {
+    years.push(String(y))
+  }
+  return years
+})
+
+const secretaryOptions = computed(() => Array.from(new Set(props.data.map((i) => i.secretary?.name).filter(Boolean))))
 
 const filteredData = computed(() => {
   return props.data.filter((item) => {
+    if (filters.value.status && item.status !== filters.value.status) return false
+    if (filters.value.caseYear) {
+      const yearMatch = item.caseNo.match(/[（(](\d{4})[）)]/)
+      if ((yearMatch ? yearMatch[1] : '') !== filters.value.caseYear) return false
+    }
     if (filters.value.caseNo && !item.caseNo.includes(filters.value.caseNo)) return false
     if (filters.value.party && !item.applicant.includes(filters.value.party) && !item.respondent.includes(filters.value.party)) return false
-    if (filters.value.secretary && item.secretary !== filters.value.secretary) return false
+    if (filters.value.secretary && item.secretary?.name !== filters.value.secretary) return false
     return true
   })
 })
@@ -118,12 +149,30 @@ const pagedData = computed(() => {
 })
 
 const handleSearch = () => { currentPage.value = 1 }
-const handleReset = () => { filters.value = { caseNo: '', party: '', secretary: '' }; currentPage.value = 1 }
-
-const formatAmount = (val) => (val || val === 0 ? val.toLocaleString('zh-CN') : '-')
+const handleReset = () => { filters.value = { caseYear: '', caseNo: '', party: '', secretary: '', status: '' }; currentPage.value = 1 }
 
 const goToCaseDetail = () => router.push('/cases')
 </script>
 
 <style scoped lang="scss">
+.chief-table {
+  // 联系方式单元格：姓名加粗在上，电话/邮箱灰色小字在下
+  .contact-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.5;
+
+    .contact-name {
+      font-weight: 500;
+      color: var(--el-text-color-secondary);
+    }
+
+    .contact-meta {
+      font-size: 12px;
+      color: var(--el-text-color-secondary);
+      word-break: break-all;
+    }
+  }
+}
 </style>

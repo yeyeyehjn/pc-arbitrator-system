@@ -173,10 +173,10 @@ const roleLabel = (role) => {
     }
 
     .message-bubble {
-      background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
+      background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%);
       color: #fff;
       border-radius: 12px 4px 12px 12px;
-      box-shadow: 0 2px 8px rgba(5, 61, 153, 0.2);
+      box-shadow: 0 2px 8px rgba(10, 31, 143, 0.2);
     }
 
     .message-time {
@@ -232,7 +232,7 @@ const roleLabel = (role) => {
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
   }
   &.avatar-arbitrator {
-    background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
+    background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%);
   }
   &.avatar-party {
     background: linear-gradient(135deg, #6bb07a 0%, #4a9d5e 100%);
@@ -268,7 +268,7 @@ const roleLabel = (role) => {
       background-color: var(--el-text-color-secondary);
     }
     &.avatar-arbitrator {
-      background-color: #053d99;
+      background-color: var(--el-color-primary);
     }
     &.avatar-party {
       background-color: #74c080;
@@ -319,7 +319,7 @@ const roleLabel = (role) => {
 
   .message-item:not(.is-mine) & .attachment-icon {
     background: #f5f7fa;
-    color: #053d99;
+    color: var(--el-color-primary);
   }
 
   .attachment-info {

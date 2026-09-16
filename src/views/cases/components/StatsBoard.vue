@@ -114,10 +114,8 @@ defineEmits(['switch-status'])
   flex: 1;
   padding: 20px;
   background-color: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -126,8 +124,7 @@ defineEmits(['switch-status'])
   gap: 16px;
 
   &:not(.active):hover {
-    border-color: var(--el-color-primary-light-7);
-    box-shadow: 0 4px 14px rgba(5, 61, 153, 0.1);
+    box-shadow: 0 4px 14px rgba(10, 31, 143, 0.1);
     background-color: var(--el-color-primary-light-9);
     outline: none;
   }
@@ -139,7 +136,7 @@ defineEmits(['switch-status'])
 
   &.active {
     background-color: var(--el-fill-color-light);
-    border-color: var(--el-color-primary);
+    box-shadow: inset 0 0 0 1px var(--el-color-primary);
 
     .stat-title,
     .stat-number {

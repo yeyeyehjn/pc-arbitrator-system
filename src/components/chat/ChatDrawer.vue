@@ -75,7 +75,7 @@ const close = () => {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
+    background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%);
     color: #fff;
     display: flex;
     align-items: center;
@@ -104,8 +104,8 @@ const close = () => {
   transition: all 0.2s ease;
 
   &:hover {
-    color: #053d99;
-    background-color: rgba(5, 61, 153, 0.08);
+    color: var(--el-color-primary);
+    background-color: rgba(10, 31, 143, 0.08);
   }
 
   &:active {

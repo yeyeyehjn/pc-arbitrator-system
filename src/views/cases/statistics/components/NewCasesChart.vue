@@ -5,7 +5,6 @@
         <span class="title-bar"></span>
         <h3 class="card-title">新收案件情况</h3>
       </div>
-      <span v-if="data" class="card-total">共 {{ data.total }} 件</span>
     </div>
 
     <CaseEmptyState v-if="!data || data.total === 0" text="该时段暂无新收案件" />
@@ -227,6 +226,9 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .new-cases-chart {
+  border: none;
+  border-radius: 0;
+
   .card-header {
     display: flex;
     align-items: center;

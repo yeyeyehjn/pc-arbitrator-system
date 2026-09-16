@@ -133,6 +133,10 @@ const handleSearch = () => {
       margin-right: 2px;
     }
     .hot-tag {
+      /* WCAG 2.5.8：可点击标签触控区域至少 24×24 */
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
       font-size: 12px;
       color: var(--el-text-color-secondary);
       padding: 3px 8px;

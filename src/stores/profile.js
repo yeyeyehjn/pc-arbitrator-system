@@ -19,6 +19,13 @@ export const useProfileStore = defineStore('profile', () => {
       other: '杭州市西湖区文三路200号',
       preferred: 'home',
     },
+    // 常驻地：默认跟随工作状态（在职→工作地址 / 退休→居住地址）
+    // value 为审核通过后生效的自定义常驻地；pending 为待审核（含被驳回）的自定义常驻地；status: none/pending/approved/rejected
+    resident: {
+      value: '',
+      pending: '',
+      status: 'none',
+    },
   })
 
   // ============ 工作单位 ============
@@ -87,6 +94,12 @@ export const useProfileStore = defineStore('profile', () => {
   })
 
   // ============ 聘书 ============
+  // 聘书扫描件（mock）：原 via.placeholder.com 外链国内不可达导致裂图，改为生成图接口
+  const certScanUrl = (title) =>
+    `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(
+      `正式公文纸质扫描件照片，${title}，米白色A4纸张，顶部红色宋体大标题，正文黑色印刷体排版规整，页面右下角盖红色圆形公章，平整俯拍，扫描仪效果，清晰无反光`,
+    )}&image_size=portrait_4_3`
+
   const certificates = ref([
     {
       id: 'cert1',
@@ -95,7 +108,7 @@ export const useProfileStore = defineStore('profile', () => {
       endDate: '2026-05-31',
       field: '买卖合同、建设工程',
       term: '第八届',
-      scanUrl: 'https://via.placeholder.com/400x560?text=仲裁员聘书',
+      scanUrl: certScanUrl('上海仲裁委员会仲裁员聘书'),
     },
     {
       id: 'cert2',
@@ -104,7 +117,7 @@ export const useProfileStore = defineStore('profile', () => {
       endDate: '2020-05-31',
       field: '民商事合同',
       term: '第七届',
-      scanUrl: 'https://via.placeholder.com/400x560?text=仲裁员聘书(旧)',
+      scanUrl: certScanUrl('上海仲裁委员会仲裁员聘书（第七届旧版，纸张微黄）'),
     },
   ])
 
@@ -184,7 +197,7 @@ export const useProfileStore = defineStore('profile', () => {
       if (caseNo && !item.caseNo.toLowerCase().includes(caseNo.toLowerCase())) return false
       if (status && item.status !== status) return false
       if (year) {
-        const itemYear = (item.payDate || item.caseNo.match(/\((\d{4})\)/)?.[1] || '').substring(0, 4)
+        const itemYear = item.caseNo.match(/[（(](\d{4})[）)]/)?.[1] || ''
         if (itemYear !== year) return false
       }
       return true
@@ -199,7 +212,7 @@ export const useProfileStore = defineStore('profile', () => {
   const getFeeYears = computed(() => {
     const years = new Set()
     fee.value.list.forEach((item) => {
-      const y = (item.payDate || item.caseNo.match(/\((\d{4})\)/)?.[1] || '').substring(0, 4)
+      const y = item.caseNo.match(/[（(](\d{4})[）)]/)?.[1] || ''
       if (y) years.add(y)
     })
     return Array.from(years).sort((a, b) => b.localeCompare(a))

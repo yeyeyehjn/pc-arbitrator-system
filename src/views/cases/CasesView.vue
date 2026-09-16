@@ -1,6 +1,6 @@
 <template>
   <div class="cases-view">
-    <aside class="todos-sidebar" :class="{ collapsed: !sidebarExpanded }">
+    <aside v-if="!hideSidebar" class="todos-sidebar" :class="{ collapsed: !sidebarExpanded }">
       <div class="sidebar-title" @click="toggleSidebar">
         <span v-show="sidebarExpanded">我的案件</span>
         <el-icon class="toggle-icon"><Fold v-if="sidebarExpanded" /><Expand v-else /></el-icon>
@@ -52,6 +52,11 @@ const route = useRoute()
 const router = useRouter()
 
 const sidebarExpanded = ref(true)
+
+// 案件详情页、专家咨询详情页隐藏侧边栏，内容全宽展示
+// （材料阅读页已直挂 MainLayout，不再经过本布局）
+const hideSidebarRoutes = ['CaseDetail', 'CaseConsultDetail']
+const hideSidebar = computed(() => hideSidebarRoutes.includes(route.name))
 
 const navItems = [
   { label: '我的案件', value: '/cases/list', icon: Document },

@@ -92,10 +92,10 @@ const pagedOpinions = computed(() => {
 })
 
 const AVATAR_COLORS = [
-  '#053d99', '#3a6bb5', '#0d6e5a', '#5b4a8a', '#8c5e2e', '#2c6e63',
+  '#0a1f8f', '#5462b1', '#0d6e5a', '#5b4a8a', '#8c5e2e', '#2c6e63',
 ]
 const colorCache = {}
-const getAvatarColor = (name) => {
+const getAvatarColor = (namereplier) => {
   if (!name) return AVATAR_COLORS[0]
   if (!colorCache[name]) {
     let hash = 0
@@ -179,7 +179,7 @@ const previewFile = (url) => window.open(url, '_blank')
       .replier {
         font-size: 14px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
+        color: var(--el-text-color-regular);
         line-height: 1;
       }
       .submitted-at {

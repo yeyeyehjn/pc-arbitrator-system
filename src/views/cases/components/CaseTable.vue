@@ -15,7 +15,7 @@
       style="width: 100%"
       :row-class-name="rowClassName"
     >
-      <el-table-column prop="caseNo" label="案件编号" min-width="180">
+      <el-table-column prop="caseNo" label="案件编号" min-width="220">
         <template #default="{ row }">
           <div class="case-no-cell">
             <el-tooltip
@@ -31,6 +31,11 @@
                 aria-label="重大案件：标的 ≥ 1 亿元"
               ><StarFilled /></el-icon>
             </el-tooltip>
+            <span
+              v-if="caseTypeMark[row.caseType]"
+              class="case-type-mark"
+              :class="`type-${row.caseType}`"
+            >{{ caseTypeMark[row.caseType] }}</span>
             <el-link
               type="primary"
               :underline="false"
@@ -166,6 +171,13 @@ const formatAmount = (val) => {
   return val.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
 }
 
+// 仲裁角色类型文字标签（案号前）
+const caseTypeMark = {
+  solo: '独',
+  chief: '首',
+  side: '边',
+}
+
 // 案号高亮 class
 const getCaseNoClass = (row) => {
   if (row.isSuspended) return ''
@@ -232,6 +244,26 @@ const goToCaseDetail = (row) => {
     outline: 2px solid var(--el-color-primary-dark-2);
     outline-offset: 2px;
     border-radius: 2px;
+  }
+}
+
+// 仲裁角色类型文字标签：独（绿）、首（蓝）、边（灰）
+.case-type-mark {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+
+  &.type-solo {
+    color: var(--el-color-success);
+  }
+
+  &.type-chief {
+    color: var(--el-color-primary);
+  }
+
+  &.type-side {
+    color: var(--el-text-color-secondary);
   }
 }
 

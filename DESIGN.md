@@ -6,19 +6,21 @@
 
 ## 1. 色彩 Token
 
-品牌色为深蓝 `#053d99`，通过 Element Plus CSS 变量在 `:root` 全局注入（见 `src/styles/element/index.scss`）。当前使用 HEX；后续若扩展色板优先迁移到 OKLCH，但不得改动已落地的品牌色相。
+品牌色为深蓝 `#0a1f8f`，通过 Element Plus CSS 变量在 `:root` 全局注入（见 `src/styles/element/index.scss`）。另有品牌辅助色 `#1d4ed8`、强调色 `#f59e0b`（`--app-color-*` token）。当前使用 HEX；后续若扩展色板优先迁移到 OKLCH，但不得改动已落地的品牌色相。
 
 ### 1.1 品牌色阶（Primary）
 
 | Token | 值 | 用途 |
 |-------|----|------|
-| `--el-color-primary` | `#053d99` | 主品牌色：链接、选中态、主按钮、强调 |
-| `--el-color-primary-dark-2` | `#04307a` | active 按压态 |
-| `--el-color-primary-light-3` | `#3a6bb5` | hover 态 |
-| `--el-color-primary-light-5` | `#6a96cd` | 次级强调 |
-| `--el-color-primary-light-7` | `#9abde0` | 边框/弱化 |
-| `--el-color-primary-light-8` | `#b5d0e8` | 背景 tint |
-| `--el-color-primary-light-9` | `#d5e3f2` | 浅 tint 背景 |
+| `--el-color-primary` | `#0a1f8f` | 主品牌色：链接、选中态、主按钮、强调 |
+| `--el-color-primary-dark-2` | `#021972` | active 按压态 |
+| `--el-color-primary-light-3` | `#4f62b1` | hover 态 |
+| `--el-color-primary-light-5` | `#818fc7` | 次级强调 |
+| `--el-color-primary-light-7` | `#b3bcdd` | 边框/弱化 |
+| `--el-color-primary-light-8` | `#cdd2e9` | 背景 tint |
+| `--el-color-primary-light-9` | `#e6e9f4` | 浅 tint 背景 |
+
+> 色阶按 Element Plus mix 公式生成（可复算）：`light-N = 主色 × (1 - N/10) + 白 × N/10`，`dark-2 = 主色 × 80% + 黑 × 20%`。
 
 ### 1.2 文字色
 
@@ -49,6 +51,15 @@
 | `#F56C6C` | 已过期/已延期（审限 < 0）— 红 |
 | `#faebeb`（或同域浅红 tint） | 已延期案件行背景 |
 | `#fff7e6`（或同域浅黄 tint） | 重大案件金额高亮背景 |
+
+### 1.5 品牌辅助色 / 强调色
+
+| Token | 值 | 用途 |
+|-------|----|------|
+| `--app-color-secondary` | `#1d4ed8` | 辅助色：次级强调、信息性图标、图表系列色、装饰渐变辅助段 |
+| `--app-color-accent` | `#f59e0b` | 强调色：关键数据强调、关注点高亮 |
+
+> 二者为品牌级 token（`--app-color-*`），在 `:root` 中定义供全局引用。与 1.4 的状态语义色（如 `#E6A23C` 到期提醒、`#F56C6C` 已过期）相互独立，语义用途不得混用。
 
 ## 2. 字体系统
 
@@ -168,7 +179,7 @@ impeccable 通用禁令禁止「`border-left`/`border-right` > 1px 作为卡片�
 
 ### 5.2 悬浮态
 
-- 卡片：`el-card shadow="hover"`；首页卡片 hover 阴影 `0 6px 20px rgba(5,61,153,0.08)`，`transition: box-shadow .25s, transform .25s`。
+- 卡片：`el-card shadow="hover"`；首页卡片 hover 阴影 `0 6px 20px rgba(3,31,143,0.08)`，`transition: box-shadow .25s, transform .25s`。
 - 未选中统计卡片 hover：背景微调到 `#fafafa`，无阴影突变。
 - 菜单项 hover：文字色变 `--el-color-primary-light-3`。
 
@@ -182,7 +193,7 @@ impeccable 通用禁令禁止「`border-left`/`border-right` > 1px 作为卡片�
 ### 5.4 标签 Tag
 
 - 案件状态：`el-tag`，按状态色区分。
-- 快捷筛选：`el-check-tag`，选中态主题色背景 `#053d99` + 白字。
+- 快捷筛选：`el-check-tag`，选中态主题色背景 `var(--el-color-primary)` + 白字。
 - 「已中止」等微标签：10px 灰色小 tag。
 
 ## 6. 动效
@@ -217,7 +228,7 @@ impeccable 通用禁令禁止「`border-left`/`border-right` > 1px 作为卡片�
 
 当前项目的色彩用 HEX 表达。若后续 impeccable 引入新模块并需要更细的色板（如数据统计看板的多色图表），应：
 
-1. 优先在 `:root` 新增 OKLCH 变量，品牌色 `#053d99` 作为锚点。
+1. 优先在 `:root` 新增 OKLCH 变量，品牌色 `#0a1f8f` 作为锚点。
 2. 图表色板围绕品牌色同域展开（同色相不同明度），避免引入无关色相。
 3. 同步在本文件登记新 token。
 

@@ -68,7 +68,7 @@ const handleCopy = () => {
 
       &:hover {
         border-color: var(--el-color-primary);
-        box-shadow: 0 2px 8px rgba(5, 61, 153, 0.1);
+        box-shadow: 0 2px 8px rgba(10, 31, 143, 0.1);
       }
 
       .tool-icon {

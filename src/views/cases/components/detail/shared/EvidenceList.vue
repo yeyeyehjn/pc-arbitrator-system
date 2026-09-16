@@ -12,13 +12,20 @@
           @change="setFilter(f.value)"
         >{{ f.label }}</el-check-tag>
       </div>
+      <el-button v-if="filteredList.length" link type="primary" class="toggle-all-btn" @click="toggleAll">
+        <el-icon class="toggle-all-icon">
+          <ArrowDownBold v-if="!allExpanded" />
+          <ArrowUpBold v-else />
+        </el-icon>
+        {{ allExpanded ? '收起全部' : '展开全部' }}
+      </el-button>
     </div>
 
     <!-- 空状态 -->
     <CaseEmptyState v-if="!filteredList.length" text="暂无证据清单" />
 
     <!-- 展开式表格 -->
-    <el-table v-else :data="filteredList" row-key="id" style="width: 100%">
+    <el-table v-else ref="tableRef" :data="filteredList" row-key="id" style="width: 100%">
       <el-table-column type="expand">
         <template #default="{ row }">
           <div class="expand-body">
@@ -27,7 +34,15 @@
               <div class="content-text">{{ row.content || '暂无证据内容' }}</div>
             </div>
             <div v-if="row.challenge" class="challenge-card">
-              <span class="challenge-tag">质证</span>
+              <div class="challenge-head">
+                <span class="challenge-tag">质证</span>
+                <span
+                  v-for="item in threeNatures"
+                  :key="item.key"
+                  class="nature-tag"
+                  :class="row.challenge[item.key] === '异议' ? 'is-disputed' : 'is-confirmed'"
+                >{{ item.label }}：{{ row.challenge[item.key] || '确认' }}</span>
+              </div>
               <div class="challenge-line">
                 <span class="challenge-label">质证人：</span>
                 <span>{{ row.challenge.challenger }}</span>
@@ -37,7 +52,7 @@
                 <span>{{ row.challenge.reason }}</span>
               </div>
               <div v-if="row.challenge && row.challenge.opinionFiles && row.challenge.opinionFiles.length" class="challenge-line">
-                <span class="challenge-label">质证意见附件：</span>
+                <span class="challenge-label">答辩文件：</span>
                 <span
                   v-for="f in row.challenge.opinionFiles"
                   :key="f.id"
@@ -103,7 +118,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Document, Download } from '@element-plus/icons-vue'
+import { Document, Download, ArrowDownBold, ArrowUpBold } from '@element-plus/icons-vue'
 import CaseEmptyState from '../../shared/CaseEmptyState.vue'
 
 const props = defineProps({
@@ -129,7 +144,32 @@ const filteredList = computed(() => {
 
 const setFilter = (v) => {
   filter.value = v
+  // 切换筛选后收起全部，避免残留展开状态造成误读
+  collapseAll()
 }
+
+// ============ 展开全部 / 收起全部 ============
+const tableRef = ref()
+const allExpanded = ref(false)
+
+const collapseAll = () => {
+  if (!tableRef.value) return
+  filteredList.value.forEach((row) => tableRef.value.toggleRowExpansion(row, false))
+  allExpanded.value = false
+}
+
+const toggleAll = () => {
+  const target = !allExpanded.value
+  filteredList.value.forEach((row) => tableRef.value.toggleRowExpansion(row, target))
+  allExpanded.value = target
+}
+
+// 质证三性核对维度
+const threeNatures = [
+  { key: 'authenticity', label: '真实性' },
+  { key: 'legality', label: '合法性' },
+  { key: 'relevance', label: '关联性' },
+]
 
 const previewVisible = ref(false)
 const currentFile = ref(null)
@@ -179,6 +219,21 @@ const downloadFile = (file) => {
       margin-left: auto;
       display: flex;
       gap: 6px;
+
+      // 筛选 chips 字重统一为 400（含选中态）
+      :deep(.el-check-tag),
+      :deep(.el-check-tag.is-checked) {
+        font-weight: 400;
+      }
+    }
+
+    .toggle-all-btn {
+      margin-left: 10px;
+      font-size: 12px;
+
+      .toggle-all-icon {
+        font-size: 12px;
+      }
     }
   }
 
@@ -254,15 +309,42 @@ const downloadFile = (file) => {
       border-top: 1px dashed #f5d9a0;
       padding-top: 8px;
 
-      .challenge-tag {
-        display: inline-block;
-        background-color: var(--app-color-accent);
-        color: #ffffff;
-        border-radius: 3px;
-        padding: 1px 6px;
-        font-size: 10px;
-        font-weight: 600;
+      .challenge-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         margin-bottom: 6px;
+        flex-wrap: wrap;
+
+        .challenge-tag {
+          display: inline-block;
+          background-color: var(--app-color-accent);
+          color: #ffffff;
+          border-radius: 3px;
+          padding: 1px 6px;
+          font-size: 10px;
+          font-weight: 600;
+        }
+
+        .nature-tag {
+          display: inline-block;
+          border-radius: 3px;
+          padding: 1px 6px;
+          font-size: 10px;
+          border: 1px solid;
+
+          &.is-confirmed {
+            background-color: #f0f9eb;
+            color: #67c23a;
+            border-color: #c2e7b0;
+          }
+
+          &.is-disputed {
+            background-color: #fff7e6;
+            color: #b45309;
+            border-color: #f5d9a0;
+          }
+        }
       }
 
       .challenge-line {
@@ -275,8 +357,10 @@ const downloadFile = (file) => {
         flex-wrap: wrap;
 
         .challenge-label {
-          color: var(--el-text-color-secondary);
+          width: 80px;
           flex-shrink: 0;
+          text-align: left;
+          color: var(--el-text-color-secondary);
         }
       }
     }
@@ -320,6 +404,33 @@ const downloadFile = (file) => {
       border-radius: 4px;
       font-size: 14px;
       color: var(--el-text-color-secondary);
+    }
+  }
+}
+
+// ============ 移动端（≤768px）：工具栏换行、表格容器内横向滚动 ============
+@media (max-width: 768px) {
+  .evidence-list {
+    .list-toolbar {
+      flex-wrap: wrap;
+      row-gap: 8px;
+
+      .toolbar-filters {
+        margin-left: 0;
+      }
+
+      .toggle-all-btn {
+        margin-left: auto;
+      }
+    }
+
+    // 展开行缩进收窄，适配小屏
+    .expand-body {
+      margin-left: 12px;
+    }
+
+    :deep(.el-table) {
+      width: 100%;
     }
   }
 }

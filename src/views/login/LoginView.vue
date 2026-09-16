@@ -5,7 +5,7 @@
       <div class="brand-bg"></div>
       <div class="brand-content">
         <div class="brand-mark">
-          <img src="/tu/login/bt-st2.png" alt="广州仲裁委员会" />
+          <img src="/tu/login/new-logo2.png" alt="广州仲裁委员会" />
         </div>
         <div class="brand-headline">
           <img src="/tu/login/font.png" alt="立信铸就广仲 创新赢得未来" />
@@ -735,7 +735,7 @@ $radius: 10px;
     animation: riseIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
 
     img {
-      height: 60px;
+      height: 48px;
       width: auto;
       object-fit: contain;
     }
@@ -1450,7 +1450,7 @@ $radius: 10px;
     padding: clamp(20px, 4vw, 32px);
 
     .brand-mark img {
-      height: 44px;
+      height: 40px;
     }
     .brand-headline {
       bottom: clamp(40px, 5vw, 60px);
@@ -1490,7 +1490,7 @@ $radius: 10px;
   }
   .brand-panel {
     .brand-mark img {
-      height: 44px;
+      height: 40px;
     }
     .brand-headline {
       bottom: 32px;
@@ -1535,7 +1535,7 @@ $radius: 10px;
   }
   .legal-notice {
     margin-top: 20px;
-    font-size: 10px;
+    font-size: 12px;
   }
 }
 @media (max-width: 360px) {
@@ -1544,7 +1544,7 @@ $radius: 10px;
   }
   .brand-panel {
     .brand-mark img {
-      height: 40px;
+      height: 34px;
     }
     .brand-headline img {
       height: clamp(40px, 13vw, 60px);
@@ -1567,6 +1567,20 @@ $radius: 10px;
   }
   .brand-panel:hover .brand-bg {
     transform: scale(1.05);
+  }
+}
+
+/* ── 触屏设备：放宽辅助链接触控区域（WCAG 2.5.8 ≥24px）── */
+@media (hover: none) {
+  .forgot {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 2px;
+  }
+  .bottom-links a {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 2px;
   }
 }
 </style>

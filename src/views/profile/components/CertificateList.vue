@@ -236,7 +236,7 @@ const handleDownload = () => {
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(5, 61, 153, 0.12);
+      box-shadow: 0 6px 16px rgba(10, 31, 143, 0.12);
     }
   }
 

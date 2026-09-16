@@ -72,6 +72,14 @@
             <el-input-number v-model="filters.amountMax" :min="0" placeholder="最大" controls-position="right" />
             <span class="amount-unit">万元</span>
           </div>
+          <div class="filter-item">
+            <span class="filter-label">类型</span>
+            <el-select v-model="filters.caseType" placeholder="全部" clearable>
+              <el-option label="独任" value="solo" />
+              <el-option label="首席" value="chief" />
+              <el-option label="边裁" value="side" />
+            </el-select>
+          </div>
         </template>
       </div>
 
@@ -81,15 +89,30 @@
         <el-checkbox
           :model-value="quickFilters.major"
           @change="$emit('toggle-quick-filter', 'major')"
-        >重大案件</el-checkbox>
+        >
+          <span class="quick-option">
+            <el-icon class="quick-icon quick-icon-major"><StarFilled /></el-icon>
+            <span>重大案件</span>
+          </span>
+        </el-checkbox>
         <el-checkbox
           :model-value="quickFilters.expiringSoon"
           @change="$emit('toggle-quick-filter', 'expiringSoon')"
-        >即将延期</el-checkbox>
+        >
+          <span class="quick-option">
+            <span class="quick-dot dot-expiring"></span>
+            <span>即将延期</span>
+          </span>
+        </el-checkbox>
         <el-checkbox
           :model-value="quickFilters.expired"
           @change="$emit('toggle-quick-filter', 'expired')"
-        >已延期</el-checkbox>
+        >
+          <span class="quick-option">
+            <span class="quick-dot dot-expired"></span>
+            <span>已延期</span>
+          </span>
+        </el-checkbox>
       </div>
 
       <!-- 操作区：查询、重置、展开/收起 -->
@@ -108,7 +131,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
+import { ArrowDown, ArrowUp, StarFilled } from '@element-plus/icons-vue'
 
 const props = defineProps({
   filters: {
@@ -210,7 +233,7 @@ const handleReset = () => {
 .quick-filter {
   gap: 16px;
   padding-top: 16px;
-  margin-top: 4px;
+  margin-top: 20px;
   border-top: 1px dashed var(--el-border-color-lighter);
 
   :deep(.el-checkbox) {
@@ -220,6 +243,37 @@ const handleReset = () => {
       font-size: 14px;
       color: var(--el-text-color-regular);
       padding-left: 8px;
+    }
+  }
+
+  // 选项前缀图标/圆点，颜色与列表对应语义一致（黄=重大/即将延期，红=已延期）
+  .quick-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .quick-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+
+    &.quick-icon-major {
+      color: var(--el-color-warning);
+    }
+  }
+
+  .quick-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &.dot-expiring {
+      background-color: var(--el-color-warning);
+    }
+
+    &.dot-expired {
+      background-color: var(--el-color-danger);
     }
   }
 }

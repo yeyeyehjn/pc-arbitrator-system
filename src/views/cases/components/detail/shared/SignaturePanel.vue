@@ -18,23 +18,27 @@
           <template #default="{ row }">
             <el-button type="primary" link size="small" @click="handleViewRecord(row)">查看</el-button>
             <el-button
+              v-if="!row.signed"
               type="primary"
               link
               size="small"
-              :disabled="row.signed"
               @click="openSignDialog(row)"
             >
-              {{ row.signed ? '已签名' : '签名' }}
+              签名
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
-    <!-- 结案文书 -->
+    <!-- 结案文书：区分未签名 / 已签名 -->
     <div class="doc-section">
       <div class="doc-subtitle">结案文书</div>
-      <el-table :data="docList.awards" style="width: 100%">
+      <el-tabs v-model="awardTab" class="award-tabs">
+        <el-tab-pane :label="`未签名(${unsignedAwards.length})`" name="unsigned" />
+        <el-tab-pane :label="`已签名(${signedAwards.length})`" name="signed" />
+      </el-tabs>
+      <el-table :data="filteredAwards" style="width: 100%">
         <el-table-column prop="title" label="文书标题" min-width="180" show-overflow-tooltip />
         <el-table-column prop="docType" label="文书类型" min-width="120" />
         <el-table-column prop="submitTime" label="提交时间" min-width="160" />
@@ -49,13 +53,13 @@
           <template #default="{ row }">
             <el-button type="primary" link size="small" @click="handleViewAward(row)">预览</el-button>
             <el-button
+              v-if="!row.signed"
               type="primary"
               link
               size="small"
-              :disabled="row.signed"
-              @click="openSignDialog(row)"
+              @click="confirmAwardSign(row)"
             >
-              {{ row.signed ? '已签名' : '签名' }}
+              签名
             </el-button>
           </template>
         </el-table-column>
@@ -96,7 +100,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import SignaturePad from '@/views/todos/components/shared/SignaturePad.vue'
 import { useCaseDetailStore } from '@/stores/caseDetail'
 
@@ -113,6 +118,14 @@ const signDialogVisible = ref(false)
 const currentDoc = ref(null)
 const padRef = ref(null)
 
+// ============ 结案文书：未签名 / 已签名 tab ============
+const awardTab = ref('unsigned')
+const unsignedAwards = computed(() => props.docList.awards.filter((d) => !d.signed))
+const signedAwards = computed(() => props.docList.awards.filter((d) => d.signed))
+const filteredAwards = computed(() =>
+  awardTab.value === 'signed' ? signedAwards.value : unsignedAwards.value
+)
+
 const handleViewRecord = (row) => {
   currentDoc.value = row
   viewDialogVisible.value = true
@@ -127,6 +140,23 @@ const openSignDialog = (row) => {
   if (row.signed) return
   currentDoc.value = row
   signDialogVisible.value = true
+}
+
+// 结案文书签名：确认弹框 → 确认后标记已签名
+const confirmAwardSign = (row) => {
+  ElMessageBox.confirm('请确认是否对本次结案文书予以电子签名确认。', '签名确认', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      const ok = store.signAwardDoc(row.id)
+      if (ok) {
+        // 当前条目已签名，若处于"未签名"tab 会自动移出列表
+        ElMessage.success('签名完成')
+      }
+    })
+    .catch(() => {})
 }
 
 const clearPad = () => {
@@ -168,6 +198,20 @@ const confirmSign = () => {
         bottom: 4px;
         width: 2px;
         background-color: var(--el-color-primary);
+      }
+    }
+
+    .award-tabs {
+      margin-bottom: 4px;
+
+      :deep(.el-tabs__header) {
+        margin-bottom: 10px;
+      }
+
+      :deep(.el-tabs__item) {
+        font-size: 14px;
+        height: 40px;
+        line-height: 40px;
       }
     }
   }

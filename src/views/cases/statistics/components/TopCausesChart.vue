@@ -67,6 +67,9 @@ const getProgressPercent = (count) => {
 
 <style scoped lang="scss">
 .top-causes-chart {
+  border: none;
+  border-radius: 0;
+
   .card-header {
     display: flex;
     align-items: center;
@@ -207,7 +210,7 @@ const getProgressPercent = (count) => {
         }
 
         .cause-stats {
-          font-size: 11px;
+          font-size: 12px;
         }
       }
     }

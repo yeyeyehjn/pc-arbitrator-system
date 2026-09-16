@@ -42,7 +42,7 @@ onMounted(() => {
   ctx.value.lineWidth = 2
   ctx.value.lineCap = 'round'
   ctx.value.lineJoin = 'round'
-  ctx.value.strokeStyle = '#00296b'
+  ctx.value.strokeStyle = '#000000'
 })
 
 const getPoint = (e) => {

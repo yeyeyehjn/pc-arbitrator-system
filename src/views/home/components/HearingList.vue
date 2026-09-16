@@ -6,14 +6,20 @@
       <el-tab-pane label="待开庭" name="pending" />
     </el-tabs>
 
-    <!-- 筛选项 -->
+    <!-- 筛选项（复用全局 .filter-bar 规范，控件统一 180px 宽） -->
     <div class="filter-bar">
-      <div class="filter-fields">
+      <div class="filter-items">
         <div class="filter-item">
-          <span class="filter-label">案号</span>
+          <span class="filter-label">案件年份</span>
+          <el-select v-model="filters.caseYear" placeholder="全部" clearable>
+            <el-option v-for="y in yearOptions" :key="y" :label="y" :value="y" />
+          </el-select>
+        </div>
+        <div class="filter-item">
+          <span class="filter-label">案件编号</span>
           <el-input
             v-model="filters.caseNumber"
-            placeholder="请输入案号"
+            placeholder="请输入案件编号"
             clearable
             :prefix-icon="Search"
           />
@@ -46,12 +52,13 @@
 
     <!-- 数据表格 -->
     <el-table :data="pagedData" style="width: 100%">
-      <el-table-column prop="caseNumber" label="案号" width="170" />
+      <el-table-column prop="caseNumber" label="案件编号" width="190" />
       <el-table-column prop="caseReason" label="案由" min-width="120" />
       <el-table-column prop="time" label="开庭时间" width="160" />
       <el-table-column prop="location" label="庭室地址" min-width="150" />
       <el-table-column prop="roomUsage" label="庭室用途" width="110" />
       <el-table-column prop="secretary" label="经办秘书" width="100" />
+      <el-table-column prop="arbitrators" label="仲裁庭" min-width="140" show-overflow-tooltip />
       <el-table-column prop="status" label="状态" width="90" fixed="right">
         <template #default="scope">
           <el-tag :type="scope.row.isToday ? 'danger' : 'warning'">{{ scope.row.status }}</el-tag>
@@ -96,6 +103,7 @@ const allData = ref([
     location: '上海仲裁委员会1号庭室',
     roomUsage: '庭审',
     secretary: '李明',
+    arbitrators: '陈志远、刘建华、王晓明',
     status: '待开庭',
     isToday: true,
   },
@@ -106,6 +114,7 @@ const allData = ref([
     location: '上海仲裁委员会2号庭室',
     roomUsage: '庭审',
     secretary: '王芳',
+    arbitrators: '张敏、李国强',
     status: '待开庭',
     isToday: true,
   },
@@ -116,6 +125,7 @@ const allData = ref([
     location: '上海仲裁委员会3号庭室',
     roomUsage: '质证',
     secretary: '李明',
+    arbitrators: '陈志远、赵雅琴、孙建军',
     status: '待开庭',
     isToday: false,
   },
@@ -126,6 +136,7 @@ const allData = ref([
     location: '上海仲裁委员会4号庭室',
     roomUsage: '合议',
     secretary: '张丽',
+    arbitrators: '刘建华、周慧敏',
     status: '待开庭',
     isToday: false,
   },
@@ -136,6 +147,7 @@ const allData = ref([
     location: '上海仲裁委员会1号庭室',
     roomUsage: '庭审',
     secretary: '王芳',
+    arbitrators: '王晓明、陈志远、赵雅琴',
     status: '待开庭',
     isToday: false,
   },
@@ -146,6 +158,7 @@ const allData = ref([
     location: '上海仲裁委员会2号庭室',
     roomUsage: '质证',
     secretary: '张丽',
+    arbitrators: '李国强、孙建军',
     status: '待开庭',
     isToday: false,
   },
@@ -156,6 +169,7 @@ const allData = ref([
     location: '上海仲裁委员会5号庭室',
     roomUsage: '庭审',
     secretary: '李明',
+    arbitrators: '张敏、刘建华、周慧敏',
     status: '待开庭',
     isToday: false,
   },
@@ -166,6 +180,7 @@ const allData = ref([
     location: '上海仲裁委员会3号庭室',
     roomUsage: '合议',
     secretary: '王芳',
+    arbitrators: '赵雅琴、王晓明',
     status: '待开庭',
     isToday: false,
   },
@@ -173,9 +188,20 @@ const allData = ref([
 
 const activeTab = ref('today')
 const filters = ref({
+  caseYear: '',
   caseNumber: '',
   secretary: '',
   date: '',
+})
+
+// 案件年份选项（近5年）
+const currentYear = new Date().getFullYear()
+const yearOptions = computed(() => {
+  const years = []
+  for (let y = currentYear; y >= currentYear - 4; y--) {
+    years.push(String(y))
+  }
+  return years
 })
 
 const currentPage = ref(1)
@@ -190,6 +216,10 @@ const filteredData = computed(() => {
     if (activeTab.value === 'today' && !item.isToday) return false
     if (activeTab.value === 'pending' && item.isToday) return false
     // 常规筛选
+    if (filters.value.caseYear) {
+      const yearMatch = item.caseNumber.match(/[（(](\d{4})[）)]/)
+      if ((yearMatch ? yearMatch[1] : '') !== filters.value.caseYear) return false
+    }
     if (filters.value.caseNumber && !item.caseNumber.includes(filters.value.caseNumber)) return false
     if (filters.value.secretary && !item.secretary.includes(filters.value.secretary)) return false
     if (filters.value.date && !item.time.startsWith(filters.value.date)) return false
@@ -212,7 +242,7 @@ const handleSearch = () => {
 }
 
 const handleReset = () => {
-  filters.value = { caseNumber: '', secretary: '', date: '' }
+  filters.value = { caseYear: '', caseNumber: '', secretary: '', date: '' }
   currentPage.value = 1
 }
 </script>
@@ -226,49 +256,27 @@ const handleReset = () => {
     }
   }
 
+  // 复用全局 .filter-bar 筛选规范（控件统一 180px 宽）；
+  // 卡片内嵌场景：去除白底内边距；筛选项与按钮共享同一换行流，
+  // 按钮跟在最后一行筛选项之后（右侧），不单独占行
   .filter-bar {
     display: flex;
-    gap: 16px;
-    margin-bottom: 16px;
     flex-wrap: wrap;
     align-items: center;
+    gap: 12px;
     background: transparent;
     padding: 0;
 
-    .filter-fields {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      flex: 1;
-      min-width: 0;
-    }
-    .filter-item {
-      min-width: 0;
-      :deep(.el-input),
-      :deep(.el-select),
-      :deep(.el-date-editor) {
-        width: auto;
-        flex: 1;
-        min-width: 0;
-      }
-    }
-    .filter-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      padding-left: 16px;
-      border-left: 1px solid var(--el-border-color-lighter);
+    .filter-items {
+      display: contents;
     }
 
-    // 移动端：筛选项改为单列堆叠
-    @media (max-width: 768px) {
-      .filter-fields {
-        grid-template-columns: 1fr;
-      }
-      .filter-actions {
-        padding-left: 0;
-        border-left: none;
-      }
+    .filter-actions {
+      margin-top: 0;
+      margin-left: auto;
+      gap: 8px;
+      padding-left: 16px;
+      border-left: 1px solid var(--el-border-color-lighter);
     }
   }
 

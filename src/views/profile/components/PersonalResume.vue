@@ -307,7 +307,7 @@ const handleDownload = (file) => {
 
     &:hover {
       border-color: var(--el-color-primary-light-5);
-      box-shadow: 0 4px 12px rgba(5, 61, 153, 0.08);
+      box-shadow: 0 4px 12px rgba(10, 31, 143, 0.08);
     }
   }
 

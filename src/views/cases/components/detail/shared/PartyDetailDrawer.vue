@@ -2,6 +2,7 @@
   <el-drawer
     v-model="drawerVisible"
     :title="drawerTitle"
+    class="party-detail-drawer"
     direction="rtl"
     size="42%"
   >
@@ -172,5 +173,13 @@ const partyBadgeText = computed(() => {
       color: var(--el-text-color-secondary);
     }
   }
+}
+
+:global(.party-detail-drawer .el-drawer__header) {
+  margin-bottom: 0;
+}
+
+:global(.party-detail-drawer .el-drawer__title) {
+  color: var(--el-text-color-regular);
 }
 </style>

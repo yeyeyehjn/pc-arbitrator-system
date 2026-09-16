@@ -1,262 +1,186 @@
 <template>
   <div class="calendar-board">
+    <!-- 月份切换：置于日历上方 -->
+    <div class="month-bar">
+      <div class="month-nav">
+        <el-button
+          class="calendar-nav-btn"
+          :icon="ArrowLeft"
+          aria-label="上一月"
+          @click="selectDate('prev-month')"
+        />
+        <span class="month-text">{{ monthLabel }}</span>
+        <el-button
+          class="calendar-nav-btn"
+          :icon="ArrowRight"
+          aria-label="下一月"
+          @click="selectDate('next-month')"
+        />
+      </div>
+      <el-button class="today-btn" @click="goToday">今日</el-button>
+    </div>
+
     <el-calendar v-model="currentDate">
-      <template #header="{ date }">
-        <div class="calendar-header">
-          <span class="calendar-title-text">{{ formatCalendarHeader(date) }}</span>
-          <div class="header-actions">
-            <el-button
-              class="calendar-nav-btn rule-btn"
-              aria-label="周期规则"
-              @click="ruleDialogVisible = true"
-            >
-              <el-icon><Setting /></el-icon>
-              <span>周期规则</span>
-            </el-button>
-            <span class="action-divider"></span>
-            <el-button
-              class="calendar-nav-btn"
-              :icon="ArrowLeft"
-              aria-label="上一月"
-              @click="selectDate('prev-month')"
-            />
-            <el-button
-              class="calendar-nav-btn today-btn"
-              @click="selectDate('today')"
-            >本月</el-button>
-            <el-button
-              class="calendar-nav-btn"
-              :icon="ArrowRight"
-              aria-label="下一月"
-              @click="selectDate('next-month')"
-            />
-          </div>
-        </div>
-      </template>
       <template #date-cell="{ data }">
         <div
           class="date-cell"
-          :class="getDateCellClass(data.day)"
-          role="button"
-          tabindex="0"
-          @click="openSettingDialog(data.day)"
-          @keydown.enter="openSettingDialog(data.day)"
+          :class="{
+            'is-hearing': isHearing(data.day),
+            'is-past': isHearing(data.day) && isPastDay(data.day),
+            'is-selected': data.day === selectedDate,
+          }"
+          :role="isActiveHearingDay(data.day) ? 'button' : false"
+          :tabindex="isActiveHearingDay(data.day) ? 0 : -1"
+          :aria-label="isActiveHearingDay(data.day) ? `查看${data.day}开庭安排` : undefined"
+          :aria-disabled="isHearing(data.day) && isPastDay(data.day)"
+          :aria-pressed="data.day === selectedDate"
+          @click="selectDay(data.day)"
+          @keydown.enter="selectDay(data.day)"
         >
           <span class="date-day">{{ data.day.split('-').slice(2).join('-') }}</span>
-          <span v-if="getDateBadge(data.day)" class="date-badge">{{ getDateBadge(data.day) }}</span>
+          <span v-if="isHearing(data.day)" class="date-badge">庭</span>
         </div>
       </template>
     </el-calendar>
 
     <div class="today-summary">
-      <h4 class="summary-title">今日开庭提醒</h4>
-      <div v-if="todayHearings.length > 0" class="hearing-list">
+      <h4 class="summary-title">{{ selectedDateLabel }}开庭提醒</h4>
+      <div v-if="selectedHearings.length > 0" class="hearing-list">
         <div
-            v-for="(item, index) in todayHearings"
-            :key="index"
+            v-for="(item, index) in selectedHearings"
+            :key="`${item.date}-${item.caseNumber}-${index}`"
             class="hearing-row"
             role="button"
             tabindex="0"
-            :aria-label="`${item.caseNumber} ${item.time} ${item.room}`"
-            @click="goToCases"
-            @keydown.enter="goToCases"
+            :aria-label="`${item.caseNumber} ${item.timeText} ${item.room}`"
+            @click="goToCaseDetail(item.caseId)"
+            @keydown.enter="goToCaseDetail(item.caseId)"
           >
           <span class="hearing-cell case-number" :title="item.caseNumber">{{ item.caseNumber }}</span>
-          <span class="hearing-cell hearing-time">{{ item.time }}</span>
+          <span class="hearing-cell hearing-time">{{ item.timeText }}</span>
           <span class="hearing-cell hearing-room" :title="item.room">{{ item.room }}</span>
         </div>
       </div>
-      <div v-else class="empty-task">今日无开庭安排</div>
-
-      <h4 class="summary-title summary-title--mt summary-title--with-action">
-        <span class="summary-title-text">即将延期案件</span>
-        <el-link
-          type="primary"
-          :underline="false"
-          class="more-link"
-          @click="goToExpiringCases"
-        >查看更多</el-link>
-      </h4>
-      <ul v-if="expiringSoonCases.length > 0" class="case-list">
-        <li
-          v-for="(caseItem, index) in expiringSoonCases"
-          :key="index"
-          class="case-item case-item--warning"
-          role="button"
-          tabindex="0"
-          :aria-label="`${caseItem.caseNo}，剩余 ${caseItem.remainDays} 天，点击查看案件`"
-          @click="goToCases"
-          @keydown.enter="goToCases"
-        >
-          <span class="case-number-text">{{ caseItem.caseNo }}</span>
-        </li>
-      </ul>
-      <div v-else class="empty-task">暂无即将延期案件</div>
-
-      <h4 class="summary-title summary-title--mt summary-title--with-action">
-        <span class="summary-title-text">已延期</span>
-        <el-link
-          type="primary"
-          :underline="false"
-          class="more-link"
-          @click="goToOverdueCases"
-        >查看更多</el-link>
-      </h4>
-      <ul v-if="overdueCases.length > 0" class="case-list">
-        <li
-          v-for="(caseItem, index) in overdueCases"
-          :key="index"
-          class="case-item"
-          role="button"
-          tabindex="0"
-          :aria-label="`${caseItem.caseNo}，已延期，点击查看案件`"
-          @click="goToCases"
-          @keydown.enter="goToCases"
-        >
-          <span class="case-number-text">{{ caseItem.caseNo }}</span>
-        </li>
-      </ul>
-      <div v-else class="empty-task">暂无已延期案件</div>
+      <div v-else class="empty-task">该日无开庭安排</div>
     </div>
-
-    <!-- 单日设置弹窗 -->
-    <DateSettingDialog
-      v-model:visible="settingDialogVisible"
-      :date="settingDialogDate"
-      @saved="handleCalendarRefresh"
-    />
-    <!-- 周期规则弹窗 -->
-    <RecurringRuleDialog v-model:visible="ruleDialogVisible" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowLeft, ArrowRight, Setting } from '@element-plus/icons-vue'
-import { useCalendarStore } from '@/stores/calendar'
-import { useCaseStore } from '@/stores/case'
-import DateSettingDialog from './DateSettingDialog.vue'
-import RecurringRuleDialog from './RecurringRuleDialog.vue'
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 
 const router = useRouter()
-const calendarStore = useCalendarStore()
-const caseStore = useCaseStore()
 
-const goToCases = () => {
-  router.push('/cases/list')
-}
-
-// 跳转到【我的案件】页面，并筛选已延期状态
-const goToOverdueCases = () => {
-  router.push('/cases/list?status=overdue')
-}
-
-// 跳转到【我的案件】页面，并筛选即将延期状态
-const goToExpiringCases = () => {
-  router.push('/cases/list?status=expiring')
+// 跳转到案件详情页
+const goToCaseDetail = (caseId) => {
+  router.push(`/cases/${caseId}`)
 }
 
 const currentDate = ref(new Date())
 
-// 弹窗状态
-const settingDialogVisible = ref(false)
-const settingDialogDate = ref('')
-const ruleDialogVisible = ref(false)
+// 当前月份文案：2026年9月
+const monthLabel = computed(
+  () => `${currentDate.value.getFullYear()}年${currentDate.value.getMonth() + 1}月`
+)
 
-const openSettingDialog = (day) => {
-  settingDialogDate.value = day
-  settingDialogVisible.value = true
-}
-
-// 弹窗保存后回调（store 响应式驱动日历刷新，此处无需额外操作）
-const handleCalendarRefresh = () => {
-  // 预留：后续对接 API 时可在此触发数据重新拉取
-}
-
-// 今日开庭日期集合（来自现有 todayHearings mock，本期仅今日）
-const todayHearingDates = computed(() => {
-  const today = new Date().toISOString().slice(0, 10)
-  return todayHearings.value.length > 0 ? new Set([today]) : new Set()
-})
-
-// 日期格样式 class
-const getDateCellClass = (day) => {
-  // 1. 已约庭（hearing 数据，优先级最高）
-  if (todayHearingDates.value.has(day)) {
-    return 'is-hearing'
-  }
-  // 2. 调用 store 计算仲裁员自设状态
-  const status = calendarStore.getDayStatus(day)
-  return `is-${status.status}`
-}
-
-// 日期格标识文字（庭/休/半）
-const getDateBadge = (day) => {
-  if (todayHearingDates.value.has(day)) return '庭'
-  const status = calendarStore.getDayStatus(day)
-  if (status.status === 'unavailable') return '休'
-  if (status.status === 'partial') return '半'
-  return ''
-}
-
-// 将 "2026 July" 格式化为 "2026年7月"
-const formatCalendarHeader = (dateStr) => {
-  const parts = dateStr.split(' ')
-  if (parts.length === 2) {
-    const year = parts[0]
-    const monthMap = {
-      'January': '1', 'February': '2', 'March': '3', 'April': '4',
-      'May': '5', 'June': '6', 'July': '7', 'August': '8',
-      'September': '9', 'October': '10', 'November': '11', 'December': '12'
-    }
-    const month = monthMap[parts[1]] || parts[1]
-    return `${year}年${month}月`
-  }
-  return dateStr
-}
-
+// 月份切换
 const selectDate = (type) => {
   const date = new Date(currentDate.value)
   if (type === 'prev-month') {
     date.setMonth(date.getMonth() - 1)
   } else if (type === 'next-month') {
     date.setMonth(date.getMonth() + 1)
-  } else if (type === 'today') {
-    date.setDate(new Date().getDate())
-    date.setMonth(new Date().getMonth())
-    date.setFullYear(new Date().getFullYear())
   }
   currentDate.value = date
 }
 
-// 今日开庭提醒：案号、开庭时间、庭室
-const todayHearings = ref([
-  {
-    caseNumber: '（2026）沪仲案字第001号',
-    time: '09:30',
-    room: '1号庭室',
-  },
-  {
-    caseNumber: '（2026）沪仲案字第003号',
-    time: '14:00',
-    room: '3号庭室',
-  },
+// 回到今日：月份与选中日期均回到今天
+const goToday = () => {
+  currentDate.value = new Date()
+  selectedDate.value = today
+}
+
+// 开庭案件数据源：含日期、开始/结束时间、庭室
+const hearings = ref([
+  // === 2026年8月 ===
+  { date: '2026-08-12', caseNumber: '（2026）沪仲案字第021号', startTime: '09:00', endTime: '11:30', room: '2号庭室' },
+  { date: '2026-08-15', caseNumber: '（2026）沪仲案字第003号', startTime: '10:00', endTime: '12:00', room: '3号庭室' },
+  { date: '2026-08-19', caseNumber: '（2026）沪仲案字第024号', startTime: '14:00', endTime: '17:00', room: '5号庭室' },
+  { date: '2026-08-22', caseNumber: '（2026）沪仲案字第007号', startTime: '09:30', endTime: '11:00', room: '1号庭室' },
+  { date: '2026-08-22', caseNumber: '（2026）沪仲案字第008号', startTime: '15:00', endTime: '16:30', room: '3号庭室' },
+  { date: '2026-08-26', caseNumber: '（2026）沪仲案字第026号', startTime: '10:30', endTime: '12:00', room: '4号庭室' },
+  { date: '2026-08-28', caseNumber: '（2026）沪仲案字第028号', startTime: '09:00', endTime: '11:00', room: '2号庭室' },
+  // === 2026年9月 ===
+  { date: '2026-09-02', caseNumber: '（2026）沪仲案字第031号', startTime: '09:30', endTime: '11:00', room: '2号庭室' },
+  { date: '2026-09-05', caseNumber: '（2026）沪仲案字第033号', startTime: '14:00', endTime: '16:00', room: '5号庭室' },
+  { date: '2026-09-07', caseNumber: '（2026）沪仲案字第001号', startTime: '09:30', endTime: '11:30', room: '1号庭室' },
+  { date: '2026-09-07', caseNumber: '（2026）沪仲案字第003号', startTime: '14:00', endTime: '16:00', room: '3号庭室' },
+  { date: '2026-09-10', caseNumber: '（2026）沪仲案字第035号', startTime: '09:00', endTime: '11:00', room: '1号庭室' },
+  { date: '2026-09-10', caseNumber: '（2026）沪仲案字第036号', startTime: '15:30', endTime: '17:00', room: '4号庭室' },
+  { date: '2026-09-14', caseNumber: '（2026）沪仲案字第037号', startTime: '10:00', endTime: '12:00', room: '3号庭室' },
+  { date: '2026-09-17', caseNumber: '（2026）沪仲案字第038号', startTime: '14:00', endTime: '15:30', room: '5号庭室' },
+  { date: '2026-09-21', caseNumber: '（2026）沪仲案字第039号', startTime: '09:30', endTime: '11:30', room: '2号庭室' },
+  { date: '2026-09-24', caseNumber: '（2026）沪仲案字第040号', startTime: '13:30', endTime: '15:00', room: '1号庭室' },
+  { date: '2026-09-27', caseNumber: '（2026）沪仲案字第041号', startTime: '09:00', endTime: '11:00', room: '4号庭室' },
+  { date: '2026-09-30', caseNumber: '（2026）沪仲案字第042号', startTime: '14:00', endTime: '15:30', room: '3号庭室' },
+  // === 2026年10月 ===
+  { date: '2026-10-08', caseNumber: '（2026）沪仲案字第043号', startTime: '09:30', endTime: '11:00', room: '2号庭室' },
+  { date: '2026-10-13', caseNumber: '（2026）沪仲案字第044号', startTime: '14:00', endTime: '16:30', room: '5号庭室' },
+  { date: '2026-10-16', caseNumber: '（2026）沪仲案字第045号', startTime: '10:00', endTime: '12:00', room: '1号庭室' },
+  { date: '2026-10-20', caseNumber: '（2026）沪仲案字第046号', startTime: '09:00', endTime: '11:00', room: '3号庭室' },
 ])
 
-// 即将延期案件：剩余审限天数 > 0 且 ≤ 15 且未中止（最多显示 3 条）
-const expiringSoonCases = computed(() =>
-  caseStore.activeList
-    .filter((item) => item.remainDays > 0 && item.remainDays <= 15 && !item.isSuspended)
-    .slice(0, 3)
+// 今天（YYYY-MM-DD）
+const today = new Date().toISOString().slice(0, 10)
+
+// 关联案件 store 可打开详情的案件 id（复用 case-0..case-11，循环映射到各开庭记录）
+const W = 12
+hearings.value = hearings.value.map((h, i) => ({
+  ...h,
+  caseId: `case-${i % W}`,
+}))
+
+// 开庭日期集合（用于日历标记「庭」）
+const hearingDateSet = computed(() => new Set(hearings.value.map((h) => h.date)))
+
+// 当前选中的开庭日期
+const selectedDate = ref(
+  hearingDateSet.value.has(today)
+    ? today
+    : hearings.value.slice().sort((a, b) => a.date.localeCompare(b.date))[0]?.date || ''
+)
+selectedDate.value = selectedDate.value || today
+
+// 判断某日期（YYYY-MM-DD）是否有开庭
+const isHearing = (day) => hearingDateSet.value.has(day)
+
+// 判断某日期是否已开庭（早于今天）
+const isPastDay = (day) => day < today
+
+// 带开庭标记且可点的日期（未开庭）
+const isActiveHearingDay = (day) => isHearing(day) && !isPastDay(day)
+
+// 已选日期的开庭案件
+const selectedHearings = computed(() =>
+  hearings.value
+    .filter((h) => h.date === selectedDate.value)
+    .sort((a, b) => (a.startTime < b.startTime ? -1 : 1))
+    .map((h) => ({ ...h, timeText: `${h.startTime}-${h.endTime}` }))
 )
 
-// 已延期案件：剩余审限天数 < 0（最多显示 3 条）
-const overdueCases = computed(() =>
-  caseStore.activeList
-    .filter((item) => item.remainDays < 0)
-    .slice(0, 3)
-)
+// 标题文案：今天→"今日开庭提醒"，其他→"9月2日开庭提醒"
+const selectedDateLabel = computed(() => {
+  if (selectedDate.value === today) return '今日'
+  const [, m, d] = selectedDate.value.split('-')
+  return `${Number(m)}月${Number(d)}日`
+})
+
+// 点击开庭日期
+const selectDay = (day) => {
+  if (isActiveHearingDay(day)) selectedDate.value = day
+}
 </script>
 
 <style scoped lang="scss">
@@ -264,20 +188,10 @@ const overdueCases = computed(() =>
   .el-calendar {
     --el-calendar-cell-width: 38px;
     :deep(.el-calendar__header) {
-      padding: 0;
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-    :deep(.el-calendar__body) {
-      padding: 10px 0;
-    }
-    :deep(.el-calendar__button-group) {
       display: none;
     }
-    :deep(.el-calendar__title) {
-      font-size: 16px;
-      font-weight: bold;
-      color: var(--el-text-color-primary);
+    :deep(.el-calendar__body) {
+      padding: 0;
     }
     :deep(.el-calendar-day) {
       height: 38px;
@@ -293,65 +207,64 @@ const overdueCases = computed(() =>
       color: var(--el-text-color-secondary);
     }
     :deep(.el-calendar-table td.is-selected .el-calendar-day) {
-      background-color: var(--el-color-primary-light-9);
-      border-radius: 4px;
+      background-color: transparent;
     }
-    :deep(.el-calendar-table .el-calendar-day:hover) {
-      background-color: var(--el-color-primary-light-9);
-      border-radius: 4px;
+    :deep(.el-calendar-table td.is-today .el-calendar-day) {
+      color: var(--el-color-primary);
     }
   }
 
-  .calendar-header {
+  .month-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    .calendar-title-text {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--el-text-color-regular);
-    }
-    .header-actions {
+    padding: 0 0 4px;
+    .month-nav {
       display: flex;
       align-items: center;
-      gap: 4px;
-      .calendar-nav-btn {
-        padding: 0;
-        height: 28px;
-        min-width: 28px;
-        border: none;
+      gap: 8px;
+    }
+    .month-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--el-text-color-regular);
+      min-width: 76px;
+      text-align: center;
+    }
+    .calendar-nav-btn {
+      padding: 0;
+      height: 28px;
+      min-width: 28px;
+      border: none;
+      background-color: transparent;
+      color: var(--el-text-color-regular);
+      transition: all 0.2s ease;
+      &:hover {
+        color: var(--el-color-primary);
+        background-color: var(--el-color-primary-light-9);
+      }
+      &:focus-visible {
+        outline: 2px solid var(--el-color-primary-light-5);
+        outline-offset: 1px;
+      }
+    }
+    .today-btn {
+      height: 28px;
+      padding: 0 12px;
+      font-size: 12px;
+      border: none;
+      background-color: transparent;
+      color: var(--el-text-color-regular);
+      transition: color 0.2s ease;
+      &:hover,
+      &:focus-visible {
+        color: var(--el-color-primary);
         background-color: transparent;
-        color: var(--el-text-color-regular);
-        transition: all 0.2s ease;
-        &:hover {
-          color: var(--el-color-primary);
-          background-color: var(--el-color-primary-light-9);
-        }
-        &:focus-visible {
-          outline: 2px solid var(--el-color-primary-light-5);
-          outline-offset: 1px;
-        }
+        outline: none;
       }
-      .today-btn {
-        padding: 0 10px;
-        font-size: 12px;
-      }
-      .rule-btn {
-        padding: 0 10px;
-        font-size: 12px;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        .el-icon {
-          font-size: 14px;
-        }
-      }
-      .action-divider {
-        width: 1px;
-        height: 16px;
-        background-color: var(--el-border-color);
-        margin: 0 4px;
+      &:focus-visible {
+        outline: 2px solid var(--el-color-primary-light-5);
+        outline-offset: 1px;
       }
     }
   }
@@ -364,9 +277,9 @@ const overdueCases = computed(() =>
     align-items: center;
     justify-content: center;
     position: relative;
-    cursor: pointer;
     border-radius: 4px;
-    transition: background-color 0.2s ease;
+    cursor: default;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
 
     .date-day {
       font-size: 12px;
@@ -377,39 +290,52 @@ const overdueCases = computed(() =>
       position: absolute;
       top: 2px;
       right: 2px;
-      font-size: 10px;
+      font-size: 12px;
       line-height: 1;
-      padding: 1px 3px;
+      padding: 2px 4px;
       border-radius: 2px;
     }
 
-    &.is-available {
-      background-color: #fff;
-    }
     &.is-hearing {
       background-color: #ecf5ff;
+      cursor: pointer;
       .date-badge {
         color: var(--el-color-primary);
       }
-    }
-    &.is-unavailable {
-      background-color: #fef0f0;
-      .date-day {
-        color: var(--el-color-danger);
-      }
-      .date-badge {
-        color: var(--el-color-danger);
-      }
-    }
-    &.is-partial {
-      background: linear-gradient(to bottom, #fff 0%, #fff 50%, #fef0f0 50%, #fef0f0 100%);
-      .date-badge {
-        color: var(--el-color-danger);
+      &:hover,
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 1px var(--el-color-primary);
       }
     }
 
-    &:hover {
-      box-shadow: inset 0 0 0 1px var(--el-color-primary);
+    // 已开庭的日期：置灰、不可点击
+    &.is-past {
+      background-color: var(--el-fill-color-light);
+      cursor: default;
+      .date-day {
+        color: var(--el-text-color-disabled);
+      }
+      .date-badge {
+        color: var(--el-text-color-disabled);
+      }
+      &:hover,
+      &:focus-visible {
+        box-shadow: none;
+      }
+    }
+
+    &.is-selected {
+      background-color: var(--el-color-primary);
+      .date-day {
+        color: #ffffff;
+      }
+      .date-badge {
+        color: #ffffff;
+      }
+      &:hover {
+        box-shadow: none;
+      }
     }
   }
 
@@ -433,19 +359,6 @@ const overdueCases = computed(() =>
         background-color: var(--el-color-primary);
         border-radius: 2px;
         margin-right: 8px;
-      }
-      .summary-title-text {
-        flex: 1;
-        min-width: 0;
-      }
-      .more-link {
-        font-size: 12px;
-        font-weight: 400;
-        margin-left: auto;
-        flex-shrink: 0;
-      }
-      &--mt {
-        margin-top: 14px;
       }
     }
 
@@ -487,47 +400,6 @@ const overdueCases = computed(() =>
       .hearing-room {
         flex: 1;
         color: var(--el-text-color-regular);
-      }
-    }
-
-    .case-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .case-item {
-      display: flex;
-      align-items: center;
-      padding: 6px 10px;
-      font-size: 12px;
-      color: var(--el-text-color-regular);
-      border-radius: 4px;
-      margin-bottom: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-      .case-number-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      &::before {
-        content: '';
-        display: inline-block;
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background-color: var(--el-color-danger);
-        margin-right: 8px;
-        flex-shrink: 0;
-      }
-      // 即将延期案件：小黄点
-      &--warning::before {
-        background-color: var(--el-color-warning);
-      }
-      &:hover,
-      &:focus-visible {
-        background-color: var(--el-color-primary-light-9);
-        outline: none;
       }
     }
 

@@ -352,7 +352,7 @@ const handleDownload = (file) => {
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--el-text-color-secondary);
   line-height: 1.6;
 }
@@ -389,7 +389,7 @@ const handleDownload = (file) => {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--el-text-color-secondary);
   line-height: 1.6;
   padding-top: 1px;
@@ -404,13 +404,13 @@ const handleDownload = (file) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
   background-color: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1;
 }

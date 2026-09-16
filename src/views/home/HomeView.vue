@@ -18,6 +18,17 @@
           <template #header>
             <div class="card-header">
               <div class="card-title">
+                <span>预警看板</span>
+              </div>
+            </div>
+          </template>
+          <WarningBoard />
+        </el-card>
+
+        <el-card v-if="hearingVisible" shadow="hover" class="dashboard-card mb-20">
+          <template #header>
+            <div class="card-header">
+              <div class="card-title">
                 <span>待开庭</span>
               </div>
               <el-link type="primary" :underline="false" @click="router.push('/cases/list')">查看全部</el-link>
@@ -33,22 +44,12 @@
           <template #header>
             <div class="card-header">
               <div class="card-title">
-                <span>日程安排</span>
+                <span>开庭日历</span>
               </div>
+              <el-link type="primary" :underline="false" @click="handleShowHearing">查看更多</el-link>
             </div>
           </template>
           <CalendarBoard />
-        </el-card>
-
-        <el-card shadow="hover" class="dashboard-card mb-20">
-          <template #header>
-            <div class="card-header">
-              <div class="card-title">
-                <span>法律检索</span>
-              </div>
-            </div>
-          </template>
-          <LegalSearch />
         </el-card>
       </el-col>
     </el-row>
@@ -59,6 +60,7 @@
 import { ref, defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import TodoStats from './components/TodoStats.vue'
+import WarningBoard from './components/WarningBoard.vue'
 import HearingList from './components/HearingList.vue'
 
 const router = useRouter()
@@ -67,9 +69,13 @@ const todoTotal = ref(0)
 const handleTodoTotalChange = (val) => {
   todoTotal.value = val ?? 0
 }
+// 待开庭模块默认隐藏，由开庭日历「查看更多」触发显示
+const hearingVisible = ref(false)
+const handleShowHearing = () => {
+  hearingVisible.value = true
+}
 // 右列非首屏组件懒加载，减小首屏 bundle
 const CalendarBoard = defineAsyncComponent(() => import('./components/CalendarBoard.vue'))
-const LegalSearch = defineAsyncComponent(() => import('./components/LegalSearch.vue'))
 </script>
 
 <style scoped lang="scss">
@@ -97,7 +103,7 @@ const LegalSearch = defineAsyncComponent(() => import('./components/LegalSearch.
   }
 
   &:hover {
-    box-shadow: 0 6px 20px rgba(5, 61, 153, 0.08);
+    box-shadow: 0 6px 20px rgba(10, 31, 143, 0.08);
   }
 
   :deep(.el-card__header) {
@@ -129,7 +135,9 @@ const LegalSearch = defineAsyncComponent(() => import('./components/LegalSearch.
       flex-shrink: 0;
     }
     span {
-      letter-spacing: 0.5px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--el-text-color-primary);
     }
   }
 }

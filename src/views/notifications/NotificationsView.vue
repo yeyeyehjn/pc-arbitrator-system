@@ -180,16 +180,6 @@ const markAllAsRead = () => {
   .table-section {
     margin-top: 16px;
 
-    .table-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
-      margin-bottom: 16px;
-    }
-
     .message-content {
       display: flex;
       align-items: center;

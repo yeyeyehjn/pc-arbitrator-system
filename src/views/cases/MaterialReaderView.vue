@@ -95,15 +95,21 @@
               :prefix-icon="Search"
             />
           </div>
-          <!-- 批量操作栏：勾选后出现 -->
-          <div v-if="selectedIds.size > 0" class="sidebar-batch">
-            <span class="batch-count">已选 {{ selectedIds.size }} 项</span>
-            <div class="batch-actions">
-              <el-button size="small" @click="batchMarkRead">标记已读</el-button>
-              <el-button size="small" @click="batchDownload">批量下载</el-button>
-              <el-button size="small" @click="batchExportCatalog">导出目录</el-button>
-            </div>
-            <el-button size="small" link aria-label="清除勾选" @click="clearSelections">清除</el-button>
+          <!-- 侧栏工具栏：勾选后出现批量操作，未读筛选常驻 -->
+          <div class="sidebar-batch">
+            <el-checkbox v-model="showUnreadOnly" size="small" class="unread-toggle">
+              显示未读附件
+            </el-checkbox>
+            <template v-if="selectedIds.size > 0">
+              <div class="batch-row">
+                <span class="batch-count">已选 {{ selectedIds.size }} 项</span>
+                <el-button size="small" link aria-label="清除勾选" @click="clearSelections">清除</el-button>
+              </div>
+              <div class="batch-actions">
+                <el-button size="small" @click="batchMarkRead">标记已读</el-button>
+                <el-button size="small" @click="batchDownload">批量下载</el-button>
+              </div>
+            </template>
           </div>
           <div class="catalog-tree">
             <div
@@ -221,11 +227,11 @@
               <span class="current-name">{{ activeMaterial?.name }}</span>
             </div>
             <div class="toolbar-right">
-              <el-button size="small" :icon="InfoFilled" @click="toggleCaseInfo">案件信息</el-button>
+              <!-- <el-button size="small" :icon="InfoFilled" @click="toggleCaseInfo">案件信息</el-button> -->
               <el-button size="small" :icon="Monitor" @click="toggleSplit">双屏对照</el-button>
               <el-button size="small" :icon="Notebook" @click="toggleSummary">摘要</el-button>
               <el-button size="small" :icon="Notebook" @click="toggleNotes">笔记</el-button>
-              <el-button size="small" :icon="CircleCheck" @click="handleVerify">验签</el-button>
+              <!-- <el-button size="small" :icon="CircleCheck" @click="handleVerify">验签</el-button> -->
               <el-button size="small" :icon="Download" @click="handleDownload">下载</el-button>
               <el-button size="small" :icon="FullScreen" @click="toggleFullscreen">全屏</el-button>
               <el-button size="small" :icon="MagicStick" @click="handleOCR">OCR提取</el-button>
@@ -246,7 +252,7 @@
                   <div
                     v-if="selection.active"
                     class="floating-toolbar"
-                    :style="{ left: selection.x + 'px', top: (selection.y - 46 < 0 ? 8 : selection.y - 46) + 'px' }"
+                    :style="floatingToolbarStyle"
                   >
                     <el-button size="small" @click="doHighlight">高亮</el-button>
                     <el-button size="small" @click="doAnnotate">批注</el-button>
@@ -395,6 +401,18 @@ const { selection, onSelect, clearSelection, onKeydown } = useTextSelection()
 const { notes, annotations, addNote, removeNote, addAnnotation, toggleHighlight, removeAnnotation, notesForMaterial, annotationsForMaterial } = useNotes()
 const { quoteList, addQuote, removeQuote, copyQuote } = useQuoteList()
 
+// 移动端判断（≤768px，与样式断点一致）
+const isMobileView = () => window.innerWidth <= 768
+
+// 浮动工具条定位：选区坐标为视口坐标（position: fixed），并防止右侧溢出屏幕
+const floatingToolbarStyle = computed(() => {
+  const toolbarWidth = 190
+  const maxLeft = window.innerWidth - toolbarWidth - 8
+  const left = Math.max(8, Math.min(selection.x, maxLeft))
+  const top = selection.y - 46 < 0 ? 8 : selection.y - 46
+  return { left: `${left}px`, top: `${top}px` }
+})
+
 const notesPanelVisible = ref(false)
 const selectedIds = ref(new Set())
 const previewPaneEl = ref(null)
@@ -445,15 +463,21 @@ const findCatalogPages = (catalog, ev) => {
 
 // 搜索关键字
 const searchKeyword = ref('')
+// 仅显示未读附件
+const showUnreadOnly = ref(false)
 
-// 过滤后的目录分组（按名称搜索）
+// 过滤后的目录分组（按名称搜索 + 未读筛选）
 const filteredCatalogGroups = computed(() => {
   const kw = searchKeyword.value.trim().toLowerCase()
-  if (!kw) return catalogGroups.value
+  if (!kw && !showUnreadOnly.value) return catalogGroups.value
   return catalogGroups.value
     .map((g) => ({
       ...g,
-      items: g.items.filter((it) => (it.name || '').toLowerCase().includes(kw)),
+      items: g.items.filter((it) => {
+        if (showUnreadOnly.value && it.readStatus !== 'unread') return false
+        if (kw && !(it.name || '').toLowerCase().includes(kw)) return false
+        return true
+      }),
     }))
     .filter((g) => g.items.length > 0)
 })
@@ -538,6 +562,8 @@ const selectGroup = (group) => {
   viewMode.value = 'cover'
   // 点击组标题时确保该组展开
   expandedGroups[group.id] = true
+  // 移动端：目录为覆盖层，选择后自动收起
+  if (isMobileView()) collapseSidebar()
 }
 
 const selectMaterial = (group, item) => {
@@ -549,6 +575,8 @@ const selectMaterial = (group, item) => {
   summaryVisible.value = false
   caseInfoVisible.value = false
   notesPanelVisible.value = false
+  // 移动端：目录为覆盖层，选择后自动收起
+  if (isMobileView()) collapseSidebar()
   const exist = openTabs.value.find((t) => t.id === item.id)
   if (!exist) {
     openTabs.value.push({ id: item.id, name: item.name, group: group.id, material: item })
@@ -697,10 +725,6 @@ const batchMarkRead = () => {
 const batchDownload = () => {
   ElMessage.success(`开始下载 ${selectedIds.value.size} 份材料`)
 }
-const batchExportCatalog = () => {
-  const names = selectedMaterials.value.map((m) => m.name).join('、')
-  ElMessage.success(`已导出目录（${selectedIds.value.size} 项）：${names}`)
-}
 
 const handleClose = () => {
   window.close()
@@ -719,6 +743,8 @@ onMounted(async () => {
   if (catalogGroups.value.length > 0) {
     activeGroup.value = catalogGroups.value[0].id
   }
+  // 移动端：目录默认收起，避免覆盖层遮挡内容
+  if (isMobileView()) sidebarCollapsed.value = true
 })
 </script>
 
@@ -726,7 +752,9 @@ onMounted(async () => {
 .material-reader {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  // 精确填满 MainLayout 可视区（header 60 + breadcrumb 40 + el-main padding 20×2），
+  // 替代 100vh：后者在多层 padding 容器内必然溢出，产生外层滚动条
+  height: calc(100vh - 140px);
   background-color: var(--el-bg-color-page);
 }
 
@@ -940,23 +968,52 @@ onMounted(async () => {
     border-bottom: 1px solid var(--el-border-color-lighter);
   }
 
-  // 批量操作栏：勾选后出现
+  // 侧栏工具栏：未读筛选常驻 + 勾选后出现批量操作
   .sidebar-batch {
     padding: 8px 12px;
     border-bottom: 1px solid var(--el-border-color-lighter);
     background-color: #f5f7fa;
 
+    > * + * {
+      margin-top: 6px;
+    }
+
+    .unread-toggle {
+      display: flex;
+      align-items: center;
+      height: auto;
+
+      :deep(.el-checkbox__label) {
+        font-size: 12px;
+        color: var(--el-text-color-regular);
+      }
+    }
+
+    .batch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .el-button {
+        margin-left: 0;
+      }
+    }
+
     .batch-count {
-      display: block;
       font-size: 12px;
       color: var(--el-text-color-secondary);
-      margin-bottom: 6px;
     }
 
     .batch-actions {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
       gap: 4px;
+
+      .el-button {
+        flex: 1;
+        margin: 0;
+        min-width: 0;
+      }
     }
   }
 
@@ -1470,7 +1527,8 @@ onMounted(async () => {
 }
 
 .floating-toolbar {
-  position: absolute;
+  // 选区坐标为视口坐标（getBoundingClientRect），需 fixed 定位才能对齐
+  position: fixed;
   z-index: 20;
   display: flex;
   gap: 4px;
@@ -1600,8 +1658,10 @@ onMounted(async () => {
 
 // ============ 移动端适配（≤768px） ============
 @media (max-width: 768px) {
+  // 精确填满：breadcrumb 隐藏，el-main 移动端 padding 12×2（dvh 兼容移动地址栏）
   .material-reader {
-    height: 100vh;
+    height: calc(100vh - 84px);
+    height: calc(100dvh - 84px);
   }
 
   // 顶部栏：简化为 标题 + 案号 + 关闭
@@ -1655,6 +1715,46 @@ onMounted(async () => {
     }
   }
 
+  // 收起态：改为顶部悬浮小胶囊，避免整条竖条遮挡预览区
+  .reader-sidebar.collapsed {
+    width: auto;
+    height: auto;
+    top: 8px;
+    left: 8px;
+    bottom: auto;
+    background: transparent;
+    border-right: none;
+    box-shadow: none;
+    z-index: 30;
+
+    .sidebar-rail {
+      width: auto;
+      height: auto;
+      flex-direction: row;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #fff;
+      border: 1px solid var(--el-border-color-light);
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .rail-icon {
+        font-size: 14px;
+      }
+
+      .rail-text {
+        writing-mode: horizontal-tb;
+        text-orientation: mixed;
+        letter-spacing: 0;
+        font-size: 12px;
+      }
+
+      &:hover {
+        background-color: #fff;
+      }
+    }
+  }
+
   // 封面网格：单列
   .cover-view {
     padding: 12px;
@@ -1671,9 +1771,14 @@ onMounted(async () => {
         font-size: 14px;
       }
     }
+
+    // 缩略图过高浪费纵向空间
+    .cover-card .cover-thumbnail {
+      height: 140px;
+    }
   }
 
-  // 预览工具栏：换行、隐藏中间名称、按钮紧凑
+  // 预览工具栏：按钮允许换行，避免内部横向滚动（造成移动端可横向拖动）
   .preview-toolbar {
     flex-wrap: wrap;
     padding: 6px 8px;
@@ -1681,8 +1786,10 @@ onMounted(async () => {
 
     .toolbar-left,
     .toolbar-right {
-      gap: 2px;
+      gap: 4px;
       flex-wrap: wrap;
+      flex-shrink: 1;
+      min-width: 0;
     }
 
     .toolbar-center {
@@ -1692,6 +1799,7 @@ onMounted(async () => {
     .el-button {
       font-size: 12px;
       padding: 6px 8px;
+      flex-shrink: 1;
     }
   }
 
@@ -1700,15 +1808,31 @@ onMounted(async () => {
     max-width: 140px;
   }
 
-  // 摘要/案件信息侧栏：全宽覆盖
+  // 双屏对照：改为上下堆叠，避免两列各占一半过窄
+  .preview-body.split-mode {
+    flex-direction: column;
+    overflow-y: hidden;
+
+    .preview-pane.split-second {
+      border-top: 1px solid var(--el-border-color-light);
+      flex-shrink: 0;
+      height: 50%;
+
+      .split-selector {
+        padding: 6px 12px;
+      }
+    }
+  }
+
+  // 文本层：收紧内边距
+  .text-layer {
+    padding: 16px;
+  }
+
+  // 摘要/案件信息/笔记侧栏：全宽覆盖
   .summary-panel,
   .notes-panel {
     width: 100%;
-  }
-
-  // 浮动工具条：相对视口定位，避免溢出预览容器
-  .floating-toolbar {
-    position: fixed;
   }
 }
 </style>

@@ -28,33 +28,25 @@
             </div>
           </header>
 
-          <!-- 证件信息网格 -->
-          <div class="meta-grid">
-            <div class="meta-cell">
-              <div class="meta-label">
-                <el-icon class="meta-icon"><CreditCard /></el-icon>
-                <span>其他证件类型</span>
-              </div>
-              <div class="meta-value">{{ basicInfo.otherIdType || '-' }}</div>
-            </div>
-            <div class="meta-cell">
-              <div class="meta-label">
-                <el-icon class="meta-icon"><Postcard /></el-icon>
-                <span>其他证件号码</span>
-              </div>
-              <div class="meta-value num-text">{{ basicInfo.otherIdNo || '-' }}</div>
-            </div>
-            <div class="meta-cell">
-              <div class="meta-label">
-                <el-icon class="meta-icon"><Calendar /></el-icon>
-                <span>证件有效期</span>
-              </div>
-              <div class="meta-value num-text">{{ basicInfo.otherIdExpiry || '-' }}</div>
-            </div>
-          </div>
-
           <!-- 联系方式网格 -->
           <div class="meta-grid">
+            <div class="meta-cell">
+              <div class="meta-label">
+                <el-icon class="meta-icon"><LocationInformation /></el-icon>
+                <span>常驻地</span>
+                <el-tooltip v-if="resident.auditTip" :content="resident.auditTip" placement="top">
+                  <el-tag
+                    size="small"
+                    :type="resident.status === 'pending' ? 'warning' : 'danger'"
+                    effect="light"
+                    class="resident-tag"
+                  >{{ resident.auditLabel }}</el-tag>
+                </el-tooltip>
+              </div>
+              <div class="meta-value" :class="{ 'is-pending': resident.status === 'pending' }">
+                {{ resident.display }}
+              </div>
+            </div>
             <div class="meta-cell">
               <div class="meta-label">
                 <el-icon class="meta-icon"><Iphone /></el-icon>
@@ -65,7 +57,7 @@
                 <span v-else class="meta-empty">-</span>
               </div>
             </div>
-            <div class="meta-cell meta-cell--wide">
+            <div class="meta-cell">
               <div class="meta-label">
                 <el-icon class="meta-icon"><Message /></el-icon>
                 <span>电子邮箱</span>
@@ -112,25 +104,11 @@
           <el-form-item label="国籍/地区">
             <span class="readonly-text">{{ basicInfo.nationality }}</span>
           </el-form-item>
-          <el-form-item label="证件类型" prop="otherIdType">
-            <el-select v-model="basicForm.otherIdType" placeholder="请选择证件类型" style="width: 100%">
-              <el-option label="身份证" value="身份证" />
-              <el-option label="护照" value="护照" />
-              <el-option label="港澳台证件" value="港澳台证件" />
-              <el-option label="军官证" value="军官证" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="证件号码" prop="otherIdNo">
-            <el-input v-model="basicForm.otherIdNo" placeholder="请输入证件号码" />
-          </el-form-item>
-          <el-form-item label="证件有效期" prop="otherIdExpiry">
-            <el-date-picker
-              v-model="basicForm.otherIdExpiry"
-              type="date"
-              value-format="YYYY-MM-DD"
-              placeholder="请选择有效期"
-              style="width: 100%"
-            />
+          <el-form-item label="常驻地" prop="resident">
+            <div class="resident-field">
+              <el-input v-model="basicForm.resident" placeholder="请输入常驻地" />
+              <span v-if="residentAuditTip" class="resident-tip">{{ residentAuditTip }}</span>
+            </div>
           </el-form-item>
           <el-form-item label="手机号码" prop="phone">
             <el-input v-model="basicForm.phone" placeholder="请输入手机号码" />
@@ -224,9 +202,6 @@ import {
   Message,
   InfoFilled,
   User,
-  CreditCard,
-  Postcard,
-  Calendar,
   LocationInformation,
 } from '@element-plus/icons-vue'
 import { useProfileStore } from '@/stores/profile'
@@ -245,6 +220,45 @@ onBeforeUnmount(() => window.removeEventListener('resize', handleResize))
 const basicInfo = computed(() => profileStore.basicInfo)
 const basicEditing = ref(false)
 
+// ============ 常驻地 ============
+// 默认值：在职→单位(工作)地址，退休→居住地址
+const defaultResident = computed(() => {
+  const status = profileStore.workUnit?.status
+  const ads = basicInfo.value.addresses || {}
+  return status === 'active' ? ads.work : ads.home
+})
+
+// 只读态常驻地展示：整合默认地址 + 审核状态
+const resident = computed(() => {
+  const r = basicInfo.value.resident || {}
+  const effective = r.value || defaultResident.value
+  if (r.status === 'pending') {
+    return {
+      status: 'pending',
+      display: r.pending || effective || '-',
+      auditLabel: '审核中',
+      auditTip: '常驻地修改已提交，审核通过后生效',
+    }
+  }
+  if (r.status === 'rejected') {
+    return {
+      status: 'rejected',
+      display: effective || '-',
+      auditLabel: '审核未通过',
+      auditTip: `常驻地修改未通过审核：${r.pending || ''}`,
+    }
+  }
+  return { status: 'none', display: effective || '-', auditLabel: '', auditTip: '' }
+})
+
+// 编辑态常驻地提示（存在待审核/未通过修改时提示）
+const residentAuditTip = computed(() => {
+  const r = basicInfo.value.resident || {}
+  if (r.status === 'pending') return '当前常驻地修改审核中，保存后将重新提交审核'
+  if (r.status === 'rejected') return '此前常驻地修改未通过审核，请重新填写'
+  return ''
+})
+
 // 地址列表（用于只读态渲染）
 const addressList = computed(() => {
   const a = basicInfo.value.addresses || {}
@@ -257,9 +271,7 @@ const addressList = computed(() => {
 })
 const basicFormRef = ref(null)
 const basicForm = reactive({
-  otherIdType: '',
-  otherIdNo: '',
-  otherIdExpiry: '',
+  resident: '',
   phone: '',
   gender: '',
   email: '',
@@ -277,9 +289,7 @@ const basicRules = {
 
 const handleStartEdit = () => {
   Object.assign(basicForm, {
-    otherIdType: basicInfo.value.otherIdType,
-    otherIdNo: basicInfo.value.otherIdNo,
-    otherIdExpiry: basicInfo.value.otherIdExpiry,
+    resident: basicInfo.value.resident?.value || defaultResident.value || '',
     phone: basicInfo.value.phone,
     gender: basicInfo.value.gender,
     email: basicInfo.value.email,
@@ -297,23 +307,30 @@ const handleSaveBasic = async () => {
   if (!basicFormRef.value) return
   await basicFormRef.value.validate(async (valid) => {
     if (!valid) return
-    // 证件有效期过期提示
-    if (basicForm.otherIdExpiry) {
-      const today = new Date().toISOString().substring(0, 10)
-      if (basicForm.otherIdExpiry < today) {
-        ElMessage.warning('证件已过期')
+    // 常驻地：修改为非默认值时进入审核状态，审核通过后才更新字段
+    const preResident = basicInfo.value.resident || {}
+    const residentInput = (basicForm.resident || '').trim()
+    const residentData = (() => {
+      if (!residentInput || residentInput === defaultResident.value) {
+        // 为空或恢复默认：跟随工作状态，无需审核
+        return { value: '', pending: '', status: 'none' }
       }
-    }
+      if (residentInput === preResident.value) {
+        // 与已生效的自定义常驻地一致
+        return { value: preResident.value || '', pending: '', status: 'none' }
+      }
+      // 新值需审核后才能生效
+      return { value: preResident.value || '', pending: residentInput, status: 'pending' }
+    })()
+    const isAudit = residentData.status === 'pending'
     await profileStore.updateBasicInfo({
-      otherIdType: basicForm.otherIdType,
-      otherIdNo: basicForm.otherIdNo,
-      otherIdExpiry: basicForm.otherIdExpiry,
+      resident: residentData,
       phone: basicForm.phone,
       gender: basicForm.gender,
       email: basicForm.email,
       addresses: { ...basicForm.addresses },
     })
-    ElMessage.success('保存成功')
+    ElMessage.success(isAudit ? '保存成功，常驻地修改已提交审核' : '保存成功')
     basicEditing.value = false
   })
 }
@@ -418,6 +435,24 @@ onBeforeUnmount(() => {
     color: var(--el-text-color-secondary);
   }
 
+  .resident-field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+
+    .el-input {
+      width: 100%;
+    }
+
+    .resident-tip {
+      font-size: 12px;
+      color: var(--el-text-color-secondary);
+      line-height: 1.5;
+    }
+  }
+
   .basic-edit-form,
   .pwd-form {
     max-width: 640px;
@@ -493,7 +528,7 @@ onBeforeUnmount(() => {
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--el-text-color-secondary);
   line-height: 1.6;
 }
@@ -534,7 +569,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--el-text-color-secondary);
   line-height: 1.6;
   margin-bottom: 4px;
@@ -543,6 +578,15 @@ onBeforeUnmount(() => {
 .meta-icon {
   font-size: 14px;
   color: var(--el-color-primary-light-5);
+}
+
+.resident-tag {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.meta-value.is-pending {
+  color: var(--el-color-warning);
 }
 
 .meta-value {
@@ -612,7 +656,7 @@ onBeforeUnmount(() => {
 }
 
 .address-type {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--el-text-color-secondary);
   white-space: nowrap;

@@ -4,6 +4,12 @@
     <div class="filter-bar">
       <div class="filter-items" :class="{ collapsed: isCollapsed }">
         <div class="filter-item">
+          <span class="filter-label">案件年份</span>
+          <el-select v-model="filters.caseYear" placeholder="全部" clearable>
+            <el-option v-for="y in yearOptions" :key="y" :label="y" :value="y" />
+          </el-select>
+        </div>
+        <div class="filter-item">
           <span class="filter-label">案件编号</span>
           <el-input
             v-model="filters.caseNo"
@@ -51,11 +57,7 @@
         :data="pagedData"
         style="width: 100%"
       >
-        <el-table-column prop="caseNo" label="案号" min-width="160">
-          <template #default="{ row }">
-            <el-link type="primary" :underline="false" @click="goToCaseDetail(row)">{{ row.caseNo }}</el-link>
-          </template>
-        </el-table-column>
+        <el-table-column prop="caseNo" label="案件编号" min-width="160" />
         <el-table-column prop="caseReason" label="案由" min-width="140" show-overflow-tooltip />
         <el-table-column prop="applicant" label="申请人" min-width="140" show-overflow-tooltip />
         <el-table-column prop="respondent" label="被申请人" min-width="140" show-overflow-tooltip />
@@ -70,8 +72,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="submitTime" label="提交时间" min-width="140" />
-        <el-table-column label="操作" width="100" fixed="right">
+        <el-table-column label="操作" width="160" fixed="right">
           <template #default="{ row }">
+            <el-button v-if="docType === '笔录'" type="primary" link @click="$emit('preview', row)">查看</el-button>
             <el-button type="primary" link @click="$emit('sign', row)">签名</el-button>
           </template>
         </el-table-column>
@@ -98,7 +101,6 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { Search, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import TodoEmptyState from './TodoEmptyState.vue'
 
@@ -107,13 +109,16 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  docType: {
+    type: String,
+    default: '',
+  },
 })
 
-defineEmits(['sign'])
-
-const router = useRouter()
+defineEmits(['sign', 'preview'])
 
 const filters = ref({
+  caseYear: '',
   caseNo: '',
   party: '',
   secretary: '',
@@ -125,6 +130,16 @@ const isCollapsed = ref(true)
 const currentPage = ref(1)
 const pageSize = ref(5)
 
+// 案件年份选项（近5年）
+const currentYear = new Date().getFullYear()
+const yearOptions = computed(() => {
+  const years = []
+  for (let y = currentYear; y >= currentYear - 4; y--) {
+    years.push(String(y))
+  }
+  return years
+})
+
 const secretaryOptions = computed(() => {
   const set = new Set(props.data.map((item) => item.secretary))
   return Array.from(set)
@@ -132,6 +147,10 @@ const secretaryOptions = computed(() => {
 
 const filteredData = computed(() => {
   return props.data.filter((item) => {
+    if (filters.value.caseYear) {
+      const yearMatch = item.caseNo.match(/[（(](\d{4})[）)]/)
+      if ((yearMatch ? yearMatch[1] : '') !== filters.value.caseYear) return false
+    }
     if (filters.value.caseNo && !item.caseNo.includes(filters.value.caseNo)) return false
     if (filters.value.party && !item.applicant.includes(filters.value.party) && !item.respondent.includes(filters.value.party)) return false
     if (filters.value.secretary && item.secretary !== filters.value.secretary) return false
@@ -149,7 +168,7 @@ const handleSearch = () => {
 }
 
 const handleReset = () => {
-  filters.value = { caseNo: '', party: '', secretary: '', status: '' }
+  filters.value = { caseYear: '', caseNo: '', party: '', secretary: '', status: '' }
   currentPage.value = 1
 }
 
@@ -158,10 +177,6 @@ const formatAmount = (val) => {
   return val.toLocaleString('zh-CN')
 }
 
-const goToCaseDetail = (row) => {
-  // 占位：后续指向案件详情页
-  router.push('/cases')
-}
 </script>
 
 <style scoped lang="scss">

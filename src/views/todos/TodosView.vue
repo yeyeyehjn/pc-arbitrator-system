@@ -38,11 +38,11 @@
             class="menu-badge"
           />
         </el-menu-item>
-        <el-menu-item index="/todos/scheduling">
+        <!-- <el-menu-item index="/todos/scheduling">
           <el-icon><Calendar /></el-icon>
           <span>智能约庭</span>
           <span class="suggest-tag">[建议]</span>
-        </el-menu-item>
+        </el-menu-item> -->
         <el-menu-item index="/todos/consult">
           <el-icon><ChatDotRound /></el-icon>
           <span>专家咨询案件</span>
@@ -118,7 +118,7 @@ onMounted(() => {
 
 .todos-content {
   flex: 1;
-  padding: 20px;
+  padding: 10px 20px;
   background-color: var(--el-bg-color-page);
   overflow: auto;
 }

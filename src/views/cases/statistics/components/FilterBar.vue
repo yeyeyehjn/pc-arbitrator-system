@@ -174,10 +174,8 @@ const mobileSummaryText = computed(() => {
 <style scoped lang="scss">
 .filter-bar {
   background-color: var(--el-bg-color);
-  border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
-  border: 1px solid var(--el-border-color-lighter);
 }
 
 // 桌面端
@@ -237,7 +235,7 @@ const mobileSummaryText = computed(() => {
 
     .clear-btn {
       margin-left: auto;
-      font-size: 12px;
+      font-size: 14px;
 
       .clear-icon {
         margin-right: 4px;

@@ -278,11 +278,11 @@ watch(
 
     &:hover {
       background: #f2f5fa;
-      color: #053d99;
+      color: var(--el-color-primary);
     }
 
     &.is-active {
-      background: #053d99;
+      background: var(--el-color-primary);
       color: #fff;
     }
   }
@@ -323,7 +323,7 @@ watch(
 
   .chat-participants-hint {
     font-size: 12px;
-    color: #053d99;
+    color: var(--el-color-primary);
     padding: 2px 8px;
     background: #f2f5fa;
     border-radius: 4px;
@@ -366,13 +366,13 @@ watch(
 
     &:hover {
       background-color: #f2f5fa;
-      color: #053d99;
+      color: var(--el-color-primary);
     }
 
     &.is-active {
-      background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
+      background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%);
       color: #fff;
-      box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
+      box-shadow: 0 2px 6px rgba(10, 31, 143, 0.25);
     }
   }
 
@@ -403,14 +403,14 @@ watch(
       transition: all 0.2s ease;
 
       &:hover {
-        border-color: #053d99;
-        color: #053d99;
+        border-color: var(--el-color-primary);
+        color: var(--el-color-primary);
       }
     }
 
     .participants-hint {
       font-size: 12px;
-      color: #053d99;
+      color: var(--el-color-primary);
       margin-left: auto;
       font-style: italic;
     }
@@ -466,7 +466,7 @@ watch(
     background: linear-gradient(135deg, #8a8f99 0%, #6b7280 100%);
   }
   &.avatar-arbitrator {
-    background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
+    background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%);
   }
 }
 
@@ -496,13 +496,13 @@ watch(
   font-size: 12px;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, #053d99 0%, #3a6bb5 100%);
-  box-shadow: 0 2px 6px rgba(5, 61, 153, 0.25);
+  background: linear-gradient(135deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%);
+  box-shadow: 0 2px 6px rgba(10, 31, 143, 0.25);
   transition: all 0.2s ease;
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(5, 61, 153, 0.3);
+    box-shadow: 0 4px 10px rgba(10, 31, 143, 0.3);
   }
 }
 </style>

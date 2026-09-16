@@ -45,6 +45,8 @@
         </el-dropdown>
       </div>
     </el-header>
+    <!-- 面包屑导航：记录已打开页面，支持单个关闭与全部关闭 -->
+    <PageBreadcrumb />
     <el-main class="main-content-wrapper">
       <div class="main-content-container">
         <router-view />
@@ -123,6 +125,7 @@ import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ArrowDown, Bell, Menu, Close, HomeFilled, Document, List, User, SwitchButton, Reading } from '@element-plus/icons-vue'
 import { useAuthStore } from '../stores/auth'
+import PageBreadcrumb from '../components/PageBreadcrumb.vue'
 import FloatingChatButton from '../components/chat/FloatingChatButton.vue'
 import ChatDrawer from '../components/chat/ChatDrawer.vue'
 import AiIconButton from '@/components/ai-assistant/AiIconButton.vue'
@@ -201,7 +204,7 @@ const goToNotifications = () => {
     display: flex;
     align-items: center;
     .logo {
-      height: 32px;
+      height: 24px;
       margin-right: 10px;
     }
     .system-title {
@@ -242,6 +245,12 @@ const goToNotifications = () => {
       align-items: center;
     }
     .notification-icon {
+      /* WCAG 2.5.8：可点击图标触控区域至少 24×24 */
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
       color: var(--el-text-color-regular);
       transition: color 0.2s ease;
@@ -273,6 +282,9 @@ const goToNotifications = () => {
 .mobile-menu-toggle {
   display: none;
   font-size: 22px;
+  /* WCAG 2.5.8：可点击图标触控区域至少 24×24 */
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   color: var(--el-text-color-regular);
   margin-left: 10px;
@@ -287,6 +299,7 @@ const goToNotifications = () => {
     .mobile-menu-toggle {
       display: flex;
       align-items: center;
+      justify-content: center;
     }
     .header-right .el-dropdown-link {
       display: none;

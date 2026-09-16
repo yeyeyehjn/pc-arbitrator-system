@@ -91,7 +91,7 @@ onMounted(() => {
   &:hover,
   &:focus-visible {
     border-color: var(--el-color-primary-light-7);
-    box-shadow: 0 4px 14px rgba(5, 61, 153, 0.1);
+    box-shadow: 0 4px 14px rgba(10, 31, 143, 0.1);
     background-color: var(--el-color-primary-light-9);
     outline: none;
   }
@@ -114,8 +114,8 @@ onMounted(() => {
     position: absolute;
     top: -2px;
     right: -2px;
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background-color: var(--el-color-danger);
     border: 2px solid #ffffff;

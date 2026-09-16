@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-17T18:00:00+08:00",
+  "title": "Design System: PC仲裁员端办案系统",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Arbitrator Blue",
+        "canonical": "#053d99",
+        "tonalRamp": ["#04307a", "#053d99", "#3a6bb5", "#6a96cd", "#9abde0", "#b5d0e8", "#d5e3f2", "#f2f5fa"]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Deep Navy Text",
+        "canonical": "#00296b",
+        "tonalRamp": ["#001a4d", "#00296b", "#1a4080", "#3358a0", "#5c7ab8", "#859dc8", "#aec0d8", "#d7e4ec"]
+      },
+      "text-regular": {
+        "role": "neutral",
+        "displayName": "Carbon Text",
+        "canonical": "#303133",
+        "tonalRamp": ["#1a1a1c", "#303133", "#4a4a4d", "#646468", "#7e7e82", "#98989c", "#b2b2b6", "#ccccce"]
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Slate Text",
+        "canonical": "#606266",
+        "tonalRamp": ["#3a3b3d", "#606266", "#7a7c80", "#949699", "#aeaeb1", "#c8c9cb", "#e2e2e4", "#f6f6f7"]
+      },
+      "bg-page": {
+        "role": "neutral",
+        "displayName": "Page Gray",
+        "canonical": "#f7f7f7",
+        "tonalRamp": ["#e0e0e0", "#e8e8e8", "#ededed", "#f2f2f2", "#f5f5f5", "#f7f7f7", "#fafafa", "#fdfdfd"]
+      },
+      "warning": {
+        "role": "tertiary",
+        "displayName": "Warning Amber",
+        "canonical": "#E6A23C",
+        "tonalRamp": ["#8a5e1a", "#b07a24", "#E6A23C", "#ebb85f", "#f0ce85", "#f5e0ab", "#faedd0", "#fdf6ed"]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Danger Red",
+        "canonical": "#F56C6C",
+        "tonalRamp": ["#8a2d2d", "#b03a3a", "#F56C6C", "#f78989", "#faa7a7", "#fcc5c5", "#fde0e0", "#fef0f0"]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Success Green",
+        "canonical": "#67C23A",
+        "tonalRamp": ["#3a6b1f", "#4d8a2a", "#67C23A", "#85d05f", "#a3de85", "#c1e9ab", "#dff0d0", "#eff8e8"]
+      },
+      "ai-purple": {
+        "role": "tertiary",
+        "displayName": "AI Purple",
+        "canonical": "#6b4fbb",
+        "tonalRamp": ["#3a2866", "#4d3890", "#6b4fbb", "#8a72d0", "#a99be0", "#c5bcee", "#ddd6f5", "#eeebfa"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Card titles, page titles, active menu items. The largest text in the system."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All content text, table cells, form labels, button labels. The workhorse."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Count annotations, helper text, filter button labels, pagination."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Tiny tags like suspended status. Never used for actionable text."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-hover",
+        "value": "0 6px 20px rgba(5, 61, 153, 0.08)",
+        "purpose": "Dashboard cards on hover. Brand-tinted, low-opacity."
+      },
+      {
+        "name": "stat-card-hover",
+        "value": "0 4px 14px rgba(5, 61, 153, 0.1)",
+        "purpose": "Statistics board cards on hover. Slightly tighter than dashboard cards."
+      },
+      {
+        "name": "floating-ball",
+        "value": "0 4px 16px rgba(5, 61, 153, 0.35)",
+        "purpose": "Chat floating action button. Higher elevation for overlay."
+      },
+      {
+        "name": "floating-ball-ai",
+        "value": "0 4px 12px rgba(107, 79, 187, 0.35)",
+        "purpose": "AI assistant floating ball. Uses AI purple tint."
+      },
+      {
+        "name": "drawer-edge",
+        "value": "-8px 0 32px rgba(0, 0, 0, 0.1)",
+        "purpose": "Chat drawer left edge shadow."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "ease",
+        "purpose": "Default easing for state transitions (hover, focus, color changes)."
+      },
+      {
+        "name": "ease-emphasized",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Entrance animations and pop effects (login page only)."
+      },
+      {
+        "name": "duration-fast",
+        "value": "0.2s",
+        "purpose": "Fast transitions: color, background, border-color changes."
+      },
+      {
+        "name": "duration-base",
+        "value": "0.25s",
+        "purpose": "Base transitions: card hover box-shadow, sidebar collapse."
+      },
+      {
+        "name": "duration-slow",
+        "value": "0.3s",
+        "purpose": "Slow transitions: background slides, step indicator fills."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "768px"
+      },
+      {
+        "name": "tablet",
+        "value": "991px"
+      },
+      {
+        "name": "login-md",
+        "value": "960px"
+      },
+      {
+        "name": "login-sm",
+        "value": "480px"
+      },
+      {
+        "name": "login-xs",
+        "value": "360px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action button for submit, save, confirm. Deep blue background with white text.",
+      "html": "<button class=\"ds-btn-primary\">查询</button>",
+      "css": ".ds-btn-primary { background: #053d99; color: #fff; border: none; border-radius: 4px; padding: 8px 20px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; transition: background 0.2s ease; } .ds-btn-primary:hover { background: #3a6bb5; } .ds-btn-primary:active { background: #04307a; } .ds-btn-primary:focus-visible { outline: 2px solid #053d99; outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Compact 12px button for filter actions (query/reset). Lives inside .filter-actions container.",
+      "html": "<button class=\"ds-btn-filter\">查询</button>",
+      "css": ".ds-btn-filter { background: #053d99; color: #fff; border: none; border-radius: 4px; padding: 7px 16px; font-size: 12px; font-weight: 500; font-family: inherit; cursor: pointer; transition: background 0.2s ease; } .ds-btn-filter:hover { background: #3a6bb5; } .ds-btn-filter:active { background: #04307a; }"
+    },
+    {
+      "name": "Ghost / Back Button",
+      "kind": "button",
+      "description": "Secondary action button with transparent background and light border. Used for back/cancel.",
+      "html": "<button class=\"ds-btn-ghost\">返回上一步</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: #606266; border: 1px solid #e4e7ed; border-radius: 4px; padding: 8px 20px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease; } .ds-btn-ghost:hover { background: #f7f7f7; border-color: #dcdfe6; }"
+    },
+    {
+      "name": "Dashboard Card",
+      "kind": "card",
+      "refersTo": "card-dashboard",
+      "description": "Borderless white card for home dashboard. Flat at rest, brand-tinted shadow on hover.",
+      "html": "<div class=\"ds-card-dashboard\"><div class=\"ds-card-header\"><span class=\"ds-card-title\">待办中心</span><a class=\"ds-card-link\">查看全部</a></div><div class=\"ds-card-body\">Content</div></div>",
+      "css": ".ds-card-dashboard { background: #fff; border: none; border-radius: 4px; transition: box-shadow 0.25s ease; } .ds-card-dashboard:hover { box-shadow: 0 6px 20px rgba(5, 61, 153, 0.08); } .ds-card-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #ebeef5; } .ds-card-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; color: #00296b; } .ds-card-title::before { content: ''; width: 3px; height: 16px; background: #053d99; border-radius: 2px; flex-shrink: 0; } .ds-card-link { font-size: 14px; color: #053d99; text-decoration: none; cursor: pointer; } .ds-card-link:hover { color: #3a6bb5; } .ds-card-body { padding: 20px; }"
+    },
+    {
+      "name": "Stat Card",
+      "kind": "card",
+      "refersTo": "stat-card",
+      "description": "Selectable statistics card. Flat at rest with light border. Active state: primary border + selection tint + 3px selection bar.",
+      "html": "<div class=\"ds-stat-card active\"><div class=\"ds-stat-main\"><div class=\"ds-stat-icon-wrap\"><svg class=\"ds-stat-icon\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"7\" width=\"18\" height=\"14\" rx=\"1\"/><path d=\"M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2\"/></svg></div><div class=\"ds-stat-text\"><span class=\"ds-stat-title\">在办案件</span><span class=\"ds-stat-number\">12</span></div></div></div>",
+      "css": ".ds-stat-card { background: #fff; border: 1px solid #e4e7ed; border-radius: 4px; padding: 20px; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; position: relative; overflow: hidden; } .ds-stat-card:not(.active):hover { border-color: #9abde0; box-shadow: 0 4px 14px rgba(5, 61, 153, 0.1); background: #d5e3f2; } .ds-stat-card.active { background: #f2f5fa; border-color: #053d99; } .ds-stat-card.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #053d99; } .ds-stat-card.active .ds-stat-title, .ds-stat-card.active .ds-stat-number { color: #053d99; } .ds-stat-main { display: flex; align-items: center; gap: 12px; } .ds-stat-icon-wrap { width: 40px; height: 40px; border-radius: 8px; background: #f2f5fa; display: flex; align-items: center; justify-content: center; flex-shrink: 0; } .ds-stat-card.active .ds-stat-icon-wrap { background: #d5e3f2; } .ds-stat-icon { color: #606266; } .ds-stat-card.active .ds-stat-icon { color: #053d99; } .ds-stat-text { display: flex; flex-direction: column; gap: 2px; } .ds-stat-title { font-size: 14px; font-weight: 500; color: #606266; } .ds-stat-number { font-size: 28px; font-weight: 700; color: #00296b; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }"
+    },
+    {
+      "name": "Filter Bar",
+      "kind": "custom",
+      "refersTo": "filter-bar",
+      "description": "Global reusable filter container. White card with 24px/20px padding, flex-wrap items with 12px gap.",
+      "html": "<div class=\"ds-filter-bar\"><div class=\"ds-filter-items\"><div class=\"ds-filter-item\"><span class=\"ds-filter-label\">案号</span><input class=\"ds-filter-input\" placeholder=\"请输入\" /></div><div class=\"ds-filter-item\"><span class=\"ds-filter-label\">状态</span><select class=\"ds-filter-select\"><option>全部</option></select></div></div><div class=\"ds-filter-actions\"><button class=\"ds-btn-filter\">查询</button><button class=\"ds-btn-filter-ghost\">重置</button></div></div>",
+      "css": ".ds-filter-bar { background: #fff; padding: 24px 20px; } .ds-filter-items { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; } .ds-filter-item { display: flex; align-items: center; gap: 8px; } .ds-filter-label { font-size: 14px; color: #606266; white-space: nowrap; width: 56px; text-align: left; flex-shrink: 0; } .ds-filter-input, .ds-filter-select { width: 180px; padding: 8px 12px; border: 1px solid #dcdfe6; border-radius: 4px; font-size: 14px; background: #fff; outline: none; transition: border-color 0.2s ease; box-sizing: border-box; } .ds-filter-input:focus, .ds-filter-select:focus { border-color: #053d99; } .ds-filter-actions { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 16px; } .ds-btn-filter-ghost { background: transparent; color: #606266; border: 1px solid #e4e7ed; border-radius: 4px; padding: 7px 16px; font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.2s ease; } .ds-btn-filter-ghost:hover { background: #f7f7f7; }"
+    },
+    {
+      "name": "Table Section",
+      "kind": "custom",
+      "refersTo": "table-section",
+      "description": "Global table container with title bar. White background, 24px/20px padding. Table header forced gray with no bottom border.",
+      "html": "<div class=\"ds-table-section\"><div class=\"ds-table-title\"><span>在办案件 <span class=\"ds-title-count\">共 12 条</span></span></div><table class=\"ds-table\"><thead><tr><th>案件编号</th><th>申请人</th></tr></thead><tbody><tr><td>GZ2026-001</td><td>张某</td></tr></tbody></table><div class=\"ds-pagination\">1 2 3 ...</div></div>",
+      "css": ".ds-table-section { background: #fff; padding: 24px 20px; } .ds-table-title { display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 600; color: #303133; margin-bottom: 16px; } .ds-title-count { font-size: 12px; font-weight: 500; color: #8a8e95; } .ds-table { width: 100%; border-collapse: collapse; } .ds-table thead th { background: #f8f8f9; color: #303133; font-weight: bold; border-bottom: none; padding: 12px; text-align: left; } .ds-table tbody td { padding: 12px; border-bottom: 1px solid #ebeef5; color: #303133; font-size: 14px; } .ds-pagination { display: flex; justify-content: flex-start; margin-top: 16px; }"
+    },
+    {
+      "name": "Top Navigation",
+      "kind": "nav",
+      "refersTo": "nav-top",
+      "description": "60px fixed top bar. White background, no shadow. Horizontal menu with 2px bottom border on active item.",
+      "html": "<nav class=\"ds-nav-top\"><div class=\"ds-nav-left\"><img src=\"logo.png\" class=\"ds-nav-logo\" alt=\"Logo\" /></div><ul class=\"ds-nav-menu\"><li class=\"ds-nav-item active\">首页</li><li class=\"ds-nav-item\">我的案件</li><li class=\"ds-nav-item\">待办事项</li></ul><div class=\"ds-nav-right\"><span class=\"ds-nav-user\">张三 仲裁员</span></div></nav>",
+      "css": ".ds-nav-top { height: 60px; display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 0 20px; box-shadow: none; } .ds-nav-left { display: flex; align-items: center; } .ds-nav-logo { height: 32px; margin-right: 10px; } .ds-nav-menu { display: flex; list-style: none; margin: 0; padding: 0; flex-grow: 1; justify-content: center; } .ds-nav-item { height: 60px; line-height: 60px; font-size: 16px; color: #606266; cursor: pointer; position: relative; transition: color 0.2s ease; } .ds-nav-item:not(.active):hover { color: #3a6bb5; } .ds-nav-item.active { color: #053d99; border-bottom: 2px solid #053d99; } .ds-nav-right { display: flex; align-items: center; gap: 16px; } .ds-nav-user { font-size: 14px; color: #303133; cursor: pointer; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Standard text input with 1px border, 4px radius, focus shifts border to brand blue.",
+      "html": "<input class=\"ds-input\" placeholder=\"请输入\" />",
+      "css": ".ds-input { width: 180px; padding: 8px 12px; background: #fff; border: 1px solid #dcdfe6; border-radius: 4px; font-size: 14px; color: #303133; outline: none; transition: border-color 0.2s ease; box-sizing: border-box; font-family: inherit; } .ds-input::placeholder { color: #8a8e95; } .ds-input:focus { border-color: #053d99; }"
+    },
+    {
+      "name": "Case Number Link",
+      "kind": "custom",
+      "description": "Primary-colored link with no underline. Can overlay warning/danger color for urgency states.",
+      "html": "<a class=\"ds-case-link\">GZ2026-001</a>",
+      "css": ".ds-case-link { color: #053d99; text-decoration: none; cursor: pointer; font-size: 14px; transition: color 0.2s ease; } .ds-case-link:hover { color: #3a6bb5; } .ds-case-link.ds-case-link-expiring { color: #E6A23C; } .ds-case-link.ds-case-link-expired { color: #F56C6C; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Judicial Workbench",
+    "overview": "This is a tool-grade enterprise UI for arbitration case management. Design serves function: every pixel earns its place by reducing friction in the arbitrator's daily workflow. The system is dense, structured, and restrained. It borrows the visual gravity of judicial authority (deep blue, precise hierarchy, no decorative noise) without mimicking paper or courtroom aesthetics.\n\nThe product runs on Element Plus 2.x with a deep blue brand override (#053d99). One font family, four font sizes, one accent color. The discipline is the design. When in doubt, the system errs toward more whitespace and fewer visual elements, not more.\n\nThe login page (LoginView.vue) is a documented exception: it uses an independent slate-blue palette and bespoke component styles that do not follow the main system tokens. This is intentional, as the login is a standalone marketing-adjacent surface. All post-login surfaces must follow the main system.",
+    "keyCharacteristics": [
+      "Tool-grade density: information per viewport over decoration",
+      "Single accent color (#053d99) used sparingly for selection, links, and primary actions",
+      "Four-step type scale (16/14/12/10px), no intermediate values",
+      "4-multiple spacing rhythm (4/8/12/16/20/24)",
+      "Flat-by-default surfaces; shadows appear only on hover or state change",
+      "Selection indicator: 3px primary-color bar, reserved exclusively for active/selected states",
+      "prefers-reduced-motion honored across all interactive components"
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "#053d99 is the only brand color used for selection, emphasis, and primary actions. Warning/danger/success colors are status-only. AI Purple is component-scoped. No screen should introduce a fifth hue family.", "section": "colors" },
+      { "name": "The Four-Step Rule", "body": "Only 16px, 14px, 12px, and 10px are permitted. 13px and 15px are forbidden; they break the rhythm without adding a meaningful step.", "section": "typography" },
+      { "name": "The 768 Rule", "body": "All modules use max-width: 768px as the mobile breakpoint. Do not use 767px or max-width: 769px; these create off-by-one gaps at the boundary.", "section": "layout" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Shadows appear only as a response to state (hover, drag, floating). A resting card with a shadow is a design error.", "section": "elevation" },
+      { "name": "The Selection-Only Rule", "body": "The 3px bar is exclusively a selection indicator. It must never appear on unselected/resting cards as decoration. A resting card with a 3px colored bar is a design error.", "section": "components" }
+    ],
+    "dos": [
+      "Do use the four-step type scale (16/14/12/10px) exclusively. Adjacent steps must differ by at least 2px and 100 weight.",
+      "Do use 4-multiple spacing (4/8/12/16/20/24) for all padding, margin, and gap values.",
+      "Do use the global classes (.filter-bar, .table-section, .pagination-bar, .section-card, .todos-sidebar) defined in src/styles/element/index.scss. New modules must reuse, not redefine.",
+      "Do use var(--el-color-primary) and its ramp for all accent/selection/link states.",
+      "Do keep the 3px vertical bar exclusively for selection/active states. It is a selection indicator, not decoration.",
+      "Do honor prefers-reduced-motion: disable all transitions and animations when the media query matches.",
+      "Do use el-link type=\"primary\" :underline=\"false\" for all in-content links.",
+      "Do use el-table with v-loading for loading states and #empty slot for no-data states."
+    ],
+    "donts": [
+      "Don't use 13px or 15px font sizes. They break the four-step rhythm.",
+      "Don't introduce a second font family. Hierarchy comes from size + weight, not typeface.",
+      "Don't add vertical borders to table cells. Only row bottom separators are permitted.",
+      "Don't remove the border-bottom: none !important on table headers, or add a bottom border to headers.",
+      "Don't redefine global class styles (.filter-bar, .table-section, etc.) inside component <style scoped> blocks.",
+      "Don't use the em dash in UI copy. Use commas, colons, periods, or parentheses instead.",
+      "Don't put a 3px colored bar on resting/unselected cards. The bar means selected or active, nothing else.",
+      "Don't use border-left color bars for timelines. Use full-border cards with rounded corners instead.",
+      "Don't use max-width: 767px as a breakpoint. Use max-width: 768px consistently across all modules.",
+      "Don't use shadows on resting surfaces. Shadows are reserved for hover, drag, and floating overlay states.",
+      "Don't introduce a fifth hue family. The system has four: brand blue, warning amber, danger red, success green (plus AI purple scoped to AI components only)."
+    ]
+  }
+}
